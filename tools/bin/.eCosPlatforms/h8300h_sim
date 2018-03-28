@@ -1,0 +1,6 @@
+ServerSideGdb=0
+prompt=(gdb) 
+inferior=h8300-elf-gdb -nw -q %e
+commands=set height 0;target sim;load;break cyg_test_exit;rbreak cyg_assert_fail;break cyg_test_init;cont;set cyg_test_is_simulator=1;cont;bt 64
+prefix=h8300-elf
+platform=h8300h_sim

@@ -1,0 +1,84 @@
+﻿<html>
+<head>
+<META http-equiv="Pragma" content="no-cache">
+<meta http-equiv="content-type" content="text/html" charset="UTF-8">
+<TITLE>RatPac AKS Configuration</TITLE>
+<link rel="stylesheet" href="style/normal_ws.css" type="text/css">
+</head>
+<SCRIPT language=JavaScript src="utils.js"></SCRIPT>
+<script language="javascript">
+
+function init()
+{
+	var logoV="<%CGI_GET_FLOGO();%>";
+	//var logoV="YRKJ";
+	var e= document.getElementById("logo_image_id");
+	
+	if (logoV== "HF")
+		e.src= "images/title.jpg";
+	else if (logoV== "YRKJ")
+		e.src= "images/YRKJ.jpg";
+	else
+		e.src= "images/hdbg.png";
+}
+
+</script>
+
+<style>
+body {
+	margin-top: 1px;
+	padding: 0;
+	background: #787878 url(images/hdbg.png) repeat left top;
+	text-align: justify;
+	font-family: Georgia, "Times New Roman", Times, serif;
+	font-size: 12px;
+	color: #616161;
+}
+h1 {
+	padding: 25px 0 0 0;
+	letter-spacing: -1px;
+	font-weight: normal;
+	font-size: 3em;
+}
+a.e_l {
+	text-transform: uppercase;
+	padding: 47px 0 0 3px;
+	font-size: 12px;
+	color: #110E0F;
+}
+b.b_link {
+	border: none;
+	text-decoration: none;
+	color: #528DC8;
+}
+b.b_easy {
+	border: none;
+	text-decoration: none;
+	color: #000000;
+}
+a.sel_lang {
+	padding: 47px 0 0 3px;
+	font-size: 14px;
+	color: #110E0F;
+}
+td.lan_td {
+	vertical-align:bottom;
+}
+</style>
+
+<body onload= "init()">
+<table width="840"><tr>
+	<iframe  width="0px" height="0px" id="lang_iframe_id"></iframe>
+	<td width="640">
+		<img src="images/hdbg.png" alt="" border="0" usemap="#Logomap" id= "logo_image_id" >
+	</td>
+	<!--
+	<td align=right valign=bottom style="{width:100px;}"><input type="button" style="{width:60px;}" value="中文" id="ovLangCN"  onClick="setLanguageCN()"></td>
+	<td align=right valign=bottom style="{width:100px;}"><input type="button" style="{width:60px;}" value="English" id="ovLangEN" onClick="setLanguageEN()"></td>
+	-->
+</tr></table>
+	<map name="Logomap" id="Logomap">
+	  <area id="logomap_id" shape="rect" coords="0,0,100,80" alt="" />
+	</map>
+</body>
+</html>

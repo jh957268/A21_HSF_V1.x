@@ -1,0 +1,668 @@
+<HTML>
+<HEAD>
+<META http-equiv="Pragma" content="no-cache">
+<META http-equiv="Content-Type" content="text/html" charset="utf-8">
+<TITLE>M2M Web Server</TITLE>
+<SCRIPT language=JavaScript src="../utils.js"></SCRIPT>
+<SCRIPT language=JavaScript src=spec.js></SCRIPT>
+<link rel="stylesheet" href="../style/normal_ws.css" type="text/css">
+
+<SCRIPT language=JavaScript>
+
+/*DEMO*/
+addCfg("ssid_name",30,"HF11X");
+addCfg("apcli_bssid",31,"00:CC:11:22:33:44");
+addCfg("S_SecurityMode",37,"OPEN");
+addCfg("S_EncryptionType",38,"WEP");
+addCfg("S_EnTyWEP",39,"0");
+addCfg("S_EnTy_KEY",40,"qwerqwer");
+addCfg("S_EnTy_Pass_P",41,"aaaaaaaaaaaaa");
+addCfg("WAN_TYPE",32,"1");
+addCfg("HN",33,"HF11X");
+addCfg("SWANIP",34,"10.10.10.221");
+addCfg("SWANMSK",35,"255.255.255.0");
+addCfg("SWANGW",36,"10.10.10.253");
+/*END_DEMO*/
+
+
+/*REAL
+<%
+
+
+
+CGI_MAP(ssid_name, CFG_WLN_ApCliSsid);
+CGI_MAP(apcli_bssid, CFG_WLN_ApCliBssid);
+CGI_MAP(S_SecurityMode, CFG_WLN_ApCliAuthMode);
+CGI_MAP(S_EncryptionType, CFG_WLN_ApCliEncrypType);
+CGI_MAP(S_EnTyWEP, CFG_WLN_ApCliKey1Type);
+CGI_MAP(S_EnTy_KEY, CFG_WLN_ApCliKey1Str);
+CGI_MAP(S_EnTy_Pass_P, CFG_WLN_ApCliWPAPSK);
+CGI_MAP(WAN_TYPE, CFG_WAN_IP_MODE);
+CGI_MAP(HN,	CFG_SYS_NAME);
+CGI_MAP(SWANIP, CFG_WAN_IP);
+CGI_MAP(SWANMSK, CFG_WAN_MSK);
+CGI_MAP(SWANGW, CFG_WAN_GW);
+CGI_MAP(SWANDNS,CFG_DNS_SVR+1);
+CGI_MAP(SWANDNSFIX,CFG_DNS_FIX);
+
+%>
+REAL*/
+
+
+/*function open_site_survey[1]() 
+{
+	window.open("site_survey[1].html","site_survey[1]","toolbar=no, location=yes, scrollbars=yes, resizable=no, width=800, height=600")
+}
+*/
+
+
+function WAN_IP_TYPE_Change()
+{
+	if (document.WAN_C_TYPE.WAN_TYPE.options.selectedIndex == 1)
+	  {  
+		document.getElementById("wan_ip_type").style.visibility = "visible";
+		document.getElementById("wan_ip_type").style.display = "";
+		document.WAN_C_TYPE.HN.disabled = false;
+		document.getElementById("div_wan_ip_type").style.visibility = "hidden";
+		document.getElementById("div_wan_ip_type").style.display = "none";
+		document.WAN_C_TYPE.SWANIP.disabled = true;
+		document.WAN_C_TYPE.SWANMSK.disabled = true;
+		document.WAN_C_TYPE.SWANGW.disabled = true;
+      }
+	
+	else
+	{
+	    document.getElementById("wan_ip_type").style.visibility = "hidden";
+		document.getElementById("wan_ip_type").style.display = "none";
+		document.WAN_C_TYPE.HN.disabled = true;
+		document.getElementById("div_wan_ip_type").style.visibility = "visible";
+		document.getElementById("div_wan_ip_type").style.display = "";
+		document.WAN_C_TYPE.SWANIP.disabled = false;
+		document.WAN_C_TYPE.SWANMSK.disabled = false;
+		document.WAN_C_TYPE.SWANGW.disabled = false;
+
+	}
+}
+
+function S_SecurityMode_change()
+{
+	var mysel = document.STA_InterfaceP.S_EncryptionType;
+	mysel.options.length = 0;
+	if (document.STA_InterfaceP.S_SecurityMode.options.selectedIndex == 0) {
+		mysel.options[0] = new Option("NONE", "NONE");
+		mysel.options[1] = new Option("WEP", "WEP");
+		
+	}
+	else if (document.STA_InterfaceP.S_SecurityMode.options.selectedIndex == 1) {
+		mysel.options[0] = new Option("WEP", "WEP");
+	}
+	else if (document.STA_InterfaceP.S_SecurityMode.options.selectedIndex == 2 ||
+		 document.STA_InterfaceP.S_SecurityMode.options.selectedIndex == 3) {
+		 
+	
+		mysel.options[0] = new Option("TKIP", "TKIP");
+		mysel.options[1] = new Option("AES", "AES");
+	}
+	else
+	{
+	    mysel.options[0] = new Option("NONE", "NONE");
+		mysel.options[1] = new Option("WEP", "WEP");
+	}
+
+	S_EncryptionType_change();
+}
+function S_EncryptionType_change()
+{   var entry=document.getElementById("EnTy_id");
+    
+	
+	if (entry.value == "NONE")
+    {	
+	    document.getElementById("S_ENTY_W_K").style.visibility = "hidden";
+		document.getElementById("S_ENTY_W_K").style.display = "none";
+		
+
+		
+		
+		document.getElementById("S_ENTY_TK_AE").style.visibility = "hidden";
+	    document.getElementById("S_ENTY_TK_AE").style.display = "none";
+
+		
+		
+	}
+	else if (entry.value == "WEP")
+	{	
+		document.getElementById("S_ENTY_W_K").style.visibility = "visible";
+	    document.getElementById("S_ENTY_W_K").style.display = "";
+		
+	
+		
+		document.getElementById("S_ENTY_TK_AE").style.visibility = "hidden";
+	    document.getElementById("S_ENTY_TK_AE").style.display = "none";
+
+		
+		
+		S_EnTyWEP_change();
+	}
+	else if((entry.value == "TKIP")||(entry.value == "AES"))
+	{   document.getElementById("S_ENTY_W_K").style.visibility = "hidden";
+	    document.getElementById("S_ENTY_W_K").style.display = "none";
+		
+
+		
+		
+	
+     	document.getElementById("S_ENTY_TK_AE").style.visibility = "visible";
+	    document.getElementById("S_ENTY_TK_AE").style.display = "";
+	
+		
+	}
+	else
+	{   document.getElementById("S_ENTY_W_K").style.visibility = "hidden";
+	    document.getElementById("S_ENTY_W_K").style.display = "none";
+		
+
+		
+	    document.getElementById("S_ENTY_TK_AE").style.visibility = "hidden";
+	    document.getElementById("S_ENTY_TK_AE").style.display = "none";
+		
+    }
+	 	
+}
+function S_EnTyWEP_change()
+  {  var entywepH=document.getElementById("S_EnTyWEP_id");
+     
+	 
+	 
+    if(document.STA_InterfaceP.S_EnTyWEP.options.selectedIndex == 1)
+	  {
+		entywepH.innerHTML="(10 or 26 HEX)";
+	  }
+	else  
+	  {  entywepH.innerHTML="(5 or 13 ASCII)";
+	  }
+	  
+  }
+  
+  function Myselectindexvalue()
+  { 
+   var  entry=getCfg("S_EncryptionType");
+  var mysel = document.STA_InterfaceP.S_EncryptionType;
+	mysel.options.length = 0;
+	if (document.STA_InterfaceP.S_SecurityMode.options.selectedIndex == 0) {
+		mysel.options[0] = new Option("NONE", "NONE");
+		mysel.options[1] = new Option("WEP", "WEP");
+		
+	}
+	else if (document.STA_InterfaceP.S_SecurityMode.options.selectedIndex == 1) {
+		mysel.options[0] = new Option("WEP", "WEP");
+	}
+	else if (document.STA_InterfaceP.S_SecurityMode.options.selectedIndex == 2 ||
+		 document.STA_InterfaceP.S_SecurityMode.options.selectedIndex == 3) {
+		 
+	
+		mysel.options[0] = new Option("TKIP", "TKIP");
+		mysel.options[1] = new Option("AES", "AES");
+	}
+	else
+	{
+	    mysel.options[0] = new Option("NONE", "NONE");
+		mysel.options[1] = new Option("WEP", "WEP");
+	}
+	 if(document.STA_InterfaceP.S_SecurityMode.options.selectedIndex == 0)
+	{
+		if(entry == "WEP")
+		{
+			document.STA_InterfaceP.S_EncryptionType.options.selectedIndex = 1;
+			
+			
+		}
+		else
+		{
+			document.STA_InterfaceP.S_EncryptionType.options.selectedIndex = 0;
+		}
+	}
+	if((document.STA_InterfaceP.S_SecurityMode.options.selectedIndex == 2)||(document.STA_InterfaceP.S_SecurityMode.options.selectedIndex == 3) ) 
+	 {
+		if(entry == "AES")
+	  {
+		document.STA_InterfaceP.S_EncryptionType.options.selectedIndex = 1;
+	  }
+	   else
+	  {
+	  	document.STA_InterfaceP.S_EncryptionType.options.selectedIndex = 0;
+	  }
+	 }
+	S_EncryptionType_change();
+  
+  }
+function  initvalue_1()
+  {
+	var  SSYMode1=getCfg("S_SecurityMode");
+	var  SETWEP1=getCfg("S_EnTyWEP");
+  
+    if(SSYMode1=="OPEN")
+	document.STA_InterfaceP.S_SecurityMode.options.selectedIndex=0;
+	else if(SSYMode1=="SHARED")
+	document.STA_InterfaceP.S_SecurityMode.options.selectedIndex=1;
+	else if(SSYMode1=="WPAPSK")
+	document.STA_InterfaceP.S_SecurityMode.options.selectedIndex=2;
+	else if(SSYMode1=="WPA2PSK")
+	document.STA_InterfaceP.S_SecurityMode.options.selectedIndex=3;
+	else
+	document.STA_InterfaceP.S_SecurityMode.options.selectedIndex=0;
+	
+	
+	if(SETWEP1=="1")
+	document.STA_InterfaceP.S_EnTyWEP.options.selectedIndex=0;
+	else if(SETWEP1=="0")
+	document.STA_InterfaceP.S_EnTyWEP.options.selectedIndex=1;
+	else
+	document.STA_InterfaceP.S_EnTyWEP.options.selectedIndex=0;
+	
+ 
+ 
+   Myselectindexvalue();
+
+
+   
+
+   
+  }
+  function initvalue_2()
+{          
+ var	 WAN_TYPE_VALUE = getCfg("WAN_TYPE");
+	  
+  	
+	if (1*WAN_TYPE_VALUE == 1)
+	{
+		document.getElementById("wan_ip_type").style.visibility = "hidden";
+		document.getElementById("wan_ip_type").style.display = "none";
+		document.WAN_C_TYPE.HN.disabled = true;
+		document.getElementById("div_wan_ip_type").style.visibility = "visible";
+		document.getElementById("div_wan_ip_type").style.display = "";
+		document.WAN_C_TYPE.SWANIP.disabled = false;
+		document.WAN_C_TYPE.SWANMSK.disabled = false;
+		document.WAN_C_TYPE.SWANGW.disabled = false;
+		document.WAN_C_TYPE.WAN_TYPE.options.selectedIndex = 0;
+		
+	}
+	else
+	{
+	    document.getElementById("wan_ip_type").style.visibility = "visible";
+		document.getElementById("wan_ip_type").style.display = "";
+		document.WAN_C_TYPE.HN.disabled = false;
+		document.getElementById("div_wan_ip_type").style.visibility = "hidden";
+		document.getElementById("div_wan_ip_type").style.display = "none";
+		document.WAN_C_TYPE.SWANIP.disabled = true;
+		document.WAN_C_TYPE.SWANMSK.disabled = true;
+		document.WAN_C_TYPE.SWANGW.disabled = true;
+		
+		document.WAN_C_TYPE.WAN_TYPE.options.selectedIndex = 1;
+	}	
+				
+}
+
+function S_WEB_key_v_check()
+{
+	var entywepH=document.STA_InterfaceP.S_EnTy_KEY.value.length;
+    var entry=document.STA_InterfaceP.S_EncryptionType.value;
+	
+	
+   if(entry=="WEP")
+	 
+    { 
+      if(document.STA_InterfaceP.S_EnTyWEP.options.selectedIndex == 1)
+	  {
+		 if((entywepH==10)||(entywepH==26))
+		 {
+		      return true;
+		 }
+		 //alert("Please input 10 or 26 characters of wep key1");
+		 alert("密码长度错误，密码为10或者26个16进制数字");
+		 document.STA_InterfaceP.S_EnTy_KEY.focus();
+		 document.STA_InterfaceP.S_EnTy_KEY.select();
+		 return false;
+	  }
+	  else if(document.STA_InterfaceP.S_EnTyWEP.options.selectedIndex == 0)  
+	  {  
+	   if((entywepH!=5)&&(entywepH!=13))
+		 {
+		    //alert("Please input 5 or 13 characters of wep key1");
+		    alert("密码长度错误，密码为5或者13个字符");
+		    document.STA_InterfaceP.S_EnTy_KEY.focus();
+		    document.STA_InterfaceP.S_EnTy_KEY.select();
+		    return false;
+		  }
+	    
+	        return true;
+	  }
+	   
+      return true;
+   }
+   else if(entry=="AES"||entry=="TKIP")
+   {
+		entywepH=document.STA_InterfaceP.S_EnTy_Pass_P.value.length;
+		//alert("step_test 4");
+		//alert(entywepH);
+		if(entywepH<8||entywepH>63)
+	    {
+		    //alert("Please input 8-63 characters of key");
+		    alert("密码长度错误，密码为8-63个字符");
+		    document.STA_InterfaceP.S_EnTy_Pass_P.focus();
+		    document.STA_InterfaceP.S_EnTy_Pass_P.select();
+			return false;
+		}
+   }
+
+   return true;
+}
+
+function init_fver()
+{
+	var fverV="<%CGI_GET_FVERSION();%>";
+	if(fverV=="z")
+	{
+	document.getElementById("fver_id").style.visibility="hidden";
+	document.getElementById("fver_id").style.display="none";
+	}
+	else
+	{
+	document.getElementById("fver_id").style.visibility="visible";
+	document.getElementById("fver_id").style.display="";
+	}
+}
+
+<!--**-->
+function init(){
+	var slanV="<%CGI_GET_FLANG() ;%>";
+	//init_logo();
+	init_fver();
+	
+	/*if(slanV=="zhcn")
+		setLanguageCN_2();
+	else if (slanV=="en")
+		setLanguageEN_2();
+	else
+		setLanguageCN_2();*/
+	init_1();
+	init_2();
+}
+
+
+<!--1**-->
+function init_1(){
+var	f=document.STA_InterfaceP;
+	cfg2Form(f);
+	initvalue_1();
+	
+}
+
+function Cancel_1() {
+	init_1();
+	
+}
+
+function Apply_1() {
+var f=document.STA_InterfaceP;
+	if(f.ssid_name.value=="")
+	{
+		alert("SSID可能隐藏.请输入SSID!");
+		f.ssid_name.focus();
+		f.ssid_name.select();
+		return;
+	}
+    if(S_WEB_key_v_check()==false)
+	    return;
+	
+	form2Cfg(f);
+	subForm(f,'do_cmd.html','LAN',cPage);
+}
+
+
+<!--2**-->
+function init_2(){
+
+var  f=document.WAN_C_TYPE;
+	    cfg2Form(f);
+		initvalue_2();
+
+}
+
+function Cancel_2() {
+	init_2();
+	
+}
+
+function Apply_2() {
+var	f=document.WAN_C_TYPE;
+ if(document.WAN_C_TYPE.WAN_TYPE.options.selectedIndex == 0)
+ {
+ if (!verifyIP2(f.SWANIP,"IP Address")) 
+		{
+		f.SWANIP.focus();
+		f.SWANIP.select();
+		return ;
+		}
+	if (!ipMskChk(f.SWANMSK,"Subnet Mask"))
+		{
+		
+		f.SWANMSK.focus();
+		f.SWANMSK.select();
+		return ;
+		}
+	if (!verifyIP2(f.SWANGW,"Default Gateway"))
+		{
+		f.SWANGW.focus();
+		f.SWANGW.select();
+		return ;
+		}
+	f.SWANDNSFIX.value=1;
+ }
+ else
+ {
+ 	f.SWANDNSFIX.value=0;	
+ }
+	form2Cfg(f);
+	subForm(f,'do_cmd.html','LAN',cPage);
+}
+
+function input_key_alert(g_encry)
+{ 
+	var slanV="<%CGI_GET_FLANG() ;%>";
+
+ 	if (slanV=="en")
+		alert('Please input key!');
+	else if (slanV=="zhcn") 
+		alert('请输入密码!');
+
+	if (g_encry == "WEP")
+	  {
+		document.STA_InterfaceP.S_EnTy_KEY.focus();
+		document.STA_InterfaceP.S_EnTy_KEY.select();
+	  }
+	else if ((g_encry == "TKIP")||(g_encry == "AES"))
+	  {
+		document.STA_InterfaceP.S_EnTy_Pass_P.focus();
+		document.STA_InterfaceP.S_EnTy_Pass_P.select();
+	  }
+}
+var g_ssid;
+var g_auth;
+var g_encry;
+function to_surver(gg_ssid, gg_auth, gg_encry)
+{
+	 g_ssid=gg_ssid;
+	 g_auth=gg_auth;
+	 g_encry=gg_encry;
+	setTimeout("set_value_surver(g_ssid, g_auth, g_encry)",1);
+
+}
+function set_value_surver(g_ssid, g_auth, g_encry)
+{
+	document.STA_InterfaceP.ssid_name.value=g_ssid;
+	if (g_auth == "OPEN")
+		document.STA_InterfaceP.S_SecurityMode.options.selectedIndex= 0;
+	else if (g_auth == "SHARED")
+		document.STA_InterfaceP.S_SecurityMode.options.selectedIndex= 1;
+	else if (g_auth == "WPAPSK")
+		document.STA_InterfaceP.S_SecurityMode.options.selectedIndex= 2;
+	else if (g_auth == "WPA2PSK")
+		document.STA_InterfaceP.S_SecurityMode.options.selectedIndex= 3;
+	else
+		document.STA_InterfaceP.S_SecurityMode.options.selectedIndex= 0;
+	S_SecurityMode_change();
+
+	if (g_encry == "NONE")
+		document.STA_InterfaceP.S_EncryptionType.options.selectedIndex= 0;
+	else if (g_encry == "WEP")
+	{
+		if (g_auth == "OPEN")
+			document.STA_InterfaceP.S_EncryptionType.options.selectedIndex= 1;
+		else
+			document.STA_InterfaceP.S_EncryptionType.options.selectedIndex= 0;
+	} 
+	else if (g_encry == "TKIP")
+		document.STA_InterfaceP.S_EncryptionType.options.selectedIndex= 0; 
+	else if (g_encry == "AES")
+		document.STA_InterfaceP.S_EncryptionType.options.selectedIndex= 1; 
+	S_EncryptionType_change();
+
+	if (g_encry == "WEP")
+		document.STA_InterfaceP.S_EnTy_KEY.value ="";
+	else if ((g_encry == "TKIP")||(g_encry == "AES"))
+		document.STA_InterfaceP.S_EnTy_Pass_P.value ="";
+	
+	if (g_encry != "NONE")
+		input_key_alert(g_encry);
+} 
+
+function search_click()
+{
+	cwin = window.open("site_survey.html","sta_site_survey_connection","toolbar=no, location=yes, scrollbars=yes, resizable=no, width=660, height=600");
+}
+
+
+</SCRIPT>
+</HEAD>
+
+<BODY leftmargin=0 topmargin=0 onload=init()>
+<script>pageHead();</script>
+
+
+
+<h1 id="staconfigTitle">无线终端设置</h1>
+<p id="staconfigIntroduce">无线终端设置，包括：要去连接的AP参数（SSID，加密）及接入模式（DHCP，静态连接）等。</p>
+<hr />
+
+<form method=post name=STA_InterfaceP >
+<table width="540" border="1" cellspacing="1" cellpadding="3" bordercolor="#9BABBD">
+ <tr >
+	 <td class="title" colspan="2" id="sta_InterfaceParameters_lan_id">无线终端参数设置</td>
+ </tr>
+ <tr ><td class="head" width="40%" id="sta_APSSID_lan_id">模块要接入的网络名称(SSID)</td>
+     <td><input name="ssid_name" maxlength=32 size=20 value="">
+	<input type="button" name="search_name" id="search_id" value="搜索" onClick="search_click()"></td>
+ </tr>
+ <tr >
+     <td class="head" id="sta_MACAddress_lan_id">MAC 地址（可选）</td>
+     <td><input name="apcli_bssid" maxlength=32 size=32 value=""></td>
+ </tr>
+ <tr ><td class="head" width="40%" id="sta_SecurityMode_lan_id">加密模式</td>
+     <td>
+	 <select name="S_SecurityMode"  id="S_SecurityMode_id" size="1" onchange="S_SecurityMode_change()" >
+	 <option  value="OPEN" >OPEN</option>
+	 <option  value="SHARED">SHARED</option> 
+	 <option  value="WPAPSK">WPAPSK</option> 
+	 <option  value="WPA2PSK">WPA2PSK</option>
+	 </select>
+	 </td>		
+ </tr>
+ <tr><td class="head"  id="sta_EncryptionType_lan_id">加密算法</td>
+    <td>
+	 <select name="S_EncryptionType" id="EnTy_id" size="1" onchange="S_EncryptionType_change()" >
+	 <option  value="NONE" >NONE</option>
+	 <option  value="WEP">WEP</option>
+	 </select>
+	 </td>
+ </tr>
+  <tr id="S_ENTY_W_K" style="visibility:hidden;display:none;">
+     <td class="head" width="40%"><a id="sta_ETypeKey_lan_id" >密码</a><a id="S_EnTyWEP_id" >(5 or 13 ASCII)</a></td>
+     <td ><input name="S_EnTy_KEY" maxlength=32 size=32 value="">	 
+	 <select name="S_EnTyWEP"  size="1" onchange="S_EnTyWEP_change()" >
+	 <option  value="1" >ASCII</option>
+	 <option  value="0">Hex</option>
+	 </select>
+	 </td>
+ </tr>
+ <tr id="S_ENTY_TK_AE" style="visibility:hidden;display:none;">
+     <td class="head" width="40%" id="sta_PassPhrase_lan_id">密码</td>
+     <td><input name="S_EnTy_Pass_P" maxlength=63 size=48 value="">	 
+	 </td>
+ </tr>
+ 
+</table>
+
+<p/>
+<center>
+<input type=button style="{width:120px;}" value="确定" onClick="Apply_1()" id="sta_Apply1_lan_id">&nbsp;&nbsp;
+<input type=button style="{width:120px;}" value="取消" onClick="Cancel_1()" id="sta_Cancel1_lan_id">
+</center>
+</form>
+
+<div id="fver_id" style="visibility:visible;display:;">
+<form method="post" name="WAN_C_TYPE">
+<input type="hidden" name="SWANDNSFIX">
+<center>
+<table >
+
+<tr >
+    <td><b id="sta_WANCType_lan_id">模块IP地址设置</b></td>
+	<td>&nbsp;  &nbsp;  &nbsp;   &nbsp; &nbsp;  &nbsp;  &nbsp;   &nbsp;&nbsp;  &nbsp;  &nbsp;   &nbsp;<td>
+	<td>&nbsp;  &nbsp;  &nbsp;   &nbsp;<td>
+    <td>
+	 <select name="WAN_TYPE" size="1" onChange="WAN_IP_TYPE_Change()" >
+	 <option value="1" id="sta_WANCTST_lan_id">静态(固定IP)</option>
+	 <option value="2" id="sta_WANCTDH_lan_id">动态(自动获取)</option>
+	 </select>
+	</td>
+
+</tr>  
+
+</table>
+</center>
+<table  id="wan_ip_type" width="540" border="1" cellspacing="1" cellpadding="3" bordercolor="#9BABBD">
+ <tr ><td class="title" colspan="2" id="sta_DHCPMode_lan_id">DHCP 模式</td></tr>
+ <tr><td class="head" width="40%" id="sta_Hostname_lan_id">主机名 (可选)</td>
+     <td><input name="HN" maxlength=32 size=32 value=""></td>
+ </tr>
+ </table>
+ <table id="div_wan_ip_type" width="540" border="1" cellspacing="1" cellpadding="3" vspace="2" hspace="2" bordercolor="#9BABBD" style="visibility:hidden;display:none;">
+ <tr ><td class="title" colspan="2" id="sta_StaticMode_lan_id">静态模式</td></tr>
+  <tr><td class="head" width="40%" id="sta_IPAddress_lan_id">IP 地址</td>
+     <td><input name="SWANIP" maxlength=32 size=32 value=""></td>
+ </tr>
+  <tr><td class="head" width="40%" id="sta_SubnetMask_lan_id">子网掩码</td>
+     <td><input name="SWANMSK" maxlength=32 size=32 value=""></td>
+ </tr>
+  <tr><td class="head" width="40%" id="sta_DefaultGateway_lan_id">网关设置</td>
+     <td><input name="SWANGW" maxlength=32 size=32 value=""></td>
+ </tr>
+ <tr><td class="head" width="40%" id="sta_DefaultGateway_lan_id">域名服务器</td>
+     <td><input name="SWANDNS" maxlength=32 size=32 value=""></td>
+ </tr>
+  
+ </table>
+ <table width = "540" border = "0" cellpadding = "2" cellspacing = "1">
+  <tr align="center">
+    <td>
+      <input type=button style="{width:120px;}" value="确定" onClick="Apply_2()" id="sta_Apply2_lan_id">&nbsp;&nbsp;
+      <input type=button style="{width:120px;}" value="取消" onClick="Cancel_2()" id="sta_Cancel2_lan_id">
+    </td>
+  </tr>
+</table>
+</form>
+</div>
+
+<script>pageTail();</script>
+</BODY>
+</HTML>

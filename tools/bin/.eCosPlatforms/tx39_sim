@@ -1,0 +1,6 @@
+ServerSideGdb=1
+prompt=(gdb) 
+inferior=mips-tx39-elf-gdb -nw -q %e
+commands=set height 0;target sim --board=jmr3904pal --memory-region 0xffff8000,0x900 --memory-region 0xffffe000,0x4 --memory-region 0xb2100000,0x4;load;break cyg_test_exit;rbreak cyg_assert_fail;break cyg_test_init;run;set cyg_test_is_simulator=1;cont;bt 64
+prefix=mips-tx39-elf
+platform=tx39_sim

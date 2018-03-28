@@ -1,0 +1,290 @@
+<HTML>
+<HEAD>
+<META http-equiv="Pragma" content="no-cache">
+<META http-equiv="Content-Type" content="text/html" charset="gb2312">
+<TITLE>RatPac AKS Configuration</TITLE>
+<link rel="stylesheet" href="../style/normal_ws.css" type="text/css">
+<SCRIPT language=JavaScript src="../utils.js"></SCRIPT>
+<SCRIPT language=JavaScript src=spec.js></SCRIPT>
+<SCRIPT language=JavaScript>
+
+/*DEMO*/
+
+
+addCfg("SYSPS",106,"admin" );
+addCfg("admuser",107,"admin");
+
+
+/*END_DEMO*/
+/*REAL
+<%
+
+
+CGI_MAP(SYSPS,CFG_SYS_ADMPASS);
+CGI_MAP(admuser,CFG_SYS_USERS);
+%>
+
+REAL*/
+
+function restartConfirm(f){
+
+    //alert("this step being executed!");
+	addFormElm('CCMD', 0);
+	subForm(f,'restart.html','SYS_CONF',cPage);
+}
+
+function Load_Default(f){
+
+	addFormElm('CCMD', 1);
+	subForm(f,'load_factory.html','SYS_CONF',cPage);
+
+}
+
+var slanV="<%CGI_GET_FLANG() ;%>";
+function init()
+ {
+	//init_logo();
+	
+	/*if(slanV=="zhcn")
+		setLanguageCN_2();
+	else if (slanV=="en")
+		setLanguageEN_2();
+	else
+		setLanguageCN_2();*/
+	init_1();
+	init_2();
+ }
+
+ function init_1()
+{
+    f=document.frmSetup;
+	cfg2Form(f);
+}
+function Cancel_1() {
+	init_1();
+	document.frmSetup.reset();
+}
+function Apply_1() {
+	 f=document.frmSetup;
+	if (!chkStrLen(f.SYSPS,0,12,"Password")) return;
+	form2Cfg(f);
+	subForm(f,'do_cmd.html','SYS',cPage);
+}
+
+
+function init_2()
+ {	
+	//document.getElementById("progressbar_id").style.visibility = "hidden";
+	//document.getElementById("progressbar_id").style.display = "none";
+	document.Update_Firmware.reset();
+ 
+ }
+function Apply_2()
+ {
+	var f=document.Update_Firmware;
+	var m='';
+	if(f.files.value=="")
+    {
+		if(slanV=="en")
+		alert("Please select the file!");
+		else
+		alert("请选择文件!");
+		return ;
+	}  
+	if(slanV=="en")
+		m='Are you sure you want to upgrade?';
+	else
+	    m='你确定要升级吗?';
+	 if(confirm(m))
+	{
+	//document.getElementById("progressbar_id").style.visibility = "visible";
+	//document.getElementById("progressbar_id").style.display = "";
+	//initbar();
+	f.submit();
+    }
+ 
+}
+function Apply_3()
+ {
+	var f=document.Update_Uboot;
+	alert(f.files.value);
+	var m='';
+	if(f.files.value=="")
+  {
+		if(slanV=="en")
+		alert("Please select the file!");
+		else
+		alert("请选择文件!");
+		return ;
+	}  
+	if(slanV=="en")
+		m='Are you sure you want to upgrade?';
+	else
+	    m='你确定要升级吗?';
+	if(confirm(m))
+	{
+	//document.getElementById("progressbar_id").style.visibility = "visible";
+	//document.getElementById("progressbar_id").style.display = "";
+	//initbar();
+	  f.submit();
+  }
+ 
+}
+
+
+<!--********progressbar**************-->
+/*
+var secs=20;
+var delay = 500;
+var timerID=null;
+var o;
+var per;
+var secs;
+ function initbar()
+ {
+
+	if(secs==0)
+	{
+		clearTimeout(timerID);
+		document.getElementById('fuwu').innerHTML="ok!";
+	}
+ else{	
+		self.status = secs;
+		secs = secs - 1;
+		per=parseInt(((20-secs)/10)*10);
+		//可以把这段js中的所有数字缩小10倍时间就会减少10倍
+		o=document.getElementById("prog"+per);
+		o.style.backgroundColor="lightblue";
+		timerID=self.setTimeout("initbar()",delay);
+	 }
+ } 
+ */
+</SCRIPT>
+</HEAD>
+
+<BODY leftmargin=0 topmargin=0 onLoad="init()">
+<script>pageHead();</script>
+<!--
+<h1 id="DM_DManagement_lan_id">Device Management</h1> 
+-->
+<h1 id="DM_DManagement_lan_id">Firmware Upgrade</h1>
+
+<p><%CGI_GET_VERSION() ;%></p>
+<!--
+<p id="devmanIntroduction">You may configure administrator account and password, load default setting or update firware.</p>
+-->
+<hr />
+
+<!--
+<form name=frmSetup>
+<table width="540" border="1" cellspacing="1" cellpadding="3" bordercolor="#9BABBD">
+
+  <tr>
+    <td class="title" colspan="2" id="manAdmSet">Adminstrator Settings</td>
+  </tr>
+  <tr>
+    <td class="head" width="40%"id="manAdmAccount">Account</td>
+    <td><input type="text" width="40%" name="admuser" size="16" maxlength="16" value="admin"></td>
+  </tr>
+ <tr><td class="head" id="DM_Password_lan_id">Password</td>
+	<td><input type=text maxlength="20" name=SYSPS size="16" value=admin ></td>
+</tr>
+
+
+</table>
+<p/>
+<center>
+<input type=button style="{width:120px;}" value="Apply" onClick="Apply_1()"  id="DM_Apply1_lan_id">&nbsp;&nbsp;
+<input type=button style="{width:120px;}" value="Cancel" onClick="Cancel_1()" id="DM_Cancel1_lan_id">
+</center>
+</form>
+
+<br>
+
+
+
+<form name="Rt_Module" >
+<INPUT type=hidden name=CMD value=SYS_CONF>
+<INPUT type=hidden name=CCMD value="100">
+
+<table width="540" border="1" cellspacing="1" cellpadding="3" bordercolor="#9BABBD">
+  <tr>
+    <td class="title" colspan="2" id="Restart_title">Restart Module</td>
+  </tr>
+  <tr>
+    <td class="head" width="40%" id="Restart_table">Restart Module</td>
+    <td><input value="Restart"  name="Rt_Module" style="{width:120px;}" type="button" onclick="restartConfirm(document.Rt_Module)" id="DM_Restart_lan_id"></td>
+  </tr>
+</table>
+</form>
+<br>
+
+
+<form method="post" name="LD_Defaults" >
+<INPUT type=hidden name=CMD value=SYS_CONF>
+<INPUT type=hidden name=CCMD value="100">
+<table width="540" border="1" cellspacing="1" cellpadding="3" bordercolor="#9BABBD">
+  <tr>
+    <td class="title" colspan="2" id="DM_LoadFactory_lan_id">Load Factory Defaults</td>
+  </tr>
+  <tr>
+    <td class="head" width="40%" id="DM_LoadDefault_lan_id">Load Default Button</td>
+    <td><input value="Load Default"  name="LoadDefault" style="{width:120px;}" type="button" onclick="Load_Default(document.LD_Defaults)" id="DM_LoadDefaultentry_lan_id"></td>
+  </tr>
+</table>
+</form>
+-->
+
+<form name="Update_Firmware" method=POST action=update_firmware.html enctype=multipart/form-data >
+<INPUT type=hidden name=CMD value=SYS_UPG>
+<INPUT type=hidden name=GO value=management.htm>
+<table width="540" border="1" cellspacing="1" cellpadding="3" bordercolor="#9BABBD">
+<tbody><tr>
+  <td class="title" colspan="2" id="uploadFW">Update Firmware</td>
+</tr>
+<tr>
+  <td class="head" width="40%" id="uploadFWLocation">Location:</td>
+        <td> <input name="files" size="20" maxlength="256" type="file" value=""></td>
+</tr>
+</tbody></table>
+<input value="Apply" id="uploadFWApply" type="button" onclick="Apply_2()" > &nbsp;&nbsp;
+<!--
+<table id="progressbar_id" style="visibility:visible;display:;">
+ <tr >
+ <td  colspan=100>
+ <div id="fuwu">Update...</div>
+ </td>
+ </tr>
+ <tr style="border:1px solid gray;background-color:#eeeeee">
+ <script >
+ for(i=1;i<=20;i++)
+ {
+ document.write("<td id=prog"+i+" height=20 width=1 ></td>");
+ }
+ </script>
+ </tr>
+ </table>
+ -->
+</form>
+
+<!--
+Uboot Upgrade
+-->
+<form name="Update_Uboot" method=POST action=update_firmware.html enctype=multipart/form-data >
+<INPUT type=hidden name=CMD value=UBOOT_UPG>
+<INPUT type=hidden name=GO value=management.htm>
+<table width="540" border="1" cellspacing="1" cellpadding="3" bordercolor="#9BABBD">
+<tbody><tr>
+  <td class="title" colspan="2" id="uploadUboot">Uboot Upgrade</td>
+</tr>
+<tr>
+  <td class="head" width="40%" id="uploadUbootLocation">Uboot Upgrade</td>
+        <td> <input name="files" size="20" maxlength="256" type="file" value=""></td>
+</tr>
+</tbody></table>
+<input value="确定" id="uploadUbootApply" type="button" onclick="Apply_3()" > &nbsp;&nbsp;
+</form>
+
+<script>pageTail();</script>
+</BODY>
+</HTML>

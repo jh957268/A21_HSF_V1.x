@@ -1,0 +1,713 @@
+<HTML>
+<HEAD>
+<META http-equiv="Pragma" content="no-cache">
+<META http-equiv="Content-Type" content="text/html" charset="gb2312">
+<TITLE>M2M Web Server</TITLE>
+<link rel="stylesheet" href="../style/normal_ws.css" type="text/css">
+<SCRIPT language=JavaScript src="../utils.js"></SCRIPT>
+<SCRIPT language=JavaScript src="spec.js"></SCRIPT>
+<SCRIPT language=JavaScript>
+
+/*DEMO*/
+
+addCfg("Network_Mode",121,"9");
+addCfg("NK_ssid_name",122,"HF-A11x_AP");
+addCfg("Frequency_name",123,"2");
+addCfg("AP_WN_Rate",124,"15");
+
+
+addCfg("AP_SecurityMode",1,"WPAPSK");  
+addCfg("AP_EnTyWEP",2,"0");  
+addCfg("AP_entcy_input",3,"TKIP"); 
+addCfg("AP_EnTy_KEY",4,"qqqqqqqqqq"); 
+addCfg("AP_EnTy_Pass_P",5,"wwwwwwww"); 
+
+
+addCfg("LANIP",0,"192.168.0.1");
+addCfg("LANMSK",0,"255.255.255.0");
+addCfg("dhcp_name",24,"1");
+addCfg("Gateway",211,"10.10.10.254");
+
+
+/*END_DEMO*/
+/*REAL
+<%
+
+CGI_MAP(Network_Mode, CFG_WLN_WirelessMode);
+CGI_MAP(NK_ssid_name, CFG_WLN_SSID1);
+CGI_MAP(Frequency_name, CFG_WLN_Channel);
+CGI_MAP(Frequency_auto, CFG_WLN_AutoChannelSelect);
+CGI_MAP(AP_WN_Rate, CFG_WLN_BasicRate);
+
+CGI_MAP(AP_WN_WLN_HT_MCS, CFG_WLN_HT_MCS);
+CGI_MAP(HideSSID2, CFG_WLN_HideSSID);
+
+
+CGI_MAP(AP_SecurityMode, CFG_WLN_AuthMode);
+CGI_MAP(AP_EnTyWEP, CFG_WLN_Key1Type);
+CGI_MAP(AP_entcy_input,CFG_WLN_EncrypType);
+CGI_MAP(AP_EnTy_KEY, CFG_WLN_Key1Str1);
+CGI_MAP(AP_EnTy_Pass_P,CFG_WLN_WPAPSK1);
+CGI_MAP(LANIP, CFG_LAN_IP);
+CGI_MAP(LAN_DHCPD_START, CFG_LAN_DHCPD_START);
+CGI_MAP(LAN_DHCPD_END, CFG_LAN_DHCPD_END);
+CGI_MAP(LANMSK, CFG_LAN_MSK);
+CGI_MAP(dhcp_name, CFG_LAN_DHCPD_EN);
+CGI_MAP(AP_Txpwr, CFG_WLN_TxPower);
+
+%>
+
+REAL*/
+<!--**-->
+
+
+
+
+function AP_SecurityMode_change()
+	{		var TKIPAES_ID=document.getElementById("AP_TKIPAES_ID");
+		
+		
+		   document.getElementById("AP_WEP_ID").style.visibility = "hidden";
+		   document.getElementById("AP_WEP_ID").style.display = "none";
+		   document.getElementById("AP_WPA_ID").style.visibility = "hidden";
+		   document.getElementById("AP_WPA_ID").style.display = "none";
+		 
+		if((document.HFA11x_AP_SMODE.AP_SecurityMode.options.selectedIndex==1)||(document.HFA11x_AP_SMODE.AP_SecurityMode.options.selectedIndex==2))
+		{
+		   document.getElementById("AP_WEP_ID").style.visibility = "visible";
+		   document.getElementById("AP_WEP_ID").style.display = "";
+		   document.getElementById("AP_WPA_ID").style.visibility = "hidden";
+		   document.getElementById("AP_WPA_ID").style.display = "none";
+		   AP_EnTyWEP_change();
+		}
+		if(document.HFA11x_AP_SMODE.AP_SecurityMode.options.selectedIndex==3)
+		{
+		   document.getElementById("AP_WEP_ID").style.visibility = "hidden";
+		   document.getElementById("AP_WEP_ID").style.display = "none";
+		   document.getElementById("AP_WPA_ID").style.visibility = "visible";
+		   document.getElementById("AP_WPA_ID").style.display = "";
+		   TKIPAES_ID.disabled = true;
+		
+		  
+		}
+		
+		if(document.HFA11x_AP_SMODE.AP_SecurityMode.options.selectedIndex==4)
+		{
+			document.getElementById("AP_WEP_ID").style.visibility = "hidden";
+		   document.getElementById("AP_WEP_ID").style.display = "none";
+		   document.getElementById("AP_WPA_ID").style.visibility = "visible";
+		   document.getElementById("AP_WPA_ID").style.display = "";
+		   TKIPAES_ID.disabled = false;
+		
+		   
+		}
+		
+	}
+	
+function AP_EnTyWEP_change()
+  {  var entywepH=document.getElementById("AP_EnTyWEP_id");
+   
+	 
+	 
+    if(document.HFA11x_AP_SMODE.AP_EnTyWEP.options.selectedIndex == 1)
+	  { 
+		entywepH.innerHTML="(10 or 26 HEX)";
+	  }
+	else  
+	  {  
+		entywepH.innerHTML="(5 or 13 ASCII)";
+	  }
+
+ }
+  
+  
+ function Network_Mode_Change()
+ {
+ 
+		
+	var ap_netw_opindex=document.AP_W_Network.Network_Mode.options.selectedIndex;
+
+	 if(ap_netw_opindex==1)
+		{
+		
+			//b
+			//m2m_cfg_set("WLN_WirelessMode", "1");
+			document.AP_W_Network.Network_Mode.value="1";  
+			//m2m_cfg_set("WLN_BasicRate", "3");
+			document.AP_W_Network.AP_WN_Rate.value="3";
+			
+			//m2m_cfg_set("WLN_FixedTxMode", "CCK");
+			document.AP_W_Network.AP_WN_WLN_FixedTxMode.value="CCK";
+			//m2m_cfg_set("WLN_HT_MCS", "0");
+			document.AP_W_Network.AP_WN_WLN_HT_MCS.value="0";
+		
+		}
+	else if(ap_netw_opindex==2)
+		{
+			//g
+			
+			//m2m_cfg_set("WLN_WirelessMode", "4");
+			
+			document.AP_W_Network.Network_Mode.value="4";  
+			//m2m_cfg_set("WLN_BasicRate", "351");
+			document.AP_W_Network.AP_WN_Rate.value="351";
+			//m2m_cfg_set("WLN_FixedTxMode", "OFDM");
+			document.AP_W_Network.AP_WN_WLN_FixedTxMode.value="OFDM";
+			//m2m_cfg_set("WLN_HT_MCS", "7");
+			document.AP_W_Network.AP_WN_WLN_HT_MCS.value="7";
+		
+		
+		
+		}
+	else if(ap_netw_opindex==3)
+		{
+			//b/g/n
+			
+			//m2m_cfg_set("WLN_WirelessMode", "9");
+			document.AP_W_Network.Network_Mode.value="9";  
+			//m2m_cfg_set("WLN_BasicRate", "15");
+			document.AP_W_Network.AP_WN_Rate.value="15";
+			//m2m_cfg_set("WLN_FixedTxMode", "HT");
+			document.AP_W_Network.AP_WN_WLN_FixedTxMode.value="HT";
+			//m2m_cfg_set("WLN_HT_MCS", "0");
+			document.AP_W_Network.AP_WN_WLN_HT_MCS.value="0";
+		
+		
+		}
+	else if(ap_netw_opindex==4)
+		{
+			//n
+		
+			//m2m_cfg_set("WLN_WirelessMode", "6");
+			document.AP_W_Network.Network_Mode.value="6";  
+			//m2m_cfg_set("WLN_BasicRate", "15");
+			document.AP_W_Network.AP_WN_Rate.value="15";
+			//m2m_cfg_set("WLN_FixedTxMode", "HT");
+			document.AP_W_Network.AP_WN_WLN_FixedTxMode.value="HT";
+			//m2m_cfg_set("WLN_HT_MCS", "7");
+			document.AP_W_Network.AP_WN_WLN_HT_MCS.value="7";
+		
+		
+		}
+	else
+		{
+			//b/g
+			
+			//m2m_cfg_set("WLN_WirelessMode", "0");
+			document.AP_W_Network.Network_Mode.value="0";  
+			//m2m_cfg_set("WLN_BasicRate", "15");
+			document.AP_W_Network.AP_WN_Rate.value="15";
+			//m2m_cfg_set("WLN_FixedTxMode", "OFDM");
+			document.AP_W_Network.AP_WN_WLN_FixedTxMode.value="OFDM";
+			//m2m_cfg_set("WLN_HT_MCS", "7");
+			document.AP_W_Network.AP_WN_WLN_HT_MCS.value="7";
+		
+		
+		}
+	
+  
+  
+  
+  }
+ function AP_WEB_key_v_check()
+{
+	var entywepH=document.HFA11x_AP_SMODE.AP_EnTy_KEY.value.length;
+    var entry=document.HFA11x_AP_SMODE.AP_SecurityMode.options.selectedIndex;
+	
+	//alert("step_test 1");
+	
+	if((entry==1)||(entry==2))
+	{
+		//alert("step_test 2");
+		if(document.HFA11x_AP_SMODE.AP_EnTyWEP.options.selectedIndex == 1)
+		{   //  alert("step_test 3_1");
+
+			if((entywepH==10)||(entywepH==26))
+			{
+			//  alert("step_test 3_1_1");
+		      return true;
+			}
+		  // alert("Please input 10 or 26 characters of wep key1");
+		  alert("密码长度错误，密码为10或者26个16进制数字");
+		   document.HFA11x_AP_SMODE.AP_EnTy_KEY.focus();
+		   document.HFA11x_AP_SMODE.AP_EnTy_KEY.select();
+		   return false;
+		}
+		else if(document.HFA11x_AP_SMODE.AP_EnTyWEP.options.selectedIndex == 0)  
+		{ // alert("step_test 3_2");
+			if((entywepH!=5)&&(entywepH!=13))
+			{  
+		    	//alert("Please input 5 or 13 characters of wep key1");
+		    	alert("密码长度错误，密码为5或者13个字符");
+		    	document.HFA11x_AP_SMODE.AP_EnTy_KEY.focus();
+		    	document.HFA11x_AP_SMODE.AP_EnTy_KEY.select();
+		    	return false;
+			}
+	        //alert("step_test 3_2_1");
+	        return true;
+		}
+	   
+      	return true;
+     }
+	else if(entry==3||entry==4)
+   	{
+		entywepH=document.HFA11x_AP_SMODE.AP_EnTy_Pass_P.value.length;
+		//alert("step_test 4");
+		//alert(entywepH);
+		if(entywepH<8||entywepH>63)
+	    {
+		    alert("密码长度错误，密码为8-63个字符");
+		    document.HFA11x_AP_SMODE.AP_EnTy_Pass_P.focus();
+		    document.HFA11x_AP_SMODE.AP_EnTy_Pass_P.select();
+			return false;
+		}
+    }
+    
+    return true;
+}
+
+ 
+	
+	
+ function initvalue_1()
+ { var VapNM=getCfg("Network_Mode");
+ 
+    if(VapNM=="0")
+	document.AP_W_Network.Network_Mode.options.selectedIndex=0;
+	else if(VapNM=="1")
+	document.AP_W_Network.Network_Mode.options.selectedIndex=1;
+	else if(VapNM=="4")
+	document.AP_W_Network.Network_Mode.options.selectedIndex=2;
+	else if(VapNM=="9")	
+	document.AP_W_Network.Network_Mode.options.selectedIndex=3;
+	else if(VapNM=="6")
+	document.AP_W_Network.Network_Mode.options.selectedIndex=4;
+	else
+	document.AP_W_Network.Network_Mode.options.selectedIndex=0;
+	
+	init_Frequency();
+    //Network_Mode_Change();
+   
+ }
+ function init_Frequency()
+{
+ var VFrequency=getCfg("Frequency_name");
+ if(VFrequency=="1")
+ document.AP_W_Network.Frequency_name.options.selectedIndex=1;
+ else if(VFrequency=="2")
+ document.AP_W_Network.Frequency_name.options.selectedIndex=2;
+ else if(VFrequency=="3")
+ document.AP_W_Network.Frequency_name.options.selectedIndex=3;
+ else if(VFrequency=="4")
+ document.AP_W_Network.Frequency_name.options.selectedIndex=4;
+ else if(VFrequency=="5")
+ document.AP_W_Network.Frequency_name.options.selectedIndex=5;
+ else if(VFrequency=="6")
+ document.AP_W_Network.Frequency_name.options.selectedIndex=6;
+ else if(VFrequency=="7")
+ document.AP_W_Network.Frequency_name.options.selectedIndex=7;
+ else if(VFrequency=="8")
+ document.AP_W_Network.Frequency_name.options.selectedIndex=8;
+ else if(VFrequency=="9")
+ document.AP_W_Network.Frequency_name.options.selectedIndex=9;
+ else if(VFrequency=="10")
+ document.AP_W_Network.Frequency_name.options.selectedIndex=10;
+ else if(VFrequency=="11")
+ document.AP_W_Network.Frequency_name.options.selectedIndex=11;
+ else
+ document.AP_W_Network.Frequency_name.options.selectedIndex=0;
+
+
+}
+ 
+ function initvalue_2()
+  {  	
+		var APSM1=getCfg("AP_SecurityMode");
+		var APETW1=getCfg("AP_EnTyWEP");
+		var APWPA1=getCfg("AP_entcy_input");
+	
+		//var art= APSM1+","+APETW1+","+APWPA1+",";
+
+	
+	if ((APSM1=="OPEN")&&(APWPA1=="WEP"))
+		document.HFA11x_AP_SMODE.AP_SecurityMode.options.selectedIndex=1;
+	else if (APSM1=="SHARED")
+		document.HFA11x_AP_SMODE.AP_SecurityMode.options.selectedIndex=2;
+	else if (APSM1=="WPAPSK")
+		document.HFA11x_AP_SMODE.AP_SecurityMode.options.selectedIndex=3;
+	else if (APSM1=="WPA2PSK")
+		document.HFA11x_AP_SMODE.AP_SecurityMode.options.selectedIndex=4;
+	else //((APSM1=="OPEN")&&(APWPA1=="NONE"))
+		document.HFA11x_AP_SMODE.AP_SecurityMode.options.selectedIndex=0;
+	
+	if(APETW1=="0")
+	document.HFA11x_AP_SMODE.AP_EnTyWEP.options.selectedIndex = 1;
+	else
+	document.HFA11x_AP_SMODE.AP_EnTyWEP.options.selectedIndex = 0;
+	
+	
+	if(APWPA1=="TKIP")
+	document.HFA11x_AP_SMODE.ap_wpa_a[0].checked = true;
+	else if(APWPA1=="AES")
+	{
+		//alert(art);
+		document.HFA11x_AP_SMODE.ap_wpa_a[1].checked = true;
+	}
+	else if(APWPA1=="TKIPAES")
+		document.HFA11x_AP_SMODE.ap_wpa_a[2].checked = true;
+	else
+		document.HFA11x_AP_SMODE.ap_wpa_a[0].checked = true;
+	
+     //document.HFA11x_AP_SMODE.AP_SecurityMode.options.selectedIndex=getCfg("AP_SecurityMode");   
+	 AP_SecurityMode_change();
+	 //document.HFA11x_AP_SMODE.AP_EnTyWEP.options.selectedIndex=getCfg("AP_EnTyWEP");
+	 AP_EnTyWEP_change();
+}
+
+function init_value_3()
+{
+ var Vdhcp=getCfg("dhcp_name");
+ if(Vdhcp=="1")
+ document.LANsetup.dhcp_name.options.selectedIndex=1;
+ else
+ document.LANsetup.dhcp_name.options.selectedIndex=0;
+}
+ 
+function open_wds_window()
+{
+	cwin=window.open("hfwds.html","WDS_Parameters_List","toolbar=no, location=yes, scrollbars=yes, resizable=no, width=640, height=480");
+}  
+<!--0**-->  
+function init()
+{
+var slanV="<%CGI_GET_FLANG() ;%>";
+	//init_logo();
+
+	/*if(slanV=="zhcn")
+		setLanguageCN_2();
+	else if (slanV=="en")
+		setLanguageEN_2();
+ 	else
+		setLanguageCN_2();*/
+	init_1();
+	init_2();  
+	init_3();
+	var broadcastssidEnableArray = document.AP_W_Network.HideSSID2.value.split(";");
+	if(broadcastssidEnableArray[0]==1)
+	{
+		//alert("hidden");
+		document.AP_W_Network.Hidden_ssid_Chk.checked=1;
+	}
+	else
+	{
+		//alert("no hidden");
+		document.AP_W_Network.Hidden_ssid_Chk.checked=0;	
+	}
+		
+}
+
+function checkbox_click()
+{
+		//alert(document.AP_W_Network.Hidden_ssid_Chk.checked);
+		if(document.AP_W_Network.Hidden_ssid_Chk.checked)
+		 document.AP_W_Network.HideSSID2.value="1;0;0;0";
+		else
+		 document.AP_W_Network.HideSSID2.value="0;0;0;0";
+		 
+		//alert(document.AP_W_Network.HideSSID2.value);
+}
+
+<!--1**-->
+
+function init_1()
+{
+	 var f=document.AP_W_Network;
+	     cfg2Form(f);
+		 initvalue_1();
+}
+
+function Cancel_1() {
+	init_1();
+	
+}
+
+
+function Apply_1() {
+	
+	
+  var f=document.AP_W_Network;
+  var freq= document.AP_W_Network.Frequency_name.options.selectedIndex;
+  
+		if (freq== 0)
+			document.AP_W_Network.Frequency_auto.value= 1;
+		else
+			document.AP_W_Network.Frequency_auto.value= 0;
+	  form2Cfg(f);
+	  subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
+}
+
+
+<!--2**-->
+
+function init_2()
+ {
+	var f=document.HFA11x_AP_SMODE;
+	     cfg2Form(f);
+		 document.getElementById("ap_HF_lan_title").innerHTML=getCfg("NK_ssid_name");
+		 initvalue_2();
+ }
+ 
+function Cancel_2()
+ {
+	init_2();
+ }
+ 
+ function Apply_2()
+ {
+  var f=document.HFA11x_AP_SMODE;
+  
+		if (document.HFA11x_AP_SMODE.AP_SecurityMode.options.selectedIndex== 0)
+			document.HFA11x_AP_SMODE.AP_entcy_input.value= "NONE";
+		else if (document.HFA11x_AP_SMODE.AP_SecurityMode.options.selectedIndex== 1)
+				document.HFA11x_AP_SMODE.AP_entcy_input.value= "WEP";
+		else if (document.HFA11x_AP_SMODE.AP_SecurityMode.options.selectedIndex== 2)
+				document.HFA11x_AP_SMODE.AP_entcy_input.value= "WEP";
+		else if ((document.HFA11x_AP_SMODE.AP_SecurityMode.options.selectedIndex== 3)||
+  				(document.HFA11x_AP_SMODE.AP_SecurityMode.options.selectedIndex== 4))
+			{
+				if (document.HFA11x_AP_SMODE.ap_wpa_a[0].checked== true)
+					document.HFA11x_AP_SMODE.AP_entcy_input.value= "TKIP";
+				else if (document.HFA11x_AP_SMODE.ap_wpa_a[1].checked== true)
+						document.HFA11x_AP_SMODE.AP_entcy_input.value= "AES";
+				else if (document.HFA11x_AP_SMODE.ap_wpa_a[2].checked== true)
+						document.HFA11x_AP_SMODE.AP_entcy_input.value= "TKIPAES";
+				else
+					document.HFA11x_AP_SMODE.AP_entcy_input.value= "AES";
+			}
+     if(AP_WEB_key_v_check()==false)
+	    return;
+      form2Cfg(f);
+	  subForm(f,'do_cmd.html','LAN',cPage);
+ }
+ 
+ 
+<!--3**-->
+function init_3()
+{
+	var f=document.LANsetup;
+	cfg2Form(f);
+	init_value_3();
+}
+
+function Cancel_3() {
+	init_3();
+}
+function Apply_3() {
+	var f=document.LANsetup;
+	var LIP = f.LANIP.value;
+    var LanMsk=f.LANMSK.value;
+	var WIP = "<%CGI_WAN_IP() ;%>";
+	var WanMSK = "<% CGI_WAN_MSK(); %>";
+
+
+	if (!verifyIP2(f.LANIP,"IP Address")) 
+		{
+		f.LANIP.focus();
+		f.LANIP.select();
+		return ;
+		}
+	if (!ipMskChk(f.LANMSK,"Subnet Mask")) 
+		{
+		f.LANMSK.focus();
+		f.LANMSK.select();
+		return ;
+		}
+
+	if(ByMask_IPrange(LIP, LanMsk, 0)==ByMask_IPrange(WIP, WanMSK, 0))
+	{
+			alert("Attention: LAN IP and WAN IP should not in the same subnet!!\nWAN IP:"+WIP+"\nLAN IP:"+LIP);
+			return;
+	}
+	var	value_lanip=document.LANsetup.LANIP.value;
+		value_lanip=value_lanip.replace(/\.\d{1,3}$/,".");
+	
+	document.LANsetup.LAN_DHCPD_START.value=value_lanip+"100";
+	document.LANsetup.LAN_DHCPD_END.value=value_lanip+"200";
+	form2Cfg(f);
+
+	subForm(f,'do_cmd.html','LAN',cPage);
+}
+</SCRIPT>
+</HEAD>
+
+<BODY leftmargin=0 topmargin=0 onLoad="init()">
+<script>pageHead();</script>
+<h1 id="apconfigTitle">无线接入点设置</h1>
+<p id="apconfigIntroduction">无线接入点接口的设置，包括：SSID，加密等。</p>
+<hr />
+
+<form method=post name=AP_W_Network >
+<input type="hidden" name="HideSSID2">	
+<table width="540" border="1" cellspacing="1" cellpadding="3"   bordercolor="#9BABBD">
+  <tr>
+    <td class="title" colspan="2" id="Wireless_Network_lan_id">无线接入点参数设置</td>
+  </tr>
+  <tr > 
+    <td class="head" width="40%" id="basicNetMode">网络模式</td>
+    <td>
+      <select name="Network_Mode"  size="1" onChange="Network_Mode_Change()">
+        <option value="0">11b/g mixed mode</option>
+        <option value="1">11b only</option>
+		<option value="4">11g only</option>
+		<option value="9">11b/g/n mixed mode</option>
+		<option value="6">11n only(2.4G) only</option>
+      </select>
+    </td>
+  </tr>
+  <tr> 
+		<td class="head">
+			<font id="network_name_head">网络名称（SSID）</font><br />	
+		</td>
+		<td>
+			<input name="NK_ssid_name" maxlength=32 size=20 >
+			<a id="Hidden_id">隐藏</a><input name="Hidden_ssid_Chk" type="checkbox" onClick="checkbox_click()"> 
+		 <!-- 	
+			<a id="Isolated_id"> Isolated </a><input type="checkbox" onClick="checkbox_click()"> 
+			-->
+		</td>
+  </tr> 
+  <tr> 
+    <td class="head" id="BSSID_head">模块MAC地址</td>
+    <td><%CGI_GET_WLN_MAC_ADDRESS();%></td>
+  </tr>
+  <tr> 
+    <td class="head" id="encry_head">无线信道选择</td>
+    <td>
+      <select name="Frequency_name" id="Frequency_id" size="1" >
+				<option value="0"  id="ap_FrequencyAS_lan_id">自动选取</option>
+				<option value="1">2412MHz(channel 1)</option>
+				<option value="2">2417MHz(channel 2)</option>
+				<option value="3">2422MHz(channel 3)</option>
+				<option value="4">2427MHz(channel 4)</option>
+				<option value="5">2432MHz(channel 5)</option>
+				<option value="6">2437MHz(channel 6)</option>
+				<option value="7">2442MHz(channel 7)</option>
+				<option value="8">2447MHz(channel 8)</option>
+				<option value="9">2452MHz(channel 9)</option>
+				<option value="10">2457MHz(channel 10)</option>
+				<option value="11">2462MHz(channel 11)</option>
+				
+      </select>
+    </td>
+  </tr>
+  <tr>
+  <td class="head" id="ap_wds_head_id">无线分散系统(WDS)</td>
+  <td><input type="button" style="{width:120px;}" id="ap_wds_setting_id" value="WDS配置" onClick="open_wds_window()"></td>
+  </tr>
+  <input type="hidden" id="AP_WN_Rate_id" name="AP_WN_Rate">   
+  <input type="hidden" name="AP_WN_WLN_FixedTxMode">
+  <input type="hidden" name="AP_WN_WLN_HT_MCS">
+	<input type="hidden" name="Frequency_auto">
+	<tr id="AP_TX_PWR_TR" >
+		<td class="head" id="ap_txpwr_head_id">发射功率</td>
+		<td><input name="AP_Txpwr" maxlength=3 size=4 value="">(1-100)</td>
+  </tr>
+</table> 
+<p/>
+<center>
+<input type=button style="{width:120px;}" value="确定" onClick="Apply_1()" id="ap_Apply1_lan_id">&nbsp;&nbsp;
+<input type=button style="{width:120px;}" value="取消" onClick="Cancel_1()" id="ap_Cancel1_lan_id">
+</center>
+</form>
+
+<form name="HFA11x_AP_SMODE">
+<table width="540" border="1" cellspacing="1" cellpadding="3" bordercolor="#9BABBD">
+<tr><td class="title" colspan="2" id="ap_HF_lan_title">"HF-A11x_AP"</td>
+</tr>
+<tr ><td class="head" width="40%" id="Security_Mode_lan_id">加密模式</td>
+     <td>
+  <input type="hidden" name="AP_entcy_input">
+	 <select name="AP_SecurityMode"  id="AP_SecurityMode_id" size="1" onchange="AP_SecurityMode_change()" >
+	  <option  value="OPEN">Disable</option>
+	 <option  value="OPEN" >OPENWEP</option>
+	 <option  value="SHARED">SHAREDWEP</option> 
+	 <option  value="WPAPSK">WPA-PSK</option> 
+	 <option  value="WPA2PSK">WPA2-PSK</option>
+	 </select>
+	 </td>		
+ </tr>
+
+</table>
+<table id="AP_WEP_ID" width="540" border="1" cellspacing="1" cellpadding="3" bordercolor="#9BABBD" style="visibility:hidden;display:none;">
+<tr><td class="title" colspan="2" id="ap_WEP_lan_id">WEP加密</td>
+</tr>
+ <tr id="AP_ENTY_W_K" >
+     <td class="head"  width="40%"><a id="ap_WEPKey_lan_id">密码</a><a id="AP_EnTyWEP_id">(5 or 13 ASCII)</a></td>
+     <td ><input name="AP_EnTy_KEY" maxlength=32 size=32 value="">	 
+	 <select name="AP_EnTyWEP"  size="1" onchange="AP_EnTyWEP_change()" >
+	 <option  value="1" >ASCII</option>
+	 <option  value="0">Hex</option>
+	 </select>
+	 </td>
+ </tr>
+</table>
+<table id="AP_WPA_ID" width="540" border="1" cellspacing="1" cellpadding="3" bordercolor="#9BABBD" style="visibility:hidden;display:none;">
+<tr><td class="title" colspan="2" id="ap_WPA_lan_id">WPA加密</td>
+ <tr >
+ <td class="head" width="40%" id="ap_WPA_Algorithms_lan_id">加密算法</td>
+ <td><input type="radio"  name="ap_wpa_a"  value="TKIP" > TKIP
+     <input type="radio"  name="ap_wpa_a"  value="AES">AES
+	 <input type="radio"  name="ap_wpa_a"  value="TKIPAES" id="AP_TKIPAES_ID" >TKIPAES
+	 </td>
+ </tr>
+ <tr id="AP_ENTY_TK_AE" >
+     <td class="head" width="40%" id="ap_PassPhrase_lan_id">密码</td>
+     <td><input name="AP_EnTy_Pass_P" maxlength=63 size=48 value="">	 
+	 </td>
+ </tr>
+
+</table>
+
+<p/>
+<center>
+<input type=button style="{width:120px;}" value="确定" onClick="Apply_2()" id="ap_Apply2_lan_id">&nbsp;&nbsp;
+<input type=button style="{width:120px;}" value="取消" onClick="Cancel_2()" id="ap_Cancel2_lan_id">
+</center>
+</form>
+<br>
+<FORM name=LANsetup>
+<table width="540" border="1" cellspacing="1" cellpadding="3" bordercolor="#9BABBD">
+<tr>
+<td class="title" colspan="2" id="ap_LANSetup_lan_title">局域网参数设置</td>
+</tr>
+<tr > 
+<td class="head" width="40%" id="ip_address_head">IP地址(DHCP网关设置)</td>
+<td><input name=LANIP size=16 maxlength=15 ></td>
+</tr>
+<input type="hidden" name="LAN_DHCPD_START">
+<input type="hidden" name="LAN_DHCPD_END">
+<tr > 
+<td class="head" id="ap_SubnetMask_lan_title">子网掩码</td>
+<td><input name=LANMSK size=16 maxlength=15 ></td>
+</tr>
+<tr > 
+    <td class="head" id="ap_DHCPType_lan_id">DHCP 类型</td>
+	<td><select name="dhcp_name" id="dhcp_id" size="1" >
+	<option value="0" id="ap_DHCPDisable_lan_id">停用</option>
+	<option value="1" id="ap_DHCPServer_lan_id">服务器</option>
+	</select>
+	</td>
+ </tr>
+
+</table>
+<p/>
+<center>
+<input type=button style="{width:120px;}" value="确定" onClick="Apply_3()" id="ap_Apply3_lan_id">&nbsp;&nbsp;
+<input type=button style="{width:120px;}" value="取消" onClick="Cancel_3()" id="ap_Cancel3_lan_id">
+</center>
+</form>
+
+
+<script>pageTail();</script>
+</BODY>
+</HTML>

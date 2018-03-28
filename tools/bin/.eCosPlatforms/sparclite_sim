@@ -1,0 +1,6 @@
+ServerSideGdb=1
+prompt=(gdb) 
+inferior=sparclite-elf-gdb -nw -q %e
+commands=set height 0;target sim -nfp -sparclite -dumbio;load;break cyg_test_exit;rbreak cyg_assert_fail;break cyg_test_init;run;set cyg_test_is_simulator=1;cont;bt 64
+prefix=sparclite-elf
+platform=sparclite_sim

@@ -1,0 +1,15 @@
+<%
+#include <cfg_def.h>
+	char *fb;
+	int size;
+    
+ 	if ((fb = malloc(CFG_PROFILE_LEN_MAX))<=0)
+	{
+		WEB_printf(req, "error alloc buf!\n");
+		return -1;
+	}
+	if ((size=CFG_write_prof(fb, CFG_PROFILE_LEN_MAX))>0)
+		WEB_write_blk( req, fb, 0, size);
+	free(fb);
+	return 0;
+%>

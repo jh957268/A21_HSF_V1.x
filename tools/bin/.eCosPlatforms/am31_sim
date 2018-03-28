@@ -1,0 +1,6 @@
+ServerSideGdb=1
+prompt=(gdb) 
+inferior=mn10300-elf-gdb -nw -q %e
+commands=set height 0;target sim --board=stdeval1 --memory-region 0x34004000,0x8;load;break cyg_test_exit;rbreak cyg_assert_fail;break cyg_test_init;run;set cyg_test_is_simulator=1;cont;bt 64
+prefix=mn10300-elf
+platform=am31_sim

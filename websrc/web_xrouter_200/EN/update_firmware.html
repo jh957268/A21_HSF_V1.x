@@ -1,0 +1,52 @@
+<HTML>
+<HEAD> 
+<title>RatPac AKS Configuration</title>    
+<META http-equiv=Content-Type content="text/html" charset="gb2312">  
+<link rel="stylesheet" href="../style/normal_ws.css" type="text/css">
+<SCRIPT language=JavaScript src="../utils.js"></SCRIPT>
+<SCRIPT language=JavaScript src=spec.js></SCRIPT>               
+<SCRIPT LANGUAGE="JavaScript">
+var rc=0;
+var go;
+var nowait='0';
+var msg='';
+var cmd;
+
+ function init_update()
+ {
+		
+ }
+
+
+function gurl(u) { if (u=='') u = 'opmode.html'; location=u; }
+
+/*REAL
+	var nowait='<%char * nowait=CGI_QUERY("nowait");%>';
+REAL*/
+</SCRIPT>
+</HEAD>
+
+<body leftmargin=0 topmargin=0 onload="init_update()" >
+<script>pageHead();</script>
+
+<h2 id="updatefir_head_ian_id">Update Firmware Successfully,Rebooting......</h2> 
+
+
+<script>
+
+/*REAL
+	var rc=<%int rc=CGI_do_cmd(req); WEB_printf(req, "%d", rc);%>;
+	var go='<%CGI_QUERY("GO");%>';
+REAL*/
+
+if (nowait==1 && rc>=0) { gurl(go); }
+if(rc<0)
+{
+	var driveLetter = document.getElementById("updatefir_head_ian_id");
+	driveLetter.innerHTML="Update fail!Error Code("+rc+")";
+}
+
+</script>
+<script>pageTail();</script>
+</body>
+</html>

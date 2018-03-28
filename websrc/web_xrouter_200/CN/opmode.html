@@ -1,0 +1,179 @@
+<HTML>
+<HEAD>
+<META http-equiv="Pragma" content="no-cache">
+<META http-equiv=Content-Type 	content="text/html" charset="gb2312">
+<link rel="stylesheet" href="../style/normal_ws.css" type="text/css">
+<TITLE>M2M Web Server</TITLE>
+<SCRIPT language=JavaScript src="../utils.js"></SCRIPT>
+<SCRIPT language=JavaScript src=spec.js></SCRIPT>
+<SCRIPT language=JavaScript>
+/*DEMO*/
+addCfg("save_lan",120,"1");
+
+addCfg("apcli_enable",212,"1");
+addCfg("Data_Transfor_Mode",212,"2");
+/*END_DEMO*/
+
+/*REAL
+<%
+CGI_MAP(country_code, CFG_WLN_CountryRegion);
+CGI_MAP(apcli_enable, CFG_WLN_ApCliEnable);
+CGI_MAP(Data_Transfor_Mode,CFG_M2M_RUN_MODE);
+%>
+
+REAL*/
+
+function initvalue()
+ {
+	var Vapable=getCfg("apcli_enable") ;
+	var VTmode=getCfg("Data_Transfor_Mode") ;
+	if(Vapable=="0")
+	document.opmode.apcli_enable[0].checked=true ;
+	else 
+	document.opmode.apcli_enable[1].checked=true ;
+	if((VTmode>=0)&&(VTmode<=3))
+	document.opmode.Data_Transfor_Mode.options.selectedIndex=VTmode;
+	else
+	document.opmode.Data_Transfor_Mode.options.selectedIndex=0;
+	
+	if(VTmode>=1)
+		document.opmode.Data_Transfor_Mode.options.selectedIndex=VTmode-1;
+ }
+
+ 
+
+
+function init(){
+	var f=document.opmode;
+	var slanV="<%CGI_GET_FLANG() ;%>";
+	var logoV="<%CGI_GET_FLOGO();%>";	
+	
+	if(logoV=="HF")
+		{
+			document.getElementById("HF_LOGO_ID").style.visibility = "visible";
+			document.getElementById("HF_LOGO_ID").style.display = "";
+			document.getElementById("YR_LOGO_ID").style.visibility = "hidden";
+			document.getElementById("YR_LOGO_ID").style.display = "none";
+			
+		}
+	else if (logoV=="YRKJ")
+		{
+			document.getElementById("YR_LOGO_ID").style.visibility = "visible";
+			document.getElementById("YR_LOGO_ID").style.display = "";
+			document.getElementById("HF_LOGO_ID").style.visibility = "hidden";
+			document.getElementById("HF_LOGO_ID").style.display = "none";
+		
+		}
+	else
+		{
+			document.getElementById("YR_LOGO_ID").style.visibility = "hidden";
+			document.getElementById("YR_LOGO_ID").style.display = "none";
+			document.getElementById("HF_LOGO_ID").style.visibility = "hidden";
+			document.getElementById("HF_LOGO_ID").style.display = "none";
+			document.getElementById("HF_hr_id").style.visibility = "hidden";
+			document.getElementById("HF_hr_id").style.display = "none";
+		
+		}
+		
+	/*if(slanV=="zhcn")
+		setLanguageCN_2();
+	else if (slanV=="en")
+		setLanguageEN_2();
+	else
+		setLanguageCN_2();	*/
+	cfg2Form(f);
+	initvalue();
+	
+}
+
+function Reset() {
+	init();
+}
+
+function Apply() {
+	var f=document.opmode ;
+
+	if (document.opmode.apcli_enable[0].checked==true)		// ap
+		document.opmode.country_code.value= 0;
+	else
+		document.opmode.country_code.value= 5;
+	form2Cfg(f);
+	subForm(f,'do_cmd.html','WIRELESS_APCLI_SETUP',cPage);
+}
+
+
+
+
+
+</SCRIPT>
+</HEAD>
+<BODY leftmargin=0 topmargin=0 onload=init()>
+<script>pageHead();</script>
+
+<h1 id="opmodeconfigTitle">模块工作模式设置</h1>
+<p id="opmodeconfigIntroduction">设置模块工作模式，包括WIFI运作模式，数据传输模式。</p>
+
+<hr>
+<form method=post name="opmode">
+<input type="hidden" name="country_code">
+<dl>
+ <dd></dd>
+  <dt><input type="radio" name="apcli_enable" value="0"  ><b id="apmode_lan_id">AP 模式:</b></dt>
+  <dt >&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp <a id="Access_Point_lan_id">WIFI 作为接入点模式(AP): 即模块创建WIFI网络，供手机、笔记本、平板电脑等其他WIFI设备接入。相关设置请进入“无线接入点设置”页面</a></dt>
+
+<dd></dd>  
+  <dt ><input type="radio" name="apcli_enable" value="1" ><b id="opmode_STAMode_lan_id">Station 模式:</b></dt>
+  <dt >&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp <a id="opmode_StationMode_lan_id">WIFI 作为终端模式(STA): 即模块加入WIFI路由器创建的WIFI网络。注意在设置模块为STA模式前，请先对无线终端参数进行设置。相关设置请进入“无线终端设置”页面</a></dt>
+  <dd></dd>  
+  <dd></dd> 
+  <p/>  
+  <dt > &nbsp <a id="opmode_DTMode_lan_id">数据传输模式</a> &nbsp&nbsp
+  <select size="1" name="Data_Transfor_Mode" >
+  <option value="0" id="opmode_TransparentMode_lan_id">透明传输模式</option>
+<!--
+  <option value="1" id="opmode_AgreementTMode_lan_id">协议传输模式</option>
+-->
+  <option value="2" id="opmode_GPIO1_lan_id">GPIO1模式</option>
+  <option value="3" id="opmode_GPIO2_lan_id">GPIO2模式</option>
+  </select>
+  </dt>
+</dl>
+
+<p/>
+<center>
+<input type=button style="{width:120px;}" value="确定" onClick="Apply()" id="opmode_Apply_lan_id">&nbsp;&nbsp;
+<input type=button style="{width:120px;}" value="取消" onClick="Reset()" id="opmode_Reset_lan_id">
+</center>
+</form>
+
+
+
+
+<hr id="HF_hr_id"> 
+
+<div id="HF_LOGO_ID" style="visibility:hidden;display:none;"> 
+<form id= "HF_Conn_id">
+<dl>
+	<dt><b id="logo_company">上海汉枫电子科技有限公司</b></dt>
+	<dt id="logo_connect">技术支持</dt>
+	<dt id="logo_mail">peter_dong@hi-flying.com  QQ:2452483191</dt>
+	<dt id="logo_phone">手机：13681967916</dt>
+</dl>
+</form>
+</div>
+
+
+<div id="YR_LOGO_ID" style="visibility:hidden;display:none;"> 
+<form id= "YR_Conn_id">
+<dl>
+	<dt><b id="logo_company_yr">济南有人物联网技术有限公司   http://www.usr.cn</b></dt>
+	<dt id="logo_connect_yr">联系方式</dt>
+	<dt id="logo_mail_yr">tec@usr.cn     QQ:800025565</dt>
+	<dt id="logo_phone_yr">0531-55507297</dt>
+</dl>
+</form>
+</div>
+
+<script>pageTail();</script>
+</BODY>
+</HTML>

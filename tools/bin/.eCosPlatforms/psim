@@ -1,0 +1,6 @@
+ServerSideGdb=1
+prompt=(gdb) 
+inferior=powerpc-eabi-gdb -nw -q %e
+commands=set height 0;target sim -o '/#address-cells 1' -o '/openprom/init/register/pc 0x100' -o '/iobus@0xf0000000/reg 0xf0000000 0x01000000' -o '/iobus/pal@0xf0001000/reg 0xf0001000 32';load;break cyg_test_exit;rbreak cyg_assert_fail;break cyg_test_init;run;set cyg_test_is_simulator=1;cont;bt 64
+prefix=powerpc-eabi
+platform=psim

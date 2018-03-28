@@ -1,0 +1,77 @@
+<!-- Copyright 2004, Ralink Technology Corporation All Rights Reserved. -->
+<html>
+<head>
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Expires" CONTENT="-1">
+<META http-equiv="Content-Type" content="text/html" charset="gb2312">
+
+<link rel="stylesheet" href="../style/normal_ws.css" type="text/css">
+
+<title>M2M Web Server</title>
+<script language="JavaScript" type="text/javascript">
+
+var gg_ssid="";
+var gg_networktype;
+var gg_channel;
+var gg_auth;
+var gg_encry;
+var gg_bssid;
+function selectedSSIDChange(ssid, bssid, networktype, channel, encry, auth)
+{
+	gg_ssid = ssid;
+	gg_networktype = networktype;
+	gg_channel = channel;
+	gg_auth = auth;
+	gg_encry = encry;
+	gg_bssid = bssid;
+}
+
+function apply_clicked()
+{ 	
+	//if(gg_ssid=="")
+	//window.close();
+	//else
+	{
+	window.opener.to_surver(gg_ssid, gg_auth, gg_encry);
+	window.close();
+	}
+}
+
+</script>
+</head>
+
+<body >
+
+<table class="body"><tr><td>
+<form method=post name="sta_site_survey">
+<table width="540" border="1" cellpadding="2" cellspacing="1" bordercolor="#9BABBD">
+  <tr>
+    <td class="title" colspan="8" id="scanSiteSurvey">Site Survey</td>
+  </tr>
+  <tr>
+    <td bgcolor="#e9e9e9" id="scanSelect">&nbsp;</td>
+    <td bgcolor="#e9e9e9" id="scanSSID">SSID</td>
+    <td bgcolor="#e9e9e9" id="scanBSSID">BSSID</td>
+    <td bgcolor="#e9e9e9" id="scanRSSI">RSSI</td>
+    <td bgcolor="#e9e9e9" id="scanChannel">Channel</td>
+    <td bgcolor="#e9e9e9" id="scanEncryp">Encryption</td>
+    <td bgcolor="#e9e9e9" id="scanAuth">Authentication</td>
+    <td bgcolor="#e9e9e9" id="scanNetType">Network Type</td>
+  </tr>
+
+  <% CGI_GET_SURVEYLIST(); %>
+</table>
+  <table width = "540" border = "0" cellpadding = "2" cellspacing = "1">
+    <tr>
+      <td>
+				<input type=button style="{width:100px;}" value="Apply" id="button_apply" name="button_apply"  onClick="apply_clicked()">&nbsp;
+				<input type=button  style="{width:120px;}" value="Refresh" id="button_refresh" onClick="window.location.reload()">
+      </td>
+    </tr>
+  </table>
+
+</form>
+</td></tr>
+</table>
+</body>
+</html>

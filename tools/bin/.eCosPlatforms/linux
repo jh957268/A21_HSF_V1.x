@@ -1,0 +1,6 @@
+ServerSideGdb=0
+prompt=(gdb) 
+inferior=i686-pc-linux-gnu-gdb -nw -q %e
+commands=set height 0;break cyg_test_exit;rbreak cyg_assert_fail;break cyg_test_init;run;set cyg_test_is_simulator=1;cont;bt 64
+prefix=i686-pc-linux-gnu
+platform=linux

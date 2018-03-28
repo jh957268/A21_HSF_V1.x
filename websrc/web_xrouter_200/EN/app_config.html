@@ -1,0 +1,101 @@
+<HTML>
+<HEAD>
+<META http-equiv="Pragma" content="no-cache">
+<META http-equiv=Content-Type 	content="text/html" charset="gb2312">
+<TITLE>RatPac AKS Configuration</TITLE>
+<SCRIPT language=JavaScript src="../utils.js"></SCRIPT>
+<SCRIPT language=JavaScript src=spec.js></SCRIPT>
+<link rel="stylesheet" href="../style/normal_ws.css" type="text/css">
+<SCRIPT language=JavaScript>
+/*DEMO*/
+
+
+addCfg("uart_baudrate",511,"15");
+addCfg("uart_bits",512,"2");
+addCfg("uart_parity",513,"2");
+addCfg("uart_stop",514,"1");
+addCfg("uart_fc",515,"1");
+
+addCfg("RMIP",521,"10.10.10.200");
+addCfg("RMPORT",522,"80");
+addCfg("autoframe_mode",523,"enable");
+addCfg("AutoFrame_Time",524,"250");
+addCfg("AutoFrame_Length",525,"250");
+
+
+addCfg("net_mode",535,"client");
+addCfg("net_protocol",536,"TCP");
+addCfg("net_port",537,"8899");
+addCfg("net_ip",538,"10.10.10.100");
+addCfg("tcp_ms",539,"32");
+addCfg("tcp_to",540,"300");
+
+/*END_DEMO*/
+/*REAL
+<%
+CGI_MAP(uart_baudrate,CFG_M2M_UART_BAUD);
+CGI_MAP(uart_bits,CFG_M2M_UART_BITS);
+CGI_MAP(uart_parity,CFG_M2M_UART_PARITY);
+CGI_MAP(uart_stop,CFG_M2M_UART_STOP);
+CGI_MAP(uart_fc,CFG_M2M_UART_FC);
+
+CGI_MAP(RMIP, CFG_SYS_RM_IP);
+CGI_MAP(RMPORT,CFG_SYS_RM_PORT);
+CGI_MAP(autoframe_mode,CFG_M2M_UART_AF);
+CGI_MAP(AutoFrame_Time,CFG_M2M_UART_AFT);
+CGI_MAP(AutoFrame_Length,CFG_M2M_UART_AFL);
+CGI_MAP(net_mode,CFG_M2M_NET_MODE);
+CGI_MAP(net_protocol,CFG_M2M_NET_PROC);
+CGI_MAP(net_port,CFG_M2M_NET_PORT);
+CGI_MAP(net_ip,CFG_M2M_NET_SERADD);
+CGI_MAP(tcp_ms,CFG_M2M_NET_MAXSK);
+CGI_MAP(tcp_to,CFG_M2M_NET_TCPTO);
+%>
+
+REAL*/
+
+
+</SCRIPT>
+</HEAD>
+<BODY leftmargin=0 topmargin=0>
+<script>pageHead();</script>
+<h1 id="appTitle">Instructions and Help</h1>
+
+Hello AKS User! If you&rsquo;ve made it this far, it&rsquo;s likely that you already know how to log in via WiFi and do the basics, so we won&rsquo;t bore you with those. <BR><BR>
+
+Instead, here&rsquo;s some information, tips and tricks, and a guide to troubleshooting common errors. <BR><BR>
+  
+<B>Quick tips:</B><BR>
+-To start transmitting to unlinked Cintennas or CRMX fixtures, briefly press RF LINK.<BR>
+-To unlink all linked Cintennas or CRMX fixtures in range, hold RF LINK for 5 seconds.<BR>
+-The DMX light will blink with every DMX frame received. Use it to indicate signal health!<BR>
+-If Art-Net is being sent, but no DMX signal appears, check your Universe settings. <BR>
+-All settings can be reverted by powering on while holding RF LINK. WiFi lights up when done.<BR>
+
+<BR><BR>
+<B>Main Settings</B><BR>
+Art-Net settings are available on the Main Settings page. <BR>
+You can set the Node Name (Art Net Short Node Name) and select which universe to listen to. <BR>Changes take effect immediately upon &ldquo;Apply&rdquo;, there is no need to restart! <BR><BR>
+
+CRMX Settings allow adjustment of the LumenRadio CRMX transmitter portion of the AKS. <BR>
+The default output power is 65mW.<BR> Users outside of the USA may be prohibited from using stronger power levels by local or national ordinances. <BR><BR>
+
+Frequencies used by the current WiFi channel will automatically be avoided by CRMX transmissions. <BR>This window can be optionally adjusted. A second channel can also be blocked to avoid other WiFi routers or AKS units. <BR><BR><BR>
+
+
+The AKS has two modes, Access Point (AP) and Station (STA). 
+<BR><BR>
+<B>Access Point:  </B><BR>
+This is the default mode. The AKS will be the central hub of its lighting control network. To use AP mode, simply turn on the AKS, connect to it, and open an Art-Net DMX control app. You can choose which universe to stream on the Main Settings page. <BR><BR>
+
+Devices connected to the ethernet port will share connectivity. Additional Art Net nodes can be added and accessed via the ethernet port. With the use of an unmanaged switch, several nodes can be added to the AKS. A maximum of 8 is currently recommended. <BR><BR>
+
+When using AP mode, ensure that you have chosen a WiFi channel, as AutoSelect will disable the CRMX advanced frequency management system.
+<BR><BR>
+<B>Station Mode:</B><BR>
+ This is a more advanced mode which allows the AKS to connect to a host access point such as a home or commercial router. When STA mode is enabled, the AKS must be accessed through the host router or via Ethernet. Intermediate knowledge of networking may be required. 
+
+
+<script>pageTail();</script>
+</BODY>
+</HTML>
