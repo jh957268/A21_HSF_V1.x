@@ -19,12 +19,11 @@ The eCos 1.x tree uses legacy 32-bit binary tools.  Install a 32-bit version of 
 ### Installing eCos
 
 > wget --passive-ftp ftp://ecos.sourceware.org/pub/ecos/ecos-install.tcl
-
+>
 > sudo sh ecos-install.tcl
 
-* Install eCos into /opt/ecos
-
-* Select `mipsisa32-elf` build toolchain.
+*   Install eCos into /opt/ecos
+*   Select `mipsisa32-elf` build toolchain.
 
 Add the eCos build environment to your PATH
 
@@ -46,22 +45,20 @@ Update the build tool to libstdc++6
 
 ## Windows
 
-1. CygWin
-1. eCos
-2. more testing!
+1.  CygWin
+1.  eCos
+2.  more testing!
 
 ## Get the Source
 
 Clone the git repository.
 
-> git clone https://github.com/RatPacDimmers/A21_HSF_V1.x.git
+> git clone `https://github.com/RatPacDimmers/A21_HSF_V1.x.git`
 
 You can now build the image by running these commands:
 
 > cd A21_HSF_V1.x
-
+>
 > make clean
-
+>
 > make
-
-
