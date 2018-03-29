@@ -59,7 +59,9 @@ Clone the git repository.
 You can now build the image by running these commands:
 
 > cd A21_HSF_V1.x
+
 > make clean
+
 > make
 
 
