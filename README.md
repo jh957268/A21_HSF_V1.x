@@ -1,4 +1,4 @@
-# AKS Firmware for HF-A21-SMT
+# HF-A21-SMT Firmware for AKS
 
 ## Ubuntu Linux
 
