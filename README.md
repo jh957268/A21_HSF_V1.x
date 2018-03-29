@@ -52,4 +52,14 @@ Update the build tool to libstdc++6
 
 ## Get the Source
 
-git?
+Clone the git repository.
+
+> git clone https://github.com/RatPacDimmers/A21_HSF_V1.x.git
+
+You can now build the image by running these commands:
+
+> cd A21_HSF_V1.x
+> make clean
+> make
+
+
