@@ -102,7 +102,28 @@ function Apply_2()
 	//initbar();
 	f.submit();
     }
- 
+}
+
+function Apply_3()
+ {
+	var f=document.Update_SAMD;
+	var m='';
+	if(f.files.value=="")
+    {
+		if(slanV=="en")
+		alert("Please select the file!");
+		else
+		alert("请选择文件!");
+		return ;
+	}  
+	if(slanV=="en")
+		m='Are you sure you want to upgrade?';
+	else
+	    m='你确定要升级吗?';
+	 if(confirm(m))
+	{
+	f.submit();
+    }
 }
 
 
@@ -143,7 +164,7 @@ var secs;
 <h1 id="DM_DManagement_lan_id">Device Management</h1> 
 <!--<p><%CGI_GET_VERSION() ;%></p>-->
 <p>Version 1.9.9.9/a Beta  Built 4/19/2017</p>
-<p>Release Build: 03/22/2019 10003</p>
+<p>Release Build: 03/23/2019 10004</p>
 <hr />
 
 <form name=frmSetup>
@@ -234,6 +255,21 @@ var secs;
  </tr>
  </table>
  -->
+</form>
+
+<form name="Update_SAMD" method=POST action=update_firmware.html enctype=multipart/form-data >
+<INPUT type=hidden name=CMD value=SAMD_UPG>
+<INPUT type=hidden name=GO value=management.htm>
+<table width="540" border="1" cellspacing="1" cellpadding="3" bordercolor="#9BABBD">
+<tbody><tr>
+  <td class="title" colspan="2" id="uploadSAMD">Update SAMD Firmware</td>
+</tr>
+<tr>
+  <td class="head" width="40%" id="uploadSAMDLocation">Location:</td>
+        <td> <input name="files" size="20" maxlength="256" type="file" value=""></td>
+</tr>
+</tbody></table>
+<input value="Apply" id="uploadSAMDApply" type="button" onclick="Apply_3()" > &nbsp;&nbsp;
 </form>
 
 <script>pageTail();</script>
