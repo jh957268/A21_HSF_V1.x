@@ -142,3 +142,16 @@ ul {
 	color: #333333
 }
 
+pre {
+  display: block;
+  font-family: monospace;
+  white-space: pre;
+  margin: 0;
+  padding: 0;
+}
+
+iframe {
+  border: 1em solid brown;
+  color: #0A0A8C;
+}
+
