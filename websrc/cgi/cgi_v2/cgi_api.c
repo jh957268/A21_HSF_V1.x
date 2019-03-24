@@ -167,6 +167,7 @@ int CGI_set_ap_only(http_req *req);
 int CGI_do_sys_log_mail(http_req *req);
 int CGI_do_ntp_config(http_req *req);
 int CGI_upgrade(http_req *req);
+int CGI_SAMD_upgrade(http_req *req);
 int CGI_upgrade_upload(http_req *req);
 int CGI_upgrade_save(http_req *req);
 void CGI_upgrade_free(void);
@@ -194,6 +195,7 @@ cgi_cmd ps_cgi_cmds[]=
 	{ "WAN_CON", &CGI_do_wan_connect },
 	{ "SYS_UPG", &CGI_upgrade },
 	{ "SYS_ULD", &CGI_upgrade_upload },
+	{ "SAMD_UPG", &CGI_SAMD_upgrade },
 #if	MODULE_DHCPS
 	{ "LAN_DHC", &CGI_do_lan_dhcp_clients },
 #endif
@@ -2034,6 +2036,45 @@ int CGI_upgrade(http_req *req)
 	}
    	//rc = CFG_put_file(1, file, len) ;
     rc = http_put_file(1, req->content, file, len);
+	
+	upgrade_mem = req->content;
+	req->content = 0;
+	CGI_upgrade_free();
+	if (rc)
+		return CGI_RC_FILE_INVALID;
+	
+	mon_snd_cmd(MON_CMD_REBOOT);
+#ifdef	CONFIG_ZWEB
+	zweb_location = 0;
+#endif
+	return CGI_RC_UPGRADE;
+}
+
+int CGI_SAMD_upgrade(http_req *req)
+{    
+	char *file;
+	int len,rc;
+	char val[48];
+	
+	if (upgrade_mem)
+	{
+		Joo_uart_send("CGI_RC_FILE_INVALID\n");
+		return CGI_RC_FILE_INVALID; // avoid incorrect cgi call
+	}
+	file = WEB_upload_file(req, "files", &len);
+
+	sprintf(val, "SAMD Filesize=%d\n", len);	
+	Joo_uart_send(val);	
+
+#if 0	
+	if(len>=FLASH_FWM_MAX_SIZE)
+	{
+		CGI_upgrade_free();
+		return CGI_RC_FILE_INVALID;
+	}
+   	//rc = CFG_put_file(1, file, len) ;
+    rc = http_put_file(1, req->content, file, len);
+#endif
 	
 	upgrade_mem = req->content;
 	req->content = 0;
