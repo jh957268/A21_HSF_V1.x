@@ -179,6 +179,9 @@ void ConverterStringToDisplay2(char *str);
 int CGI_do_uboot_upgrade(http_req *req);
 static int CGI_do_load_cert(http_req *req);
 
+void do_refresh_clients(void);
+int  refresh_client_done(void);
+
 
 cgi_cmd ps_cgi_cmds[]=
 {
@@ -359,7 +362,37 @@ int CGI_do_cmd(http_req *req)
 		}
 		CFG_save(0);
 	}
-	
+	if (!strcmp(cmd, "CONSTELLATION_REFRESH"))
+	{
+		do_refresh_clients();
+		return CGI_RC_OK;
+	}
+	if (strstr(cmd, "SET_UNIVERSE"))
+	{
+		char art_subnet[4], uniNo[4];
+		char *tmp1, *tmp2;
+
+		tmp1 = strchr(cmd, '=');
+		if (0 == tmp1)
+		{
+			return (CGI_RC_OK);
+		}
+		tmp1++;
+		tmp2 = strchr(tmp1, '-');
+		if (0 == tmp2)
+		{
+			return (CGI_RC_OK);
+		}
+		*tmp2 = 0;
+		tmp2++;
+		
+		sprintf(art_subnet, "%s", tmp1);
+		sprintf(uniNo, "%s", tmp2);			
+		CFG_set_str(CFG_AKS_UNIVERSE,uniNo);
+		CFG_save(0);
+		return CGI_RC_OK;
+	}
+
 ReadyToOut:	
 
 	if (rc==CGI_RC_CFG_OK)
@@ -491,10 +524,226 @@ void sc_convert(char *instr)
     }
 }
 
+void fill_space(char *datarray, int arrlen)
+{
+	int i;
+	int len = strlen(datarray);
+
+	for (i = len; i < (arrlen - 1); i++)
+	{
+		datarray[i] = ' ';
+	}
+	datarray[arrlen-1] = 0;
+}
+
+int get_client_entry(int idx, char *node_name, char *ip_addr, char *universe, char *art_sub, char *battery);
 void CGI_var_map(http_req *req, char *name, int id)
 {
-	char val[512];
-	CFG_get_str(id, val);
+	static char val[512+128];    // carefule, the stack size may not be enough for such a big value
+	static char href_link[128];
+	static char cmd_buff[128];
+	int idx, base_idx, i;
+	char node_name[24];
+	char ip_addr[20];
+	char universe[4];
+	char art_sub[4];
+	char ip_addr_save[20];
+	char sel_ele[64];
+	char battery[12];
+	int node_len, link_len;
+	int uni_num, art_sub_num;
+
+	base_idx = ((CFG_AKS_CONS1 >> 16) & 0xff);
+	switch (id)
+	{
+		case CFG_AKS_CONS1:
+		case CFG_AKS_CONS2:
+		case CFG_AKS_CONS3:
+		case CFG_AKS_CONS4:
+		case CFG_AKS_CONS5:
+		case CFG_AKS_CONS6:
+		case CFG_AKS_CONS7:
+		case CFG_AKS_CONS8:
+		case CFG_AKS_CONS9:
+		case CFG_AKS_CONS10:
+		case CFG_AKS_CONS11:
+		case CFG_AKS_CONS12:
+		case CFG_AKS_CONS13:
+		case CFG_AKS_CONS14:
+		case CFG_AKS_CONS15:
+		case CFG_AKS_CONS16:
+#if 0		
+			if (CFG_AKS_CONS1 == id)
+			{
+				do_refresh_clients();
+				while (1)
+				{
+					if ( 1 == refresh_client_done())
+					{
+						break;
+					}
+					hf_thread_delay(1000);
+				}
+			}
+#endif			
+			idx = ((id >> 16) & 0xff) - base_idx;
+			if (-1 == get_client_entry(idx, node_name, ip_addr, universe, art_sub, battery))
+			{
+				return;
+			}
+			//sprintf(node_name, "AKS_NODE%d", idx);
+			//sprintf(ip_addr,"10.10.100.2%d", idx);
+			//sprintf(universe,"%d", idx);
+			//sprintf(identify,"ID*");
+			//sprintf(link, "Link");
+			//sprintf(node_name, "AKS_NODETest");
+			//sprintf(ip_addr,"10.10.100.254");
+			//sprintf(art_sub,"1");
+			//sprintf(baterry,"88");
+			//strcat(baterry,"\%");
+			sprintf(ip_addr_save, "%s", ip_addr);
+			
+			sprintf(href_link, "<a href=\"http://%s\" target=\"_blank\">%s</a>", ip_addr, node_name);
+			
+			link_len = strlen(href_link);
+			node_len = strlen(node_name);
+			fill_space(href_link, link_len + 17 - node_len);
+			fill_space(ip_addr, 17);
+			fill_space(battery, 10);
+			sprintf(val, "%s", href_link);
+			strcat(val, ip_addr);
+			strcat(val, battery);
+			
+			sprintf(cmd_buff, "<button type=\"button\" onclick=\"popupCenter('http://%s/EN/id.html', 'myPop1',700,500);\">ID</button>", ip_addr_save);
+			link_len = strlen(cmd_buff);
+			fill_space(cmd_buff, link_len+6);
+			strcat(val, cmd_buff);
+			
+			sprintf(cmd_buff, "<button type=\"button\" onclick=\"popupCenter('http://%s/EN/link.html', 'myPop1',700,500);\">Link</button>", ip_addr_save);			
+			link_len = strlen(cmd_buff);
+			fill_space(cmd_buff, link_len+1);	
+			strcat(val, cmd_buff);
+			
+			sprintf(cmd_buff, "<button type=\"button\" onclick=\"popupCenter('http://%s/EN/unlink.html', 'myPop1',700,500);\">Unlink</button>", ip_addr_save);
+			link_len = strlen(cmd_buff);
+			fill_space(cmd_buff, link_len+4);
+			strcat(val, cmd_buff);
+			
+			//fill_space(universe, 4);
+			uni_num = atoi(universe);
+			art_sub_num = atoi(art_sub);
+
+			//strcat(val, universe);
+			
+			//sprintf(val, "<a href=\"http://%s\" target=\"_blank\">%s</a> &emsp;&emsp;&emsp;&emsp;&emsp; %s", ip_addr, node_name, ip_addr) ;
+			sc_convert(val);
+			//sc_convert(universe);
+			//WEB_printf(req, "displayMsg('%s','%s');\n",name,val);
+			WEB_printf(req, "displayMsg('%s',",name);
+			//WEB_printf(req, "'%s');\n",val);
+			WEB_printf(req, "'%s'+",val);
+			//WEB_printf(req, "'%s'",universe);
+			
+			sprintf(sel_ele,"<select id=\"artsub%d\" size=\"1\">", idx);
+			sc_convert(sel_ele);
+			WEB_printf(req, "'%s'+",sel_ele);
+
+			sprintf(cmd_buff, "<button type=\"button\" onclick=\"setUniverse('http://%s/EN/', '%d');\">Set</button>", ip_addr_save, idx);
+			
+			for (i = 0; i < 16; i++)
+			{
+				if (i == art_sub_num)
+					sprintf(sel_ele,"<option value=\"%d\" selected>%d</option>", i, i);
+				else
+					sprintf(sel_ele,"<option value=\"%d\">%d</option>", i, i);
+				sc_convert(sel_ele);
+				WEB_printf(req, "'%s'+",sel_ele);
+			}
+	
+			//sprintf(sel_ele,"<option selected>2</option>");
+			//sc_convert(sel_ele);
+			//WEB_printf(req, "'%s'+",sel_ele);
+	
+			sprintf(sel_ele,"</select>");
+			sc_convert(sel_ele);
+			WEB_printf(req, "'%s'+",sel_ele);
+			
+			sprintf(sel_ele,"<select id=\"univ%d\" size=\"1\">", idx);
+			sc_convert(sel_ele);
+			WEB_printf(req, "'%s'+",sel_ele);
+			
+			for (i = 0; i < 16; i++)
+			{
+				if (i == uni_num)
+					sprintf(sel_ele,"<option value=\"%d\" selected>%d</option>", i, i);
+				else
+					sprintf(sel_ele,"<option value=\"%d\">%d</option>", i, i);
+				sc_convert(sel_ele);
+				WEB_printf(req, "'%s'+",sel_ele);
+			}
+			sprintf(sel_ele,"</select>");
+			sc_convert(sel_ele);
+			WEB_printf(req, "'%s'+",sel_ele);
+			
+			// print the set button
+			sc_convert(cmd_buff);
+			WEB_printf(req, "'%s'",cmd_buff);
+			
+			WEB_printf(req, ");\n");
+			return;
+
+		case CFG_SET_ID:
+		case CFG_SET_LINK:
+		case CFG_SET_UNLINK:
+			return;
+
+		case CFG_SET_UNIV0:
+		case CFG_SET_UNIV1:
+		case CFG_SET_UNIV2:
+		case CFG_SET_UNIV3:
+		case CFG_SET_UNIV4:
+		case CFG_SET_UNIV5:
+		case CFG_SET_UNIV6:
+		case CFG_SET_UNIV7:	
+		case CFG_SET_UNIV8:
+		case CFG_SET_UNIV9:
+		case CFG_SET_UNIV10:
+		case CFG_SET_UNIV11:
+		case CFG_SET_UNIV12:
+		case CFG_SET_UNIV13:
+		case CFG_SET_UNIV14:
+		case CFG_SET_UNIV15:
+			base_idx = ((CFG_SET_UNIV0 >> 16) & 0xff);
+			idx = ((id >> 16) & 0xff) - base_idx;
+			sprintf(val,"%d", idx);
+			CFG_set_str(CFG_AKS_UNIVERSE,val);
+			CFG_save(0);
+			return;
+		default:
+			CFG_get_str(id, val);
+			break;
+	}
+#if 0	
+	if (CFG_AKS_CONS1 == id)
+	{
+	    //if (0 == jootest)
+	    //{
+		//	sprintf(joo_test_value,"JooTest-AKS");
+		//	jootest++;
+		//}
+		sprintf(val,"AKS_NODE1         10.10.100.20");
+		//jootest++;
+		//Joo_uart_send(val);
+	}
+	else if (CFG_AKS_CONS2 == id )
+	{
+		sprintf(val,"AKS_NODE2         10.10.100.21");
+	}
+	else
+	{
+		CFG_get_str(id, val);
+	}	
+#endif
 	sc_convert(val);
 	WEB_printf(req, "addCfg('%s',0x%08x,'%s');\n",name,id,val);
 }
@@ -1770,11 +2019,14 @@ int CGI_upgrade(http_req *req)
 {    
 	char *file;
 	int len,rc;
+	//char val[32];
 	if (upgrade_mem) 
 		return CGI_RC_FILE_INVALID; // avoid incorrect cgi call
 	
 	file = WEB_upload_file(req, "files", &len);
 	//if (len >= 0xA0000)
+	//sprintf(val, "Filesize=%d\n", len);	
+	//Joo_uart_send(val);	
 	if(len>=FLASH_FWM_MAX_SIZE)
 	{
 		CGI_upgrade_free();
