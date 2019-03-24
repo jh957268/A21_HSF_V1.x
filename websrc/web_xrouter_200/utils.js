@@ -436,7 +436,7 @@ function form2Cfg(f)
 var OUTF;
 function frmHead(na,to,cmd,go)
 {
-	OUTF="<FORM name="+na+" action="+to+" method=POST>\n"+
+	OUTF="<FORM name="+na+" action="+to+" method=POST target=subIframe>\n"+
 	"<INPUT type=hidden name=CMD value="+cmd+">\n"+
 	"<INPUT type=hidden name=GO value="+go+">\n";
 }
@@ -476,18 +476,67 @@ function genForm(n,a,d,g)
 	return OUTF;
 }
 
+var timeoutVar;
+function close_iFrame()
+{
+    clearTimeout(timeoutVar);
+    var element = document.getElementById('subFormId');
+    if (element)
+    {
+        element.parentNode.removeChild(element);
+    }
+    var elemiFrm = document.getElementById('subIframeId');
+    if (elemiFrm)
+    {
+         elemiFrm.parentNode.removeChild(elemiFrm);
+    }
+    clearTimeout(timeoutVar);
+}
+
 function subForm(f1,a,d,g)
 {
-	var msg=genForm('OUT',a,d,g);
+    if (timeoutVar)
+    {
+        clearTimeout(timeoutVar);
+    }
+
+    var element = document.getElementById('subFormId');
+    if (element)
+    {
+        element.parentNode.removeChild(element);
+    }
+    var elemiFrm = document.getElementById('subIframeId');
+    if (elemiFrm)
+    {
+         elemiFrm.parentNode.removeChild(elemiFrm);
+    }
+
+    var ifrm = document.createElement('iframe');
+    ifrm.setAttribute('name', 'subIframe');
+    ifrm.setAttribute('id', 'subIframeId'); // assign an id
+    ifrm.height = "100";
+    ifrm.width = "500";
+    ifrm.frameborder="0"
+    f1.parentNode.appendChild(ifrm);
+   
+    var html = '<body>Please Wait...</body>';
+
+    ifrm.contentWindow.document.open();
+    ifrm.contentWindow.document.write(html);
+    ifrm.contentWindow.document.close();
+    //document.body.appendChild(ifrm);
+
+    var msg=genForm('OUT',a,d,g);
 /*DEMO*/
 	if (!confirm(msg)) return;
 /*END_DEMO*/
-
-	var newElem = document.createElement("div");
-	newElem.innerHTML = msg ;
-	f1.parentNode.appendChild(newElem);
-	f=document.OUT;
-	f.submit();
+    var newElem = document.createElement("div");
+    newElem.innerHTML = msg ;
+    newElem.setAttribute('id', 'subFormId');
+    f1.parentNode.appendChild(newElem);
+    f=document.OUT;
+    timeoutVar = setTimeout(function(){ close_iFrame(); }, 5000);
+    f.submit();
 }
 
 function addFormElm(n,v)
