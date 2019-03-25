@@ -406,6 +406,83 @@ function Apply_2() {
 			<input type=button style="{width:120px;}" value="Cancel" onClick="Cancel_2()" id="ap_Cancel2_lan_id">
 		</center>
 	</form>
+	
+	<form method=post name=GAFFER>
+		<table width="540" border="1" cellspacing="1" cellpadding="3"   bordercolor="#9BABBD">
+			<tr>
+				<td class="title" colspan="2" id="Wireless_Network_lan_id">GAFFER's Window</td>
+			</tr>
+			<tr> 
+				<td class="head">
+					<font id="gaffer_stat">GAFFER State</font><br>	
+				</td>
+				<td>
+					<input name="GAFFER_STAT" maxlength=32 size=20>
+				</td>
+			</tr>
+			<tr> 
+				<td class="head">
+					<font id="gaffer_subnet">Artnet Subnet</font><br>	
+				</td>
+				<td>
+					<select name="GAFFER_SUBNET" size="1">
+						<option value="0">0</option>
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+						<option value="4">4</option>
+						<option value="5">5</option>
+						<option value="6">6</option>
+						<option value="7">7</option>
+						<option value="8">8</option>
+						<option value="9">9</option>
+						<option value="10">10</option>
+						<option value="11">11</option>
+						<option value="12">12</option>
+						<option value="13">13</option>
+						<option value="14">14</option>
+						<option value="15">15</option>
+					</select>
+				</td>
+			</tr>			
+			<tr> 
+				<td class="head">
+					<font id="gaffer_universe">Universe ID</font><br>	
+				</td>
+				<td>
+					<select name="GAFFER_UNIVERSE" size="1">
+						<option value="0">0</option>
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+						<option value="4">4</option>
+						<option value="5">5</option>
+						<option value="6">6</option>
+						<option value="7">7</option>
+						<option value="8">8</option>
+						<option value="9">9</option>
+						<option value="10">10</option>
+						<option value="11">11</option>
+						<option value="12">12</option>
+						<option value="13">13</option>
+						<option value="14">14</option>
+						<option value="15">15</option>
+
+					</select>
+				</td>
+			</tr>
+			<tr > 
+				<td class="head" id="gaffer_range">Port: Range</td>
+				<td><b>Lower:</b>&nbsp;&nbsp;<input name="gaffer_lower" maxlength=6 size=6 value="8899">&nbsp;&nbsp;&nbsp;&nbsp;<b>Upper:</b>&nbsp;&nbsp;<input name="gaffer_upper" maxlength=6 size=6 value="8899"></td>
+			</tr > 
+		</table> 
+		<p/>
+		<center>
+			<input type=button style="{width:120px;}" value="Apply" onClick="Apply_1()" id="ap_Apply1_lan_id">&nbsp;&nbsp;
+			<input type=button style="{width:120px;}" value="Cancel" onClick="Cancel_1()" id="ap_Cancel1_lan_id">
+		</center>
+	</form>
+
 
 
 <hr id="HF_hr_id"> 
