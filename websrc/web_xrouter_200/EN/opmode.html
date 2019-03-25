@@ -169,9 +169,23 @@ function Apply_1() {
 	subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
 }
 
+function Apply_ID() {
+	var f=document.CRMXSettings;
+	form2Cfg(f);
+	subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
+}
 
+function Apply_Link() {
+	var f=document.CRMXSettings;
+	form2Cfg(f);
+	subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
+}
 
-
+function Apply_UnLink() {
+	var f=document.CRMXSettings;
+	form2Cfg(f);
+	subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
+}
 
 function init_2()
 {
@@ -365,6 +379,16 @@ function Apply_2() {
 					</select>
 				</td>
 			</tr>
+			<tr> 
+				<td class="head">
+					<font id="crmx_link">CRMX Wireless Link</font><br>	
+				</td>
+				<td>
+					<input type=button style="{width:120px;}" value="ID" onClick="Apply_ID()" id="crmx_Apply_id">&nbsp;&nbsp;
+					<input type=button style="{width:120px;}" value="LINK" onClick="Apply_Link()" id="crmx_Apply_link">&nbsp;&nbsp;
+					<input type=button style="{width:120px;}" value="UNLINK" onClick="Apply_UnLink()" id="crmx_Apply_unlink"					
+				</td>
+			</tr>			
 			<!--
 			<tr> 
 				<td class="head">
