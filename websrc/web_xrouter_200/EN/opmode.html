@@ -12,6 +12,7 @@ addCfg("save_lan",120,"1");
 
 addCfg("apcli_enable",212,"1");
 addCfg("Data_Transfor_Mode",212,"2");
+addCfg("GAFFER_ENABLE",212,"1");
 /*END_DEMO*/
 
 /*REAL
@@ -30,6 +31,12 @@ CGI_MAP(AKS_SECOND_CHANNEL, CFG_AKS_SECOND_CHANNEL);
 CGI_MAP(net_ip,CFG_M2M_NET_SERADD);
 CGI_MAP(net_port,CFG_M2M_NET_PORT);
 CGI_MAP(AKS_Bit_Settings, CFG_AKS_SETTINGS);
+
+CGI_MAP(GAFFER_ENABLE, CFG_GAFFER_ENABLE);
+CGI_MAP(GAFFER_UNIVERSE, CFG_GAFFER_UNIVERSE);
+CGI_MAP(GAFFER_SUBNET, CFG_GAFFER_SUBNET);
+CGI_MAP(GAFFER_LOWER, CFG_GAFFER_LOWER);
+CGI_MAP(GAFFER_UPPER, CFG_GAFFER_UPPER);
 
 %>
 
@@ -53,6 +60,7 @@ function initvalue()
 */
 	init_1();
 	init_2();
+	init_gaffer();
  }
 
  
@@ -169,6 +177,26 @@ function Apply_1() {
 	subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
 }
 
+function init_gaffer()
+{
+	var Vapable=getCfg("GAFFER_ENABLE") ;
+	if(Vapable=="0")
+		document.GAFFER.GAFFER_ENABLE[0].checked=true ;
+	else 
+		document.GAFFER.GAFFER_ENABLE[1].checked=true ;
+}
+
+function Cancel_gaffer() {
+	init_gaffer();
+}
+
+function Apply_gaffer() {
+	var f=document.GAFFER;
+
+	form2Cfg(f);
+	subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
+}
+
 function Apply_ID() {
 	var f=document.CRMXSettings;
 	form2Cfg(f);
@@ -214,13 +242,11 @@ function Apply_2() {
 <input type="hidden" name="country_code">
 	<dl>
 		<dd></dd>
-		<dt><input type="radio" name="apcli_enable" value="0"  ><b id="apmode_lan_id">Access Point (AP):</b></dt>
-		<dt >&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp <a id="Access_Point_lan_id">Access Point</a></dt>
-
-		<dd></dd>  
-		<dt ><input type="radio" name="apcli_enable" value="1" ><b id="opmode_STAMode_lan_id">Station Mode (STA):</b></dt>
-		<dt >&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp <a id="opmode_StationMode_lan_id"> Station Mode</a></dt>
-		<dd></dd>  
+		<dt><input type="radio" name="apcli_enable" value="0"  ><b id="apmode_lan_id">Access Point (AP):</b>&emsp;&emsp;&emsp;&emsp;
+		    <input type="radio" name="apcli_enable" value="1" ><b id="opmode_STAMode_lan_id">Station Mode (STA):</b></dt>
+		<dt >&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp <a id="Access_Point_lan_id">Access Point</a>
+		     &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; <a id="opmode_StationMode_lan_id"> Station Mode</a></dt>
+ 
 		<dd></dd> 
 		<!--
 		<p/>  
@@ -257,7 +283,7 @@ function Apply_2() {
 			</tr>
 			<tr> 
 				<td class="head">
-					<font id="aks_subnet">Artnet Subnet</font><br>	
+					<font id="aks_subnet">Artnet Subnet/Universe ID</font><br>	
 				</td>
 				<td>
 					<select name="AKS_SUBNET" size="1">
@@ -277,14 +303,7 @@ function Apply_2() {
 						<option value="13">13</option>
 						<option value="14">14</option>
 						<option value="15">15</option>
-					</select>
-				</td>
-			</tr>			
-			<tr> 
-				<td class="head">
-					<font id="aks_universe">Universe ID</font><br>	
-				</td>
-				<td>
+					</select>&nbsp;&nbsp;
 					<select name="AKS_UNIVERSE" size="1">
 						<option value="0">0</option>
 						<option value="1">1</option>
@@ -302,10 +321,9 @@ function Apply_2() {
 						<option value="13">13</option>
 						<option value="14">14</option>
 						<option value="15">15</option>
-
-					</select>
+					</select>					
 				</td>
-			</tr>
+			</tr>			
 			<tr > 
 				<td class="head" id="para_net_port_id">Port: (Default 6454)</td>
 				<td><input name="net_port" maxlength=32 size=32 value="8899"></td>
@@ -417,12 +435,12 @@ function Apply_2() {
 					<font id="gaffer_stat">GAFFER State</font><br>	
 				</td>
 				<td>
-					<input name="GAFFER_STAT" maxlength=32 size=20>
+					<input type="radio" value="0" name="GAFFER_ENABLE"><b>Enable</b>&emsp;&emsp;<input type="radio" value="1" name="GAFFER_ENABLE"><b>Disable</b>
 				</td>
 			</tr>
 			<tr> 
 				<td class="head">
-					<font id="gaffer_subnet">Artnet Subnet</font><br>	
+					<font id="gaffer_subnet">Artnet Subnet/Universe ID</font><br>	
 				</td>
 				<td>
 					<select name="GAFFER_SUBNET" size="1">
@@ -442,14 +460,7 @@ function Apply_2() {
 						<option value="13">13</option>
 						<option value="14">14</option>
 						<option value="15">15</option>
-					</select>
-				</td>
-			</tr>			
-			<tr> 
-				<td class="head">
-					<font id="gaffer_universe">Universe ID</font><br>	
-				</td>
-				<td>
+					</select>&nbsp;&nbsp;
 					<select name="GAFFER_UNIVERSE" size="1">
 						<option value="0">0</option>
 						<option value="1">1</option>
@@ -467,19 +478,19 @@ function Apply_2() {
 						<option value="13">13</option>
 						<option value="14">14</option>
 						<option value="15">15</option>
-
-					</select>
+					</select>					
 				</td>
-			</tr>
+			</tr>			
 			<tr > 
-				<td class="head" id="gaffer_range">Port: Range</td>
-				<td><b>Lower:</b>&nbsp;&nbsp;<input name="gaffer_lower" maxlength=6 size=6 value="8899">&nbsp;&nbsp;&nbsp;&nbsp;<b>Upper:</b>&nbsp;&nbsp;<input name="gaffer_upper" maxlength=6 size=6 value="8899"></td>
+				<td class="head" id="gaffer_range">Channel Range</td>
+				<td><b>Lower:</b>&nbsp;&nbsp;<input name="GAFFER_LOWER" maxlength=4 size=4 value="10">&emsp;
+				    <b>Upper:</b>&nbsp;&nbsp;<input name="GAFFER_UPPER" maxlength=4 size=4 value="16"></td>
 			</tr > 
 		</table> 
 		<p/>
 		<center>
-			<input type=button style="{width:120px;}" value="Apply" onClick="Apply_1()" id="ap_Apply1_lan_id">&nbsp;&nbsp;
-			<input type=button style="{width:120px;}" value="Cancel" onClick="Cancel_1()" id="ap_Cancel1_lan_id">
+			<input type=button style="{width:120px;}" value="Apply" onClick="Apply_gaffer()" id="ap_Apply1_lan_id">&nbsp;&nbsp;
+			<input type=button style="{width:120px;}" value="Cancel" onClick="Cancel_gaffer()" id="ap_Cancel1_lan_id">
 		</center>
 	</form>
 
