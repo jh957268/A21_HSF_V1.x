@@ -149,6 +149,11 @@ typedef struct _web_data
 	unsigned char channelWidth[3];
 	unsigned char secondChannel[3];
 	unsigned char bitSetting[3];
+	unsigned char gaffer_enb[2];
+	unsigned char gaffer_sub[3];
+	unsigned char gaffer_univ[3];
+	unsigned char gaffer_lower[4];
+	unsigned char gaffer_upper[4];
 }WEB_DATA_T;
 
 WEB_DATA_T g_web_config = {0};
