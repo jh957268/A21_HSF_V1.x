@@ -179,6 +179,8 @@ function Apply_1() {
 
 function init_gaffer()
 {
+	var f=document.GAFFER;
+	cfg2Form(f);
 	var Vapable=getCfg("GAFFER_ENABLE") ;
 	if(Vapable=="0")
 		document.GAFFER.GAFFER_ENABLE[0].checked=true ;
