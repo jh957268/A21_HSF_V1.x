@@ -194,7 +194,30 @@ function Cancel_gaffer() {
 
 function Apply_gaffer() {
 	var f=document.GAFFER;
+	var low=document.GAFFER.GAFFER_LOWER.value;
+	var upper=document.GAFFER.GAFFER_UPPER.value;
 
+	if(isNaN(low)){
+		alert(low + " is not a number");
+		return;
+	}
+	if(isNaN(upper)){
+		alert(upper + " is not a number");
+		return;
+	}
+	low=1*low;
+	upper=1*upper;
+	if ((low > 511) || (upper > 511))
+	{
+		alert("Number is out of range");
+		return;
+	}
+	if (low > upper)
+	{
+		alert("lower > upper");
+		return;
+	}	
+	
 	form2Cfg(f);
 	subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
 }
