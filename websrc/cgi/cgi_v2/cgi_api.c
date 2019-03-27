@@ -227,6 +227,7 @@ int CGI_do_cmd(http_req *req)
 	char * cmd;
 	int update_cnt =0;
 	int forceToReboot = 0;
+	//char ebuff[64];
 
 #if	(defined(CONFIG_HTTPD_MAX_USERS)&&(CONFIG_HTTPD_MAX_USERS>1))
 	#ifdef	CONFIG_HTTPD_ADMIN_NAME
@@ -309,6 +310,8 @@ int CGI_do_cmd(http_req *req)
 					*c = '\0';
 			}
 			diag_printf("call CFG set %s=[%s]\n", CFG_id2str(id), val);
+			//sprintf(ebuff, "call CFG set id = %d %s=[%s]\n", id, CFG_id2str(id), val);
+			//Joo_uart_send((char *)ebuff);
 
 			if (!strcmp(CFG_id2str(id), "WLN_BssidNum"))
 			{
