@@ -676,13 +676,16 @@ static int USER_FUNC socketa_recv_callback(uint32_t event,char *data,uint32_t le
 	{
 		char Uni[4]={0};
 		char label[] = "Art-Net";
-		int uni_num;
+		int uni_num, art_sub;
 		
 		if(strncmp(data, label, 7)==0)
 		{
-			CFG_get_str(CFG_str2id("AKS_UNIVERSE"),Uni);
-
+			CFG_get_str(CFG_str2id("AKS_UNIVERSE"),Uni);	
 			uni_num = atoi(Uni);;
+			CFG_get_str(CFG_str2id("AKS_SUBNET"),Uni);
+			art_sub = atoi(Uni);
+			art_sub <<= 4;
+			uni_num = ((uni_num | art_sub) & 0xff);
 			if(len > 50)
 			{
 				if(uni_num == (int)data[14])
@@ -932,6 +935,8 @@ struct client_ent
 	char node_name[20];
 	char ip_addr[20];
 	char universe[4];
+	char subnet[4];
+	char baterry[4];
 };
 
 struct client_ent client_list[MAX_NUM_ENTRY];
@@ -1011,6 +1016,8 @@ static void server_thread_main(void* arg)
 	sprintf(client_list[0].node_name, "%s", tmp_buff);
 	CFG_get_str( CFG_str2id("AKS_UNIVERSE"), tmp_buff);
 	sprintf(client_list[0].universe, tmp_buff);	
+	CFG_get_str( CFG_str2id("AKS_SUBNET"), tmp_buff);
+	sprintf(client_list[0].subnet, tmp_buff);	
 	
    	if (0 == refresh_clients)
 	{
@@ -1075,9 +1082,11 @@ static void server_thread_main(void* arg)
 			eprintf("\r\n");
 			msg[19] = 0;
 			msg[22] = 0;
+			msg[26] = 0;
 			sprintf(client_list[client_valid_num].node_name, "%s", &msg[0]);
 			sprintf(client_list[client_valid_num].ip_addr, "%s", inet_ntoa(cliAddr.sin_addr));
 			sprintf(client_list[client_valid_num].universe, &msg[20]);
+			sprintf(client_list[client_valid_num].subnet, &msg[24]);
 			client_valid_num++;
 			
 		}
@@ -1217,6 +1226,7 @@ USER_FUNC static void client_thread_main(void* arg)
 			//eprintf("Node name = %s, Uni = %s\n", g_web_config.name, g_web_config.universe);
 			CFG_get_str( CFG_str2id("AKS_NAME"), &cli_recv[0]);
 			CFG_get_str( CFG_str2id("AKS_UNIVERSE"), &cli_recv[20]);
+			CFG_get_str( CFG_str2id("AKS_SUBNET"), &cli_recv[24]);
 			//sprintf(&cli_recv[0], "AKS" );
 			//sprintf(&cli_recv[20], "10");
 #if 0
@@ -1254,7 +1264,8 @@ int get_client_entry(int idx, char *node_name, char *ip_addr, char *universe, ch
 	}
 	sprintf(ip_addr, "%s", client_list[idx].ip_addr);
 	sprintf(universe, "%s", client_list[idx].universe);
-	sprintf(art_sub, "1");
+	sprintf(art_sub, "%s", client_list[idx].subnet);	
+
 	sprintf(battery, "88\%");
 	return 0;
 }
