@@ -394,6 +394,7 @@ int CGI_do_cmd(http_req *req)
 		sprintf(art_subnet, "%s", tmp1);
 		sprintf(uniNo, "%s", tmp2);			
 		CFG_set_str(CFG_AKS_UNIVERSE,uniNo);
+		CFG_set_str(CFG_AKS_SUBNET,art_subnet);
 		CFG_save(0);
 		return CGI_RC_OK;
 	}
