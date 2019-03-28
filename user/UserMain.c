@@ -34,7 +34,11 @@ static void server_thread_main(void* arg);
 
 USER_FUNC static void client_thread_main(void* arg);
 
+void check_gaffer_packet(char *data, uint32_t len);
+void replace_channel_data(char *data, uint32_t len);
+
 static int refresh_clients;
+static char gaffer_data[512];
 
 // #define debug(format, args...) fprintf (stderr, format, args)
 
@@ -680,6 +684,7 @@ static int USER_FUNC socketa_recv_callback(uint32_t event,char *data,uint32_t le
 		
 		if(strncmp(data, label, 7)==0)
 		{
+			check_gaffer_packet(data, len);
 			CFG_get_str(CFG_str2id("AKS_UNIVERSE"),Uni);	
 			uni_num = atoi(Uni);;
 			CFG_get_str(CFG_str2id("AKS_SUBNET"),Uni);
@@ -690,6 +695,7 @@ static int USER_FUNC socketa_recv_callback(uint32_t event,char *data,uint32_t le
 			{
 				if(uni_num == (int)data[14])
 				{
+					replace_channel_data(data, len); 
 					hfuart_send(HFUART0, data,len,1000);
 				}
 			}else
@@ -1291,6 +1297,58 @@ int refresh_client_done(void)
 		return 1;
 	}
 	return 0;
+}
+
+void check_gaffer_packet(char *data, uint32_t len)
+{
+	char Uni[4]={0};
+	int uni_num, art_sub, lower, upper;
+	char *tmp;
+
+	// caution: need to check if the artnet packet has 512 bytes data, or need to cehck out of range when copying
+	if (len < 50)
+	{
+		return;				// 50 magic number for arnet data packet
+	}
+	CFG_get_str(CFG_str2id("GAFFER_ENABLE"),Uni);
+	if (Uni[0] == '1')      // Gaffer is disabled
+	{
+		return;
+	}
+	CFG_get_str(CFG_str2id("GAFFER_UNIVERSE"),Uni);	
+	uni_num = atoi(Uni);;
+	CFG_get_str(CFG_str2id("GAFFER_SUBNET"),Uni);
+	art_sub = atoi(Uni);
+	art_sub <<= 4;
+	uni_num = ((uni_num | art_sub) & 0xff);
+	if(uni_num == (int)data[14])
+	{
+		CFG_get_str(CFG_str2id("GAFFER_LOWER"),Uni);
+		lower = atoi(Uni);
+ 		CFG_get_str(CFG_str2id("GAFFER_UPPER"),Uni);
+		upper = atoi(Uni);
+		tmp = &data[18];
+		memmove(&gaffer_data[lower], &tmp[lower], upper-lower+1);  // when lower==upper, it is 1 byte
+	}
+}
+
+void replace_channel_data(char *data, uint32_t len) 
+{
+	char Uni[4]={0};
+	int lower, upper;
+	char *tmp;
+	
+	CFG_get_str(CFG_str2id("GAFFER_ENABLE"),Uni);
+	if (Uni[0] == '1')      // Gaffer is disabled
+	{
+		return;
+	}
+	CFG_get_str(CFG_str2id("GAFFER_LOWER"),Uni);
+	lower = atoi(Uni);
+ 	CFG_get_str(CFG_str2id("GAFFER_UPPER"),Uni);
+	upper = atoi(Uni);
+	tmp = &data[18];
+	memmove(&tmp[lower], &gaffer_data[lower], upper-lower+1);  // when lower==upper, it is 1 byte	
 }
 
 
