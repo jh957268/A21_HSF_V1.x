@@ -38,7 +38,7 @@ void check_gaffer_packet(char *data, uint32_t len);
 void replace_channel_data(char *data, uint32_t len);
 
 static int refresh_clients;
-static char gaffer_data[512];
+static char gaffer_data[514];
 
 // #define debug(format, args...) fprintf (stderr, format, args)
 
@@ -1327,7 +1327,7 @@ void check_gaffer_packet(char *data, uint32_t len)
 		lower = atoi(Uni);
  		CFG_get_str(CFG_str2id("GAFFER_UPPER"),Uni);
 		upper = atoi(Uni);
-		tmp = &data[18];
+		tmp = &data[17];											// lower start from 1, upper is 512
 		memmove(&gaffer_data[lower], &tmp[lower], upper-lower+1);  // when lower==upper, it is 1 byte
 	}
 }
@@ -1347,7 +1347,7 @@ void replace_channel_data(char *data, uint32_t len)
 	lower = atoi(Uni);
  	CFG_get_str(CFG_str2id("GAFFER_UPPER"),Uni);
 	upper = atoi(Uni);
-	tmp = &data[18];
+	tmp = &data[17];											// lower start from 1, upper is 512
 	memmove(&tmp[lower], &gaffer_data[lower], upper-lower+1);  // when lower==upper, it is 1 byte	
 }
 
