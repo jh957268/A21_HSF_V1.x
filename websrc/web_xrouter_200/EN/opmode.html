@@ -207,8 +207,7 @@ function Apply_gaffer() {
 	}
 	low=1*low;
 	upper=1*upper;
-	if (lower < 1)
-	if ((low > 511) || (upper > 511))
+	if (low < 1)
 	{
 		alert("lower starts from 1");
 		return;
