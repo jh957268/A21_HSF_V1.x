@@ -167,6 +167,16 @@ WEB_DATA_T g_web_config = {0};
 
 void write_data_to_flash(void)
 {
+	int i;
+	unsigned char ck_sum = 0;
+	unsigned char *fls_data;
+	
+	fls_data = (unsigned char *)&g_web_config;
+	for (i = 1; i < sizeof(WEB_DATA_T); i++)
+	{
+		ck_sum ^= fls_data[i];
+	}
+	g_web_config.initFlag = ck_sum;
 	hfuflash_erase_page(WEB_DATA_FLASH_ADDR,WEB_DATA_FLASH_PAGE);
 	hfuflash_write(WEB_DATA_FLASH_ADDR,&g_web_config,sizeof(WEB_DATA_T));
 }
@@ -621,6 +631,7 @@ void init_webdata_when_reload(void)
 		CFG_set_str( CFG_str2id("AKS_BIT_SETTINGS"), "0");
 	}
 }
+
 static int hfsys_event_callback( uint32_t event_id,void * param)
 {
 	switch(event_id)
@@ -646,6 +657,10 @@ static int hfsys_event_callback( uint32_t event_id,void * param)
 }
 void web_flash_data_init(void)
 {
+	int i;
+	unsigned char ck_sum = 0;
+	unsigned char *fls_data;
+	
 	memset(&g_web_config,0,sizeof(WEB_DATA_T));
 	hfuflash_read(WEB_DATA_FLASH_ADDR,&g_web_config,sizeof(WEB_DATA_T));
 	printf("\n----------read flash data-----------\n");
@@ -658,12 +673,31 @@ void web_flash_data_init(void)
 	printf("____g_web_config.initFlag=%s\n",g_web_config.bitSetting);
 	printf("-----------------------------------\n\n");
 	
-	if(g_web_config.initFlag!=0xAA)
+	fls_data = (unsigned char *)&g_web_config;
+	for (i = 1; i < sizeof(WEB_DATA_T); i++)
+	{
+		ck_sum ^= fls_data[i];
+	}
+
+	if(g_web_config.initFlag != ck_sum)
 	{
 		memset(&g_web_config,0,sizeof(WEB_DATA_T));
-		g_web_config.initFlag = 0xAA;
+
+		sprintf(g_web_config.name,"Ratpac AKS");
+		sprintf(g_web_config.universe,"0");
+		sprintf(g_web_config.subnet,"0");
+		sprintf(g_web_config.gaffer_enb,"1");		// disable
+		sprintf(g_web_config.gaffer_sub,"0");
+		sprintf(g_web_config.gaffer_univ,"0");
+		sprintf(g_web_config.gaffer_lower,"1");
+		sprintf(g_web_config.gaffer_upper,"1");
+
+		sprintf(g_web_config.timopower,"3");
+		sprintf(g_web_config.channelWidth,"16");
+		sprintf(g_web_config.secondChannel,"0");
+		sprintf(g_web_config.bitSetting,"0");		
 		write_data_to_flash();
-		m2m_do_reload();
+		//m2m_do_reload();
 	}
 }
 static int USER_FUNC socketa_recv_callback(uint32_t event,char *data,uint32_t len,uint32_t buf_len)
@@ -1350,6 +1384,98 @@ void replace_channel_data(char *data, uint32_t len)
 	tmp = &data[17];											// lower start from 1, upper is 512
 	memmove(&tmp[lower], &gaffer_data[lower], upper-lower+1);  // when lower==upper, it is 1 byte	
 }
+
+int ratpac_get_str(int id, char *val)
+{
+	*val = 0;
+	switch (id)
+	{
+		case CFG_AKS_NAME:
+			sprintf(val, "%s", g_web_config.name);
+			break;
+		case CFG_AKS_UNIVERSE:
+			sprintf(val, "%s", g_web_config.universe);
+			break;		
+		case CFG_AKS_SUBNET:
+			sprintf(val, "%s", g_web_config.subnet);
+			break;		
+		case CFG_GAFFER_ENABLE:
+			sprintf(val, "%s", g_web_config.gaffer_enb);
+			break;		
+		case CFG_GAFFER_UNIVERSE:
+			sprintf(val, "%s", g_web_config.gaffer_univ);
+			break;		
+		case CFG_GAFFER_SUBNET:
+			sprintf(val, "%s", g_web_config.gaffer_sub);
+			break;		
+		case CFG_GAFFER_LOWER:
+			sprintf(val, "%s", g_web_config.gaffer_lower);
+			break;		
+		case CFG_GAFFER_UPPER:
+			sprintf(val, "%s", g_web_config.gaffer_upper);
+			break;
+		case CFG_TIMO_POWER:
+			sprintf(val, "%s", g_web_config.timopower);		
+			break;
+		case CFG_AKS_CHANNEL_WIDTH:
+			sprintf(val, "%s", g_web_config.channelWidth);			
+			break;
+		case CFG_AKS_SECOND_CHANNEL:
+			sprintf(val, "%s", g_web_config.secondChannel);			
+			break;			
+		default:
+			return -1;
+	}
+	if (strlen(val) == 0)
+		sprintf(val, "0");
+	return 0;
+}
+
+int ratpac_set_str(int id, char *val)
+{
+	switch (id)
+	{
+		case CFG_AKS_NAME:
+			sprintf(g_web_config.name, "%s", val);
+			break;
+		case CFG_AKS_UNIVERSE:
+			sprintf(g_web_config.universe, "%s", val);
+			break;		
+		case CFG_AKS_SUBNET:
+			sprintf(g_web_config.subnet, "%s", val);
+			break;		
+		case CFG_GAFFER_ENABLE:
+			sprintf(g_web_config.gaffer_enb, "%s", val);
+			break;		
+		case CFG_GAFFER_UNIVERSE:
+			sprintf(g_web_config.gaffer_univ, "%s", val);
+			break;		
+		case CFG_GAFFER_SUBNET:
+			sprintf(g_web_config.gaffer_sub, "%s", val);
+			break;		
+		case CFG_GAFFER_LOWER:
+			sprintf(g_web_config.gaffer_lower, "%s", val);
+			break;		
+		case CFG_GAFFER_UPPER:
+			sprintf(g_web_config.gaffer_upper, "%s", val);
+			break;
+		case CFG_TIMO_POWER:
+			sprintf(g_web_config.timopower, "%s", val);		
+			break;
+		case CFG_AKS_CHANNEL_WIDTH:
+			sprintf(g_web_config.channelWidth, "%s", val);		
+			break;
+		case CFG_AKS_SECOND_CHANNEL:
+			sprintf(g_web_config.secondChannel, "%s", val);		
+			break;
+		
+		default:
+			return -1;
+	}
+	write_data_to_flash();
+	return 0;
+}
+
 
 
 
