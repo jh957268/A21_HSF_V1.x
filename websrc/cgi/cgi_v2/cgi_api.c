@@ -182,7 +182,8 @@ static int CGI_do_load_cert(http_req *req);
 
 void do_refresh_clients(void);
 int  refresh_client_done(void);
-
+int ratpac_get_str(int id, char *val);
+int ratpac_set_str(int id, char *val);
 
 cgi_cmd ps_cgi_cmds[]=
 {
@@ -318,10 +319,13 @@ int CGI_do_cmd(http_req *req)
 				forceToReboot = 1;
 			}
 
-
+			rc = ratpac_set_str(id, val);    // return 0 or -1, 0 means done and success
+			if (-1 == rc)
+			{
+				rc=CFG_set_str(id,val);
+			}
 			
-			rc=CFG_set_str(id,val);
-						if(id==CFG_SYS_USERS||id==CFG_SYS_ADMPASS)
+			if(id==CFG_SYS_USERS||id==CFG_SYS_ADMPASS)
 			{
 				user_config(0,0);
 			}
@@ -725,8 +729,13 @@ void CGI_var_map(http_req *req, char *name, int id)
 			CFG_set_str(CFG_AKS_UNIVERSE,val);
 			CFG_save(0);
 			return;
+
 		default:
-			CFG_get_str(id, val);
+			idx = ratpac_get_str(id, val);
+			if (-1 == idx)
+			{
+				CFG_get_str(id, val);
+			}
 			break;
 	}
 #if 0	
