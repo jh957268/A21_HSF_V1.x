@@ -700,6 +700,42 @@ void web_flash_data_init(void)
 		//m2m_do_reload();
 	}
 }
+
+static char uart_rcv_data[64];
+static int uart_rvc_len = 0;
+static int uart_rvc_done = 0;
+
+static int USER_FUNC uart_recv_callback(uint32_t event,char *data,uint32_t len,uint32_t buf_len)
+{
+	int copy_len;
+	
+	if (1 == artnet_enable)
+	{
+		uart_rvc_len=0;
+		return len;
+	}
+	copy_len = ((len > 60) ? 60 : len);
+	strncpy(&uart_rcv_data[uart_rvc_len], data, copy_len);
+	uart_rvc_len += copy_len;
+	if (uart_rcv_data[uart_rvc_len-1] == '\n' || uart_rcv_data[uart_rvc_len-1] == '\r')
+	{
+		uart_rcv_data[uart_rvc_len] = 0;
+		uart_rvc_done = 1;
+#if 0
+		if (uart_rcv_data[uart_rvc_len-1] == '\n')
+			Joo_uart_send("TWN");
+		else if (uart_rcv_data[uart_rvc_len-1] == '\r')
+			Joo_uart_send("TWR");
+		else		
+			Joo_uart_send("TW?");
+#endif		
+		uart_rvc_len = 0;
+		return (copy_len);
+	}
+//	Joo_uart_send("PD");
+	return (copy_len);
+}	
+
 static int USER_FUNC socketa_recv_callback(uint32_t event,char *data,uint32_t len,uint32_t buf_len)
 {
 	if(event==HFNET_SOCKETA_CONNECTED)
@@ -778,7 +814,7 @@ void UserMain(void *arg)
 	{
 		HF_Debug(DEBUG_WARN,"start assis fail\n");
 	}	
-	if(hfnet_start_uart(HFTHREAD_PRIORITIES_LOW,NULL)!=HF_SUCCESS)
+	if(hfnet_start_uart(HFTHREAD_PRIORITIES_LOW,(hfnet_callback_t)uart_recv_callback)!=HF_SUCCESS)
 	{
 		HF_Debug(DEBUG_WARN,"start uart fail\n");
 	}
@@ -853,6 +889,12 @@ void UserMain(void *arg)
 		if (0 == artnet_enable)
 		{
 			hf_thread_delay(1000);
+			if (1 == uart_rvc_done)
+			{
+				Joo_uart_send(uart_rcv_data);
+				uart_rvc_done = 0;
+				uart_rvc_len = 0;
+			}
 			continue;
 		}
 		/*
@@ -1475,6 +1517,24 @@ int ratpac_set_str(int id, char *val)
 	write_data_to_flash();
 	return 0;
 }
+
+void set_artnet_enable(int val)
+{
+	artnet_enable = val;
+}
+
+void clear_uart_recv(void)
+{
+	uart_rvc_done = 0;
+	uart_rvc_len = 0;
+}
+
+void Joo_uart_cmd(char *cmd)
+{
+	set_artnet_enable(0);
+	clear_uart_recv();
+	Joo_uart_send(cmd);
+}	
 
 
 
