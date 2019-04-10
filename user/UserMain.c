@@ -1532,10 +1532,15 @@ void clear_uart_recv(void)
 int Joo_uart_cmd(char *cmd)
 {
 	int i;
+	cyg_tick_count_t cur_tick;
+	
 	set_artnet_enable(0);
 	clear_uart_recv();
 	Joo_uart_send(cmd);
-	for (i = 0; i < 1200; i++)
+	cur_tick = cyg_current_time();
+	
+	// for (i = 0; i < 1200; i++)
+	while (	(cyg_current_time() - cur_tick) < 200)   // every tick is 10ms
 	{
 		hf_thread_delay(2);
 		if ( 1 == uart_rvc_done)
@@ -1543,6 +1548,7 @@ int Joo_uart_cmd(char *cmd)
 	}
 	if (0 == uart_rvc_done)
 	{
+		Joo_uart_send("SAMD no response\n");
 		return (-1);
 	}
 	uart_rvc_done = 0;
