@@ -1529,11 +1529,28 @@ void clear_uart_recv(void)
 	uart_rvc_len = 0;
 }
 
-void Joo_uart_cmd(char *cmd)
+int Joo_uart_cmd(char *cmd)
 {
+	int i;
 	set_artnet_enable(0);
 	clear_uart_recv();
 	Joo_uart_send(cmd);
+	for (i = 0; i < 1000; i++)
+	{
+		hf_thread_delay(2);
+		if ( 1 == uart_rvc_done)
+			break;
+	}
+	if (0 == uart_rvc_done)
+	{
+		return (-1);
+	}
+	uart_rvc_done = 0;
+	if (strstr(uart_rcv_data, "+ok"))
+	{
+		return 0;
+	}
+	return (-1);
 }	
 
 
