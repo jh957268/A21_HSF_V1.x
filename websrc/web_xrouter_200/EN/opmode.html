@@ -228,22 +228,27 @@ function Apply_gaffer() {
 	subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
 }
 
+function popupCenter(url, title, w, h) 
+{
+  var left = (screen.width/2)-(w/2);
+  var top = (screen.height/2)-(h/2);
+  var newwin = window.open(url, title, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width='+w+', height='+h+', top='+top+', left='+left);
+  setTimeout(function(){ newwin.close(); }, 3000);
+}
+
 function Apply_ID() {
-	var f=document.CRMXSettings;
-	form2Cfg(f);
-	subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
+	//var f=document.CRMXSettings;
+	//form2Cfg(f);
+	//subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
+	popupCenter('/EN/id.html', 'myPop1',700,500);
 }
 
 function Apply_Link() {
-	var f=document.CRMXSettings;
-	form2Cfg(f);
-	subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
+	popupCenter('/EN/link.html', 'myPop1',700,500);
 }
 
 function Apply_UnLink() {
-	var f=document.CRMXSettings;
-	form2Cfg(f);
-	subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
+	popupCenter('/EN/unlink.html', 'myPop1',700,500);
 }
 
 function init_2()
