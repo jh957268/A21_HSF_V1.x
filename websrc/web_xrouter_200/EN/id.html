@@ -9,20 +9,27 @@
 
 <p>ID command sent.</p>
 
-<SCRIPT language=JavaScript>
-/*DEMO*/
-addCfg("AKS_NAME",212,"Success");
-/*END_DEMO*/
+<hl><pre id="SET_ID"></pre></hl>
+
+<script language=JavaScript>
+
+function displayMsg(eleID, strMsg)
+{
+	var strMessage1 = document.getElementById(eleID) ;
+	if (strMessage1)
+	{
+		strMessage1.innerHTML = strMsg;
+	}
+}
 
 /*REAL
 <%
 CGI_MAP(SET_ID, CFG_SET_ID);
 %>
+
 REAL*/
 
+//displayMsg('SET_ID', 'Command Status : Success');
 </script>
-
-<p>	<input name="AKS_NAME" maxlength=32 size=20></p>
-
 </body>
 </html>
