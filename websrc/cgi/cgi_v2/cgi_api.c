@@ -706,33 +706,36 @@ void CGI_var_map(http_req *req, char *name, int id)
 		case CFG_SET_ID:
 			if (Joo_uart_cmd("Artnet:ID\n") == 0)
 			{
-				sprintf(val, "Success");
+				sprintf(val, "Command Status : Success");
 			}
 			else
 			{
-				sprintf(val, "Fail");				
+				sprintf(val, "Command Status : Fail");				
 			}
-			break;
+			WEB_printf(req, "displayMsg('%s','%s');\n",name, val);
+			return;
 		case CFG_SET_LINK:
 			if (Joo_uart_cmd("Artnet:Link\n") == 0)
 			{
-				sprintf(val, "Success");
+				sprintf(val, "Command Status : Success");
 			}
 			else
 			{
-				sprintf(val, "Fail");				
+				sprintf(val, "Command Status : Fail");				
 			}
-			break;		
+			WEB_printf(req, "displayMsg('%s','%s');\n",name, val);
+			return;	
 		case CFG_SET_UNLINK:
 			if (Joo_uart_cmd("Artnet:Unlink\n") == 0)
 			{
-				sprintf(val, "Success");
+				sprintf(val, "Command Status : Success");
 			}
 			else
 			{
-				sprintf(val, "Fail");				
+				sprintf(val, "Command Status : Fail");				
 			}
-			break;	
+			WEB_printf(req, "displayMsg('%s','%s');\n",name, val);
+			return;
 
 		case CFG_SET_UNIV0:
 		case CFG_SET_UNIV1:
