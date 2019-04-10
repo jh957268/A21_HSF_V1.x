@@ -1535,7 +1535,7 @@ int Joo_uart_cmd(char *cmd)
 	set_artnet_enable(0);
 	clear_uart_recv();
 	Joo_uart_send(cmd);
-	for (i = 0; i < 1000; i++)
+	for (i = 0; i < 1200; i++)
 	{
 		hf_thread_delay(2);
 		if ( 1 == uart_rvc_done)
