@@ -761,6 +761,10 @@ static int USER_FUNC socketa_recv_callback(uint32_t event,char *data,uint32_t le
 			art_sub = atoi(Uni);
 			art_sub <<= 4;
 			uni_num = ((uni_num | art_sub) & 0xff);
+			if (0 == artnet_enable)
+			{
+				return 0;			// do not send data if artnet_enable is 0
+			}
 			if(len > 50)
 			{
 				if(uni_num == (int)data[14])
