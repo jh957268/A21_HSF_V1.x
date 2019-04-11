@@ -2132,7 +2132,7 @@ int CGI_SAMD_upgrade(http_req *req)
 	if (rc)
 		return CGI_RC_FILE_INVALID;
 	
-	mon_snd_cmd(MON_CMD_REBOOT);
+	// mon_snd_cmd(MON_CMD_REBOOT);
 #ifdef	CONFIG_ZWEB
 	zweb_location = 0;
 #endif
