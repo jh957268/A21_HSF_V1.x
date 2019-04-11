@@ -1533,18 +1533,21 @@ void clear_uart_recv(void)
 	uart_rvc_len = 0;
 }
 
-int Joo_uart_cmd(char *cmd)
+int Joo_uart_cmd(char *cmd, int len, char *expect_resp, cyg_tick_count_t timeout_tick)
 {
 	int i;
 	cyg_tick_count_t cur_tick;
 	
 	set_artnet_enable(0);
 	clear_uart_recv();
-	Joo_uart_send(cmd);
+	if (len)
+	{
+		hfuart_send(HFUART0, cmd, len, 100);
+	}	
 	cur_tick = cyg_current_time();
 	
 	// for (i = 0; i < 1200; i++)
-	while (	(cyg_current_time() - cur_tick) < 200)   // every tick is 10ms
+	while (	(cyg_current_time() - cur_tick) < timeout_tick)   // every tick is 10ms
 	{
 		hf_thread_delay(2);
 		if ( 1 == uart_rvc_done)
@@ -1556,11 +1559,67 @@ int Joo_uart_cmd(char *cmd)
 		return (-1);
 	}
 	uart_rvc_done = 0;
-	if (strstr(uart_rcv_data, "+ok"))
+	if (strstr(uart_rcv_data, expect_resp))
 	{
 		return 0;
 	}
 	return (-1);
+}
+
+#define PKT_SIZE 256
+static unsigned char pkt_buff[PKT_SIZE+16];
+static unsigned char expect_buff[8] = {'o', 'k', ':', 0, 0};
+
+int SAMD_firmware_download(unsigned char *firmware, int len)
+{
+	unsigned char cksum, blk;
+	int cpy_len;
+	int remain_len = len;
+	int total_len = 0;
+	int i;
+	
+	if (Joo_uart_cmd("Artnet:Reset\n", strlen("Artnet:Reset\n"), "ok:Reset", 200) != 0)
+	{
+		return -1;
+	}
+	if (Joo_uart_cmd(0, "ok:Hello", 0, 200) != 0)
+	{
+		return -1;
+	}
+	if (Joo_uart_cmd("Artnet:Update\n", strlen("Artnet:Update\n"), "ok:Update", 200) != 0)
+	{
+		return -1;
+	}
+	
+	blk = 16;
+	sprintf(pkt_buff, "Artnet:");
+	pkt_buff[8] = ':';
+	
+	while (remain_len)
+	{
+		cpy_len = ((remain_len >= PKT_SIZE) ? PKT_SIZE : remain_len);
+		cksum = 0;
+		for (i = 0; i < cpy_len; i++)
+		{
+			cksum += firmware[total_len + i];
+			pkt_buff[9 + i] = firmware[total_len + i];
+		}
+		if (cpy_len < PKT_SIZE)
+		{
+			memset(&pkt_buff[9 + i], 0x0, (PKT_SIZE - cpy_len));
+		}
+		pkt_buff[7]= blk;
+		pkt_buff[9+PKT_SIZE] = cksum;
+		remain_len -= cpy_len;
+		total_len += cpy_len;
+		expect_buff[3] = blk;
+		blk++;
+		if (Joo_uart_cmd(pkt_buff,9+PKT_SIZE+1, expect_buff, 100) != 0)  // 1 is for cksum
+		{
+			return -1;
+		}
+	}
+	return 0;
 }	
 
 
