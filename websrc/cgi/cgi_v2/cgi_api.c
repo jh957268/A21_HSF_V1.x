@@ -184,6 +184,7 @@ void do_refresh_clients(void);
 int  refresh_client_done(void);
 int ratpac_get_str(int id, char *val);
 int ratpac_set_str(int id, char *val);
+int SAMD_firmware_download(char *firmware, int len);
 
 cgi_cmd ps_cgi_cmds[]=
 {
@@ -546,7 +547,7 @@ void fill_space(char *datarray, int arrlen)
 	datarray[arrlen-1] = 0;
 }
 
-int Joo_uart_cmd(char *cmd);
+int Joo_uart_cmd(char *cmd, int len, char *expect_resp, cyg_tick_count_t timeout_tick);
 int get_client_entry(int idx, char *node_name, char *ip_addr, char *universe, char *art_sub, char *battery);
 void CGI_var_map(http_req *req, char *name, int id)
 {
@@ -704,7 +705,7 @@ void CGI_var_map(http_req *req, char *name, int id)
 			return;
 
 		case CFG_SET_ID:
-			if (Joo_uart_cmd("Artnet:ID\n") == 0)
+			if (Joo_uart_cmd("Artnet:ID\n", strlen("Artnet:ID\n"), "ok:ID", 200) == 0)
 			{
 				sprintf(val, "Command Status : Success");
 			}
@@ -715,7 +716,7 @@ void CGI_var_map(http_req *req, char *name, int id)
 			WEB_printf(req, "displayMsg('%s','%s');\n",name, val);
 			return;
 		case CFG_SET_LINK:
-			if (Joo_uart_cmd("Artnet:Link\n") == 0)
+			if (Joo_uart_cmd("Artnet:Link\n",strlen("Artnet:Link\n"), "ok:ID", 200) == 0)
 			{
 				sprintf(val, "Command Status : Success");
 			}
@@ -726,7 +727,7 @@ void CGI_var_map(http_req *req, char *name, int id)
 			WEB_printf(req, "displayMsg('%s','%s');\n",name, val);
 			return;	
 		case CFG_SET_UNLINK:
-			if (Joo_uart_cmd("Artnet:Unlink\n") == 0)
+			if (Joo_uart_cmd("Artnet:Unlink\n",strlen("Artnet:Unlink\n"), "ok:ID", 200) == 0)
 			{
 				sprintf(val, "Command Status : Success");
 			}
@@ -2106,8 +2107,14 @@ int CGI_SAMD_upgrade(http_req *req)
 	}
 	file = WEB_upload_file(req, "files", &len);
 
-	sprintf(val, "SAMD Filesize=%d\n", len);	
-	Joo_uart_send(val);	
+	rc = SAMD_firmware_download(file, len);
+#if 1
+	if (-1 == rc)
+	{
+		sprintf(val, "SAMD Upgrade Fails, Filesize=%d\n", len);	
+		Joo_uart_send(val);
+	}
+#endif
 
 #if 0	
 	if(len>=FLASH_FWM_MAX_SIZE)
