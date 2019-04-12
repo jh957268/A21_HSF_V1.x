@@ -514,8 +514,8 @@ function subForm(f1,a,d,g)
     var ifrm = document.createElement('iframe');
     ifrm.setAttribute('name', 'subIframe');
     ifrm.setAttribute('id', 'subIframeId'); // assign an id
-    ifrm.height = "100";
-    ifrm.width = "500";
+    ifrm.height = "80";
+    ifrm.width = "540";
     ifrm.frameborder="0"
     f1.parentNode.appendChild(ifrm);
    
