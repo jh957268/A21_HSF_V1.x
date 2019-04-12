@@ -120,9 +120,37 @@ function Apply_3()
 		m='Are you sure you want to upgrade?';
 	else
 	    m='你确定要升级吗?';
-	 if(confirm(m))
-	{
-	f.submit();
+	if(confirm(m))
+	{	
+		var elemiFrm = document.getElementById('subIframeId');
+		if (elemiFrm)
+		{
+			alert("Found IFRAME!");
+			elemiFrm.parentNode.removeChild(elemiFrm);
+		}	
+	
+	    var ifrm = document.createElement('iframe');
+		ifrm.setAttribute('name', 'subIframe');
+		ifrm.setAttribute('id', 'subIframeId'); // assign an id
+		ifrm.height = "100";
+		ifrm.width = "500";
+		ifrm.frameborder="0"
+		var html = '<body>Upgrade SAMD Firmware, Please Wait...</body>';
+
+		//ifrm.contentWindow.document.open();
+		//alert("Alert2!");		
+		//ifrm.contentWindow.document.write(html);
+		//alert("Alert3!");		
+		//ifrm.contentWindow.document.close();
+		//alert("Alert4!");		
+		alert("Alert5!");
+		f.parentNode.appendChild(ifrm);
+		//alert("Alert6!");
+		f.action = 'update_firmware.html';
+		f.target = 'subIframe';
+		alert("Alert7");		
+		//subForm(f,'update_firmware.html','SAMD_UPG',cPage);
+		f.submit();
     }
 }
 
