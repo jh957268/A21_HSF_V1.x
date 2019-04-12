@@ -125,29 +125,43 @@ function Apply_3()
 		var elemiFrm = document.getElementById('subIframeId');
 		if (elemiFrm)
 		{
-			alert("Found IFRAME!");
+			//alert("Found IFRAME!");
 			elemiFrm.parentNode.removeChild(elemiFrm);
 		}	
-	
+		elemiFrm = document.getElementById('subIframeId2');
+		if (elemiFrm)
+		{
+			//alert("Found IFRAME!");
+			elemiFrm.parentNode.removeChild(elemiFrm);
+		}	
+		
 	    var ifrm = document.createElement('iframe');
 		ifrm.setAttribute('name', 'subIframe');
 		ifrm.setAttribute('id', 'subIframeId'); // assign an id
-		ifrm.height = "100";
-		ifrm.width = "500";
+		ifrm.height = "30";
+		ifrm.width = "540";
 		ifrm.frameborder="0"
+		f.parentNode.appendChild(ifrm);
 		var html = '<body>Upgrade SAMD Firmware, Please Wait...</body>';
-
-		//ifrm.contentWindow.document.open();
-		//alert("Alert2!");		
-		//ifrm.contentWindow.document.write(html);
+		ifrm.contentWindow.document.open();
+		alert("Alert2!");		
+		ifrm.contentWindow.document.write(html);
 		//alert("Alert3!");		
 		//ifrm.contentWindow.document.close();
-		//alert("Alert4!");		
+		//alert("Alert4!");
+
+	    var ifrm2 = document.createElement('iframe');
+		ifrm2.setAttribute('name', 'subIframe2');
+		ifrm2.setAttribute('id', 'subIframeId2'); // assign an id
+		ifrm2.height = "60";
+		ifrm2.width = "540";
+		ifrm2.frameborder="0"
+		f.parentNode.appendChild(ifrm2);		
 		alert("Alert5!");
-		f.parentNode.appendChild(ifrm);
+		//f.parentNode.appendChild(ifrm);
 		//alert("Alert6!");
-		f.action = 'update_firmware.html';
-		f.target = 'subIframe';
+		f.action = 'http://10.10.100.254/EN/update_firmware.html';
+		f.target = 'subIframe2';
 		alert("Alert7");		
 		//subForm(f,'update_firmware.html','SAMD_UPG',cPage);
 		f.submit();
