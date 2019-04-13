@@ -147,6 +147,23 @@
 #define CFG_GAFFER_LOWER				CFG_USER_(46,CFG_TYPE_INT)
 #define CFG_GAFFER_UPPER				CFG_USER_(47,CFG_TYPE_INT)
 
+#define CFG_AKS_ADVA1			        CFG_USER_(48,CFG_TYPE_STR)
+#define CFG_AKS_ADVA2			        CFG_USER_(49,CFG_TYPE_STR)
+#define CFG_AKS_ADVA3			        CFG_USER_(50,CFG_TYPE_STR)
+#define CFG_AKS_ADVA4			        CFG_USER_(51,CFG_TYPE_STR)
+#define CFG_AKS_ADVA5			        CFG_USER_(52,CFG_TYPE_STR)
+#define CFG_AKS_ADVA6			        CFG_USER_(53,CFG_TYPE_STR)
+#define CFG_AKS_ADVA7			        CFG_USER_(54,CFG_TYPE_STR)
+#define CFG_AKS_ADVA8			        CFG_USER_(55,CFG_TYPE_STR)
+#define CFG_AKS_ADVA9			        CFG_USER_(56,CFG_TYPE_STR)
+#define CFG_AKS_ADVA10			        CFG_USER_(57,CFG_TYPE_STR)
+#define CFG_AKS_ADVA11			        CFG_USER_(58,CFG_TYPE_STR)
+#define CFG_AKS_ADVA12			        CFG_USER_(59,CFG_TYPE_STR)
+#define CFG_AKS_ADVA13			        CFG_USER_(60,CFG_TYPE_STR)
+#define CFG_AKS_ADVA14			        CFG_USER_(61,CFG_TYPE_STR)
+#define CFG_AKS_ADVA15			        CFG_USER_(62,CFG_TYPE_STR)
+#define CFG_AKS_ADVA16			        CFG_USER_(63,CFG_TYPE_STR)
+
 // M2M: gohuy
 #define CFG_M2M_(idx,type) 			CFG_ID_(CFG_ID_M2M,idx,type,0)
 #define CFG_M2M_RUN_MODE	            	CFG_M2M_(1,CFG_TYPE_STR)
