@@ -1,0 +1,438 @@
+<HTML>
+<HEAD>
+<META http-equiv="Pragma" content="no-cache">
+<META http-equiv=Content-Type 	content="text/html" charset="gb2312">
+<link rel="stylesheet" href="../style/normal_ws.css" type="text/css">
+<TITLE>RatPac AKS Constellation</TITLE>
+<SCRIPT language=JavaScript src="../utils.js"></SCRIPT>
+<SCRIPT language=JavaScript src=spec.js></SCRIPT>
+<SCRIPT language=JavaScript>
+/*DEMO*/
+addCfg("save_lan",120,"1");
+
+//addCfg("apcli_enable",212,"1");
+//addCfg("Data_Transfor_Mode",212,"2");
+//addCfg("AKS_NAME",212,"JOO RatPac");
+//addCfg("AKS_NAME1",212,"JOO Test");
+addCfg("AKS_CONS1",212,"Constellation test1           10.10.100.20");
+//addCfg("AKS_CONS2",212,"Constellation test2");
+//addCfg("AKS_NAME3",212,"JOO Test");
+/*END_DEMO*/
+
+/*REAL
+<%
+
+//CGI_MAP(AKS_CONS1, CFG_AKS_CONS1);
+//CGI_MAP(AKS_CONS2, CFG_AKS_CONS2);
+//CGI_MAP(AKS_CONS3, CFG_AKS_CONS3);
+//CGI_MAP(AKS_CONS4, CFG_AKS_CONS4);
+//CGI_MAP(AKS_CONS5, CFG_AKS_CONS5);
+//CGI_MAP(AKS_CONS6, CFG_AKS_CONS6);
+//CGI_MAP(AKS_CONS7, CFG_AKS_CONS7);
+//CGI_MAP(AKS_CONS8, CFG_AKS_CONS8);
+//CGI_MAP(AKS_CONS9, CFG_AKS_CONS9);
+//CGI_MAP(AKS_CONS10, CFG_AKS_CONS10);
+//CGI_MAP(AKS_CONS11, CFG_AKS_CONS11);
+//CGI_MAP(AKS_CONS12, CFG_AKS_CONS12);
+//CGI_MAP(AKS_CONS13, CFG_AKS_CONS13);
+//CGI_MAP(AKS_CONS14, CFG_AKS_CONS14);
+//CGI_MAP(AKS_CONS15, CFG_AKS_CONS15);
+//CGI_MAP(AKS_CONS16, CFG_AKS_CONS16);
+
+%>
+
+REAL*/
+
+function initvalue()
+ {
+/*
+	var Vapable=getCfg("apcli_enable") ;
+	//var VTmode=getCfg("Data_Transfor_Mode") ;
+	if(Vapable=="0")
+	document.opmode.apcli_enable[0].checked=true ;
+	else 
+	document.opmode.apcli_enable[1].checked=true ;
+
+	if((VTmode>=0)&&(VTmode<=3))
+		document.opmode.Data_Transfor_Mode.options.selectedIndex=VTmode;
+	else
+		document.opmode.Data_Transfor_Mode.options.selectedIndex=0;
+	if(VTmode>=1)
+		document.opmode.Data_Transfor_Mode.options.selectedIndex=VTmode-1;
+*/
+	init_1();
+	init_2();
+ }
+
+ 
+
+
+function init(){
+	var f=document.opmode;
+	var slanV="<%CGI_GET_FLANG() ;%>";
+	var logoV="<%CGI_GET_FLOGO();%>";	
+	
+	if(logoV=="HF")
+		{
+			document.getElementById("HF_LOGO_ID").style.visibility = "visible";
+			document.getElementById("HF_LOGO_ID").style.display = "";
+			document.getElementById("YR_LOGO_ID").style.visibility = "hidden";
+			document.getElementById("YR_LOGO_ID").style.display = "none";
+			
+		}
+	else if (logoV=="YRKJ")
+		{
+			document.getElementById("YR_LOGO_ID").style.visibility = "visible";
+			document.getElementById("YR_LOGO_ID").style.display = "";
+			document.getElementById("HF_LOGO_ID").style.visibility = "hidden";
+			document.getElementById("HF_LOGO_ID").style.display = "none";
+		
+		}
+	else
+		{
+			document.getElementById("YR_LOGO_ID").style.visibility = "hidden";
+			document.getElementById("YR_LOGO_ID").style.display = "none";
+			document.getElementById("HF_LOGO_ID").style.visibility = "hidden";
+			document.getElementById("HF_LOGO_ID").style.display = "none";
+			document.getElementById("HF_hr_id").style.visibility = "hidden";
+			document.getElementById("HF_hr_id").style.display = "none";
+		
+		}
+		
+	/*if(slanV=="zhcn")
+		setLanguageCN_2();
+	else if (slanV=="en")
+		setLanguageEN_2();
+	else
+		setLanguageCN_2();	*/
+	cfg2Form(f);
+	initvalue();
+/*	
+	var broadcastssidEnableArray2 = document.CRMXSettings.AKS_Bit_Settings.value.split("");
+ 	if(broadcastssidEnableArray2[0]==1)
+ 	{
+		document.CRMXSettings.AKS_BIT_SETTINGS.checked=1;
+	}
+	else
+	{
+		document.CRMXSettings.AKS_BIT_SETTINGS.checked=0;	
+	}
+*/	
+}
+
+function Reset() {
+	init();
+}
+function checkbox_clicked()
+{
+	//alert(document.AP_W_Network.Hidden_ssid_Chk.checked);
+	if(document.CRMXSettings.AKS_BIT_SETTINGS.checked)
+		document.CRMXSettings.AKS_Bit_Settings.value="1;0;0;0";
+	else
+		document.CRMXSettings.AKS_Bit_Settings.value="0;0;0;0";
+
+	//alert(document.HFA21TEST.AKS_Settings.value);
+}
+function Apply() {
+	var f=document.opmode;
+
+	if (document.opmode.apcli_enable[0].checked==true)		// ap
+		document.opmode.country_code.value= 0;
+	else
+		document.opmode.country_code.value= 5;
+	form2Cfg(f);
+	subForm(f,'do_cmd.html','WIRELESS_APCLI_SETUP',cPage);
+}
+
+function init_1()
+{
+	var f=document.HFA21TEST;
+	cfg2Form(f);
+	f=document.CONSTELLATION;
+	cfg2Form(f);
+	//initvalue_4();
+}
+function Cancel_1() {
+	init_1();
+}
+
+function reload_constellation()
+{
+	var URL = '/EN/constellation.html';
+    document.location.href = URL;
+}
+
+function Apply_refresh() {
+	var f=document.HFA21TEST;
+
+	form2Cfg(f);
+	// subForm(f,'http://www.expert-exchange.com','CONSTELLATION_REFRESH=10',cPage);
+	subForm(f,'do_constellation.html','CONSTELLATION_REFRESH',cPage);
+	setTimeout(function(){ reload_constellation(); }, 5000);
+	// cannot reload constellation here, it will be excuted before refresh is done
+}
+
+function Apply_1() {
+	var f=document.HFA21TEST;
+	var p= f.net_port.value;
+
+	if (p== "")
+	{
+		alert('Please input the port value!');
+		f.net_port.focus();
+		f.net_port.select();
+		return false;	
+	}
+		
+	p= 1*p;
+	if (!((p>0)&&(p<=65535)))
+    {
+		alert('The port value shall be: > 0 and <= 65535');
+		f.net_port.focus();
+		f.net_port.select();
+		return false;
+    }
+
+	form2Cfg(f);
+	subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
+}
+
+function init_2()
+{
+	var f=document.CRMXSettings;
+	cfg2Form(f);
+	//initvalue_4();
+}
+function Cancel_2() {
+	init_2();
+}
+function Apply_2() {
+	var f=document.CRMXSettings;
+	form2Cfg(f);
+	subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
+}
+
+</SCRIPT>
+</HEAD>
+<BODY leftmargin=0 topmargin=0 onload=init()>
+<script>pageHead();</script>
+
+<h1 id="constellationTitle">Ratpac AKS Constellation</h1>
+
+<hr>
+
+<form method=post name="opmode">
+
+</form>
+
+
+<form method=post name=HFA21TEST target="_blank">
+
+	</form>
+
+
+	<form method=post name=CRMXSettings>
+
+	</form>
+	
+
+	<form method=post name=CONSTELLATION>
+		<table width="540" border="1" cellspacing="1" cellpadding="3"   bordercolor="#9BABBD">
+			<tr>
+				<td class="head">
+					<font id="aks_cons"><pre>Node Name     IP Address    Battery Identify  Wireless CRMX    Art-Sub/Universe</pre></font><br>
+				</td>
+			</tr>
+			<tr>
+				<td height="20">
+					<pre id="AKS_CONS1"></pre>
+				</td>
+			</tr>
+			<tr>
+				<td height="20">
+					<pre id="AKS_CONS2"></pre>
+				</td>
+			</tr>
+			<tr>
+				<td height="20">
+					<pre id="AKS_CONS3"></pre>
+				</td>
+			</tr>
+			<tr>
+				<td height="20">
+					<pre id="AKS_CONS4"></pre>
+				</td>
+			</tr>
+			<tr>
+				<td height="20">
+					<pre id="AKS_CONS5"></pre>
+				</td>
+			</tr>
+			<tr>
+				<td height="20">
+					<pre id="AKS_CONS6"></pre>
+				</td>
+			</tr>
+			<tr>
+				<td height="20">
+					<pre id="AKS_CONS7"></pre>
+				</td>
+			</tr>
+			<tr>
+				<td height="20">
+					<pre id="AKS_CONS8"></pre>
+				</td>
+			</tr>
+			<tr>
+				<td height="20">
+					<pre id="AKS_CONS9"></pre>
+				</td>
+			</tr>
+			<tr>
+				<td height="20">
+					<pre id="AKS_CONS10"></pre>
+				</td>
+			</tr>
+			<tr>
+				<td height="20">
+					<pre id="AKS_CONS11"></pre>
+				</td>
+			</tr>
+			<tr>
+				<td height="20">
+					<pre id="AKS_CONS12"></pre>
+				</td>
+			</tr>
+			<tr>
+				<td height="20">
+					<pre id="AKS_CONS13"></pre>
+				</td>
+			</tr>
+			<tr>
+				<td height="20">
+					<pre id="AKS_CONS14"></pre>
+				</td>
+			</tr>
+			<tr>
+				<td height="20">
+					<pre id="AKS_CONS15"></pre>
+				</td>
+			</tr>
+			<tr>
+				<td height="20">
+					<pre id="AKS_CONS16"></pre>
+				</td>
+			</tr>				
+		</table> 
+		<center>
+			<input type=button style="{width:120px;}" value="Refresh" onClick="Apply_refresh()" id="ap_Apply1_refresh_id">
+		<!--  /*
+			<button type="button" onclick="window.location.href='/EN/constellation.html'">Refresh</button>
+		-->
+		</center>
+	</form>
+  	<!--  /* 
+	<iframe name="subIframe" width="560" height="315"  frameborder="2" allowfullscreen></iframe>
+	-->
+<hr id="HF_hr_id"> 
+
+<div id="HF_LOGO_ID" style="visibility:hidden;display:none;"> 
+<form id= "HF_Conn_id">
+<dl>
+	<dt><b id="logo_company">Hi-Flying Electronics Technology Co.., Ltd.</b></dt>
+	<dt id="logo_connect">Technical Support</dt>
+	<dt id="logo_mail">peter_dong@hi-flying.com  QQ:2452483191</dt>
+	<dt id="logo_phone">Phone：13681967916</dt>
+</dl>
+</form>
+</div>
+
+
+<div id="YR_LOGO_ID" style="visibility:hidden;display:none;"> 
+<form id= "YR_Conn_id">
+<dl>
+	<dt><b id="logo_company_yr">Jinan Usr Technology Co. Ltd    http://en.usr.cn</b></dt>
+	<dt id="logo_connect_yr">Contact:</dt>
+	<dt id="logo_mail_yr">tec@usr.cn     QQ:800025565</dt>
+	<dt id="logo_phone_yr">86-531-55507297</dt>
+</dl>
+</form>
+</div>
+
+<script>pageTail();
+
+function do_SetUniverse(url, universe) {
+	var f=document.HFA21TEST;
+	alert("Do Universe");
+	form2Cfg(f);
+	subForm(f, url + 'do_constellation.html','SET_UNIVERSE=' + universe,cPage);
+}
+
+function popupCenter(url, title, w, h) 
+{
+  var left = (screen.width/2)-(w/2);
+  var top = (screen.height/2)-(h/2);
+  var newwin = window.open(url, title, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width='+w+', height='+h+', top='+top+', left='+left);
+  setTimeout(function(){ newwin.close(); }, 3000);
+}
+
+function displayMsg(eleID, strMsg)
+{
+	var strMessage1 = document.getElementById(eleID) ;
+	strMessage1.innerHTML = strMsg;
+}
+
+function setUniverse(url, eleID)
+{
+	var strUser;
+	var subnet;
+	var myEle = document.getElementById('univ' + eleID);
+	if (myEle)
+	{
+		strUser = myEle.options[myEle.selectedIndex].value;
+		//popupCenter(url + 'univ' + strUser + '.html', 'myPop1',700,500)
+		//alert(url + 'univ' + strUser + '.html');
+	}
+	else
+	{
+		//alert('univ' + eleID + ' not found');
+		strUser = '0';
+	}
+	myEle = document.getElementById('artsub' + eleID);
+	if (myEle)
+	{
+		subnet = myEle.options[myEle.selectedIndex].value;
+	}
+	else
+	{
+		alert('artsub' + eleID + ' not found');
+		subnet = '0';
+	}	
+	do_SetUniverse(url, subnet + '-' + strUser);
+}
+
+/*REAL
+<%
+CGI_MAP(AKS_CONS1, CFG_AKS_CONS1);
+CGI_MAP(AKS_CONS2, CFG_AKS_CONS2);
+CGI_MAP(AKS_CONS3, CFG_AKS_CONS3);
+CGI_MAP(AKS_CONS4, CFG_AKS_CONS4);
+CGI_MAP(AKS_CONS5, CFG_AKS_CONS5);
+CGI_MAP(AKS_CONS6, CFG_AKS_CONS6);
+CGI_MAP(AKS_CONS7, CFG_AKS_CONS7);
+CGI_MAP(AKS_CONS8, CFG_AKS_CONS8);
+CGI_MAP(AKS_CONS9, CFG_AKS_CONS9);
+CGI_MAP(AKS_CONS10, CFG_AKS_CONS10);
+CGI_MAP(AKS_CONS11, CFG_AKS_CONS11);
+CGI_MAP(AKS_CONS12, CFG_AKS_CONS12);
+CGI_MAP(AKS_CONS13, CFG_AKS_CONS13);
+CGI_MAP(AKS_CONS14, CFG_AKS_CONS14);
+CGI_MAP(AKS_CONS15, CFG_AKS_CONS15);
+CGI_MAP(AKS_CONS16, CFG_AKS_CONS16);
+%>
+
+REAL*/
+
+</script>
+</BODY>
+</HTML>
