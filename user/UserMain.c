@@ -36,6 +36,7 @@ USER_FUNC static void client_thread_main(void* arg);
 
 void check_gaffer_packet(char *data, uint32_t len);
 void replace_channel_data(char *data, uint32_t len);
+int check_duplicate_ip(char *ip_addr);
 
 static int refresh_clients;
 static char gaffer_data[514];
@@ -1169,17 +1170,37 @@ static void server_thread_main(void* arg)
 			msg[19] = 0;
 			msg[22] = 0;
 			msg[26] = 0;
-			sprintf(client_list[client_valid_num].node_name, "%s", &msg[0]);
-			sprintf(client_list[client_valid_num].ip_addr, "%s", inet_ntoa(cliAddr.sin_addr));
-			sprintf(client_list[client_valid_num].universe, &msg[20]);
-			sprintf(client_list[client_valid_num].subnet, &msg[24]);
-			client_valid_num++;
 			
+			char ip_addr[20];
+			sprintf(ip_addr, inet_ntoa(cliAddr.sin_addr));
+			
+			if (0 == check_duplicate_ip(ip_addr))
+			{	
+				sprintf(client_list[client_valid_num].node_name, "%s", &msg[0]);
+				sprintf(client_list[client_valid_num].ip_addr, "%s", inet_ntoa(cliAddr.sin_addr));
+				sprintf(client_list[client_valid_num].universe, &msg[20]);
+				sprintf(client_list[client_valid_num].subnet, &msg[24]);
+				client_valid_num++;
+			}
 		}
 	}
 
   }/* end of server infinite loop */
 
+}
+
+int check_duplicate_ip(char *ip_addr)
+{
+	int i;
+	
+	for (i = 0; i < client_valid_num; i++)
+	{
+		if (!strcmp(client_list[client_valid_num].ip_addr, ip_addr))
+		{
+			return 1;
+		}
+	}
+	return 0;
 }
 
 static char cli_recv[128]={0};
