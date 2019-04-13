@@ -565,9 +565,27 @@ void CGI_var_map(http_req *req, char *name, int id)
 	int node_len, link_len;
 	int uni_num, art_sub_num;
 
-	base_idx = ((CFG_AKS_CONS1 >> 16) & 0xff);
 	switch (id)
 	{
+		case CFG_AKS_ADVA1:
+		case CFG_AKS_ADVA2:
+		case CFG_AKS_ADVA3:
+		case CFG_AKS_ADVA4:
+		case CFG_AKS_ADVA5:
+		case CFG_AKS_ADVA6:
+		case CFG_AKS_ADVA7:
+		case CFG_AKS_ADVA8:
+		case CFG_AKS_ADVA9:
+		case CFG_AKS_ADVA10:
+		case CFG_AKS_ADVA11:
+		case CFG_AKS_ADVA12:
+		case CFG_AKS_ADVA13:
+		case CFG_AKS_ADVA14:
+		case CFG_AKS_ADVA15:
+		case CFG_AKS_ADVA16:
+			base_idx = ((CFG_AKS_ADVA1 >> 16) & 0xff);
+			
+			return;
 		case CFG_AKS_CONS1:
 		case CFG_AKS_CONS2:
 		case CFG_AKS_CONS3:
@@ -597,7 +615,8 @@ void CGI_var_map(http_req *req, char *name, int id)
 					hf_thread_delay(1000);
 				}
 			}
-#endif			
+#endif		
+			base_idx = ((CFG_AKS_CONS1 >> 16) & 0xff);	
 			idx = ((id >> 16) & 0xff) - base_idx;
 			if (-1 == get_client_entry(idx, node_name, ip_addr, universe, art_sub, battery))
 			{
@@ -2033,7 +2052,7 @@ int CGI_do_uboot_upgrade(http_req *req)
 static int CGI_do_load_cert(http_req *req)
 {
 	char *file;
-	int len,rc;
+	int len,rc=0;
 	
 	if (upgrade_mem) 
 		return CGI_RC_FILE_INVALID; // avoid incorrect cgi call
