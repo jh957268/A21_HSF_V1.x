@@ -3,7 +3,7 @@
 <META http-equiv="Pragma" content="no-cache">
 <META http-equiv=Content-Type 	content="text/html" charset="gb2312">
 <link rel="stylesheet" href="../style/normal_ws.css" type="text/css">
-<TITLE>RatPac AKS Constellation</TITLE>
+<TITLE>RatPac AKS Firmware Update</TITLE>
 <SCRIPT language=JavaScript src="../utils.js"></SCRIPT>
 <SCRIPT language=JavaScript src=spec.js></SCRIPT>
 <SCRIPT language=JavaScript>
@@ -14,30 +14,30 @@ addCfg("save_lan",120,"1");
 //addCfg("Data_Transfor_Mode",212,"2");
 //addCfg("AKS_NAME",212,"JOO RatPac");
 //addCfg("AKS_NAME1",212,"JOO Test");
-addCfg("AKS_CONS1",212,"Constellation test1           10.10.100.20");
-//addCfg("AKS_CONS2",212,"Constellation test2");
+//addCfg("AKS_ADVA1",212,"Constellation test1           10.10.100.20");
+//addCfg("AKS_ADVA2",212,"Constellation test2");
 //addCfg("AKS_NAME3",212,"JOO Test");
 /*END_DEMO*/
 
 /*REAL
 <%
 
-//CGI_MAP(AKS_CONS1, CFG_AKS_CONS1);
-//CGI_MAP(AKS_CONS2, CFG_AKS_CONS2);
-//CGI_MAP(AKS_CONS3, CFG_AKS_CONS3);
-//CGI_MAP(AKS_CONS4, CFG_AKS_CONS4);
-//CGI_MAP(AKS_CONS5, CFG_AKS_CONS5);
-//CGI_MAP(AKS_CONS6, CFG_AKS_CONS6);
-//CGI_MAP(AKS_CONS7, CFG_AKS_CONS7);
-//CGI_MAP(AKS_CONS8, CFG_AKS_CONS8);
-//CGI_MAP(AKS_CONS9, CFG_AKS_CONS9);
-//CGI_MAP(AKS_CONS10, CFG_AKS_CONS10);
-//CGI_MAP(AKS_CONS11, CFG_AKS_CONS11);
-//CGI_MAP(AKS_CONS12, CFG_AKS_CONS12);
-//CGI_MAP(AKS_CONS13, CFG_AKS_CONS13);
-//CGI_MAP(AKS_CONS14, CFG_AKS_CONS14);
-//CGI_MAP(AKS_CONS15, CFG_AKS_CONS15);
-//CGI_MAP(AKS_CONS16, CFG_AKS_CONS16);
+//CGI_MAP(AKS_ADVA1, CFG_AKS_ADVA1);
+//CGI_MAP(AKS_ADVA2, CFG_AKS_ADVA2);
+//CGI_MAP(AKS_ADVA3, CFG_AKS_ADVA3);
+//CGI_MAP(AKS_ADVA4, CFG_AKS_ADVA4);
+//CGI_MAP(AKS_ADVA5, CFG_AKS_ADVA5);
+//CGI_MAP(AKS_ADVA6, CFG_AKS_ADVA6);
+//CGI_MAP(AKS_ADVA7, CFG_AKS_ADVA7);
+//CGI_MAP(AKS_ADVA8, CFG_AKS_ADVA8);
+//CGI_MAP(AKS_ADVA9, CFG_AKS_ADVA9);
+//CGI_MAP(AKS_ADVA10, CFG_AKS_ADVA10);
+//CGI_MAP(AKS_ADVA11, CFG_AKS_ADVA11);
+//CGI_MAP(AKS_ADVA12, CFG_AKS_ADVA12);
+//CGI_MAP(AKS_ADVA13, CFG_AKS_ADVA13);
+//CGI_MAP(AKS_ADVA14, CFG_AKS_ADVA14);
+//CGI_MAP(AKS_ADVA15, CFG_AKS_ADVA15);
+//CGI_MAP(AKS_ADVA16, CFG_AKS_ADVA16);
 
 %>
 
@@ -61,14 +61,12 @@ function initvalue()
 		document.opmode.Data_Transfor_Mode.options.selectedIndex=VTmode-1;
 */
 	init_1();
-	init_2();
  }
 
  
 
 
 function init(){
-	var f=document.opmode;
 	var slanV="<%CGI_GET_FLANG() ;%>";
 	var logoV="<%CGI_GET_FLOGO();%>";	
 	
@@ -105,7 +103,6 @@ function init(){
 		setLanguageEN_2();
 	else
 		setLanguageCN_2();	*/
-	cfg2Form(f);
 	initvalue();
 /*	
 	var broadcastssidEnableArray2 = document.CRMXSettings.AKS_Bit_Settings.value.split("");
@@ -123,31 +120,9 @@ function init(){
 function Reset() {
 	init();
 }
-function checkbox_clicked()
-{
-	//alert(document.AP_W_Network.Hidden_ssid_Chk.checked);
-	if(document.CRMXSettings.AKS_BIT_SETTINGS.checked)
-		document.CRMXSettings.AKS_Bit_Settings.value="1;0;0;0";
-	else
-		document.CRMXSettings.AKS_Bit_Settings.value="0;0;0;0";
-
-	//alert(document.HFA21TEST.AKS_Settings.value);
-}
-function Apply() {
-	var f=document.opmode;
-
-	if (document.opmode.apcli_enable[0].checked==true)		// ap
-		document.opmode.country_code.value= 0;
-	else
-		document.opmode.country_code.value= 5;
-	form2Cfg(f);
-	subForm(f,'do_cmd.html','WIRELESS_APCLI_SETUP',cPage);
-}
 
 function init_1()
 {
-	var f=document.HFA21TEST;
-	cfg2Form(f);
 	f=document.CONSTELLATION;
 	cfg2Form(f);
 	//initvalue_4();
@@ -156,8 +131,13 @@ function Cancel_1() {
 	init_1();
 }
 
-function reload_constellation()
+function reload_advance()
 {
+	var URL = '/EN/advance.html';
+    document.location.href = URL;
+}
+
+function Apply_back() {
 	var URL = '/EN/constellation.html';
     document.location.href = URL;
 }
@@ -166,50 +146,9 @@ function Apply_refresh() {
 	var f=document.HFA21TEST;
 
 	form2Cfg(f);
-	// subForm(f,'http://www.expert-exchange.com','CONSTELLATION_REFRESH=10',cPage);
 	subForm(f,'do_constellation.html','CONSTELLATION_REFRESH',cPage);
-	setTimeout(function(){ reload_constellation(); }, 5000);
+	setTimeout(function(){ reload_advance(); }, 5000);
 	// cannot reload constellation here, it will be excuted before refresh is done
-}
-
-function Apply_1() {
-	var f=document.HFA21TEST;
-	var p= f.net_port.value;
-
-	if (p== "")
-	{
-		alert('Please input the port value!');
-		f.net_port.focus();
-		f.net_port.select();
-		return false;	
-	}
-		
-	p= 1*p;
-	if (!((p>0)&&(p<=65535)))
-    {
-		alert('The port value shall be: > 0 and <= 65535');
-		f.net_port.focus();
-		f.net_port.select();
-		return false;
-    }
-
-	form2Cfg(f);
-	subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
-}
-
-function init_2()
-{
-	var f=document.CRMXSettings;
-	cfg2Form(f);
-	//initvalue_4();
-}
-function Cancel_2() {
-	init_2();
-}
-function Apply_2() {
-	var f=document.CRMXSettings;
-	form2Cfg(f);
-	subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
 }
 
 </SCRIPT>
@@ -217,115 +156,103 @@ function Apply_2() {
 <BODY leftmargin=0 topmargin=0 onload=init()>
 <script>pageHead();</script>
 
-<h1 id="constellationTitle">Ratpac AKS Constellation</h1>
+<h1 id="AdvamceTitle">Ratpac AKS Firmware Update</h1>
 
 <hr>
-
-<form method=post name="opmode">
-
+<form method=post name=HFA21TEST target="_blank">
 </form>
 
-
-<form method=post name=HFA21TEST target="_blank">
-
-	</form>
-
-
-	<form method=post name=CRMXSettings>
-
-	</form>
-	
-
-	<form method=post name=CONSTELLATION>
+	<form method=post name=Advance>
 		<table width="540" border="1" cellspacing="1" cellpadding="3"   bordercolor="#9BABBD">
 			<tr>
 				<td class="head">
-					<font id="aks_cons"><pre>Node Name     IP Address    Battery Identify  Wireless CRMX    Art-Sub/Universe</pre></font><br>
+					<font id="aks_adva"><pre>Node Name     IP Address    eCos Ver.     SAMD Ver.      Timo Ver.</pre></font><br>
 				</td>
 			</tr>
 			<tr>
 				<td height="20">
-					<pre id="AKS_CONS1"></pre>
+					<pre id="AKS_ADVA1"></pre>
 				</td>
 			</tr>
 			<tr>
 				<td height="20">
-					<pre id="AKS_CONS2"></pre>
+					<pre id="AKS_ADVA2"></pre>
 				</td>
 			</tr>
 			<tr>
 				<td height="20">
-					<pre id="AKS_CONS3"></pre>
+					<pre id="AKS_ADVA3"></pre>
 				</td>
 			</tr>
 			<tr>
 				<td height="20">
-					<pre id="AKS_CONS4"></pre>
+					<pre id="AKS_ADVA4"></pre>
 				</td>
 			</tr>
 			<tr>
 				<td height="20">
-					<pre id="AKS_CONS5"></pre>
+					<pre id="AKS_ADVA5"></pre>
 				</td>
 			</tr>
 			<tr>
 				<td height="20">
-					<pre id="AKS_CONS6"></pre>
+					<pre id="AKS_ADVA6"></pre>
 				</td>
 			</tr>
 			<tr>
 				<td height="20">
-					<pre id="AKS_CONS7"></pre>
+					<pre id="AKS_ADVA7"></pre>
 				</td>
 			</tr>
 			<tr>
 				<td height="20">
-					<pre id="AKS_CONS8"></pre>
+					<pre id="AKS_ADVA8"></pre>
 				</td>
 			</tr>
 			<tr>
 				<td height="20">
-					<pre id="AKS_CONS9"></pre>
+					<pre id="AKS_ADVA9"></pre>
 				</td>
 			</tr>
 			<tr>
 				<td height="20">
-					<pre id="AKS_CONS10"></pre>
+					<pre id="AKS_ADVA10"></pre>
 				</td>
 			</tr>
 			<tr>
 				<td height="20">
-					<pre id="AKS_CONS11"></pre>
+					<pre id="AKS_ADVA11"></pre>
 				</td>
 			</tr>
 			<tr>
 				<td height="20">
-					<pre id="AKS_CONS12"></pre>
+					<pre id="AKS_ADVA12"></pre>
 				</td>
 			</tr>
 			<tr>
 				<td height="20">
-					<pre id="AKS_CONS13"></pre>
+					<pre id="AKS_ADVA13"></pre>
 				</td>
 			</tr>
 			<tr>
 				<td height="20">
-					<pre id="AKS_CONS14"></pre>
+					<pre id="AKS_ADVA14"></pre>
 				</td>
 			</tr>
 			<tr>
 				<td height="20">
-					<pre id="AKS_CONS15"></pre>
+					<pre id="AKS_ADVA15"></pre>
 				</td>
 			</tr>
 			<tr>
 				<td height="20">
-					<pre id="AKS_CONS16"></pre>
+					<pre id="AKS_ADVA16"></pre>
 				</td>
 			</tr>				
 		</table> 
 		<center>
-			<input type=button style="{width:120px;}" value="Refresh" onClick="Apply_refresh()" id="ap_Apply1_refresh_id">
+			<input type=button style="{width:120px;}" value="Previous" onClick="Apply_back()" id="ap_Apply1_back_id">
+			<input type=button style="{width:120px;}" value="Refresh" onClick="Apply_refresh()" id="ap_refresh1_back_id">
 		<!--  /*
 			<button type="button" onclick="window.location.href='/EN/constellation.html'">Refresh</button>
 		-->
@@ -334,6 +261,43 @@ function Apply_2() {
   	<!--  /* 
 	<iframe name="subIframe" width="560" height="315"  frameborder="2" allowfullscreen></iframe>
 	-->
+	
+<form name="Upgrade_eCos" method=POST action=update_firmware.html enctype=multipart/form-data >
+<INPUT type=hidden name=CMD value=SYS_UPG>
+<INPUT type=hidden name=GO value=advance.htm>
+<table width="540" border="1" cellspacing="1" cellpadding="3" bordercolor="#9BABBD">
+<tbody>
+<tr>
+	<td class="head" width="40%" id="upgradeFWLocation">eCos Firmware Location:</td>
+	<td> <input name="files" size="20" maxlength="256" type="file" value=""></td>
+</tr>
+</tbody></table>
+</form>
+	
+<form name="Upgrade_SAMD" method=POST action=update_firmware.html enctype=multipart/form-data >
+<INPUT type=hidden name=CMD value=SAMD_UPG>
+<INPUT type=hidden name=GO value=advance.htm>
+<table width="540" border="1" cellspacing="1" cellpadding="3" bordercolor="#9BABBD">
+<tbody>
+<tr>
+	<td class="head" width="40%" id="upgradeSAMDLocation">SAMD Firmware Location:</td>
+	<td> <input name="files" size="20" maxlength="256" type="file" value=""></td>
+</tr>
+</tbody></table>
+</form>
+
+<form name="Upgrade_TIMO" method=POST action=update_firmware.html enctype=multipart/form-data >
+<INPUT type=hidden name=CMD value=TIMO_UPG>
+<INPUT type=hidden name=GO value=advance.htm>
+<table width="540" border="1" cellspacing="1" cellpadding="3" bordercolor="#9BABBD">
+<tbody>
+<tr>
+	<td class="head" width="40%" id="upgradeTIMOLocation">TIMO Firmware Location:</td>
+	<td> <input name="files" size="20" maxlength="256" type="file" value=""></td>
+</tr>
+</tbody></table>
+</form>
+	
 <hr id="HF_hr_id"> 
 
 <div id="HF_LOGO_ID" style="visibility:hidden;display:none;"> 
@@ -413,22 +377,22 @@ function setUniverse(url, eleID)
 
 /*REAL
 <%
-CGI_MAP(AKS_CONS1, CFG_AKS_CONS1);
-CGI_MAP(AKS_CONS2, CFG_AKS_CONS2);
-CGI_MAP(AKS_CONS3, CFG_AKS_CONS3);
-CGI_MAP(AKS_CONS4, CFG_AKS_CONS4);
-CGI_MAP(AKS_CONS5, CFG_AKS_CONS5);
-CGI_MAP(AKS_CONS6, CFG_AKS_CONS6);
-CGI_MAP(AKS_CONS7, CFG_AKS_CONS7);
-CGI_MAP(AKS_CONS8, CFG_AKS_CONS8);
-CGI_MAP(AKS_CONS9, CFG_AKS_CONS9);
-CGI_MAP(AKS_CONS10, CFG_AKS_CONS10);
-CGI_MAP(AKS_CONS11, CFG_AKS_CONS11);
-CGI_MAP(AKS_CONS12, CFG_AKS_CONS12);
-CGI_MAP(AKS_CONS13, CFG_AKS_CONS13);
-CGI_MAP(AKS_CONS14, CFG_AKS_CONS14);
-CGI_MAP(AKS_CONS15, CFG_AKS_CONS15);
-CGI_MAP(AKS_CONS16, CFG_AKS_CONS16);
+CGI_MAP(AKS_ADVA1, CFG_AKS_ADVA1);
+CGI_MAP(AKS_ADVA2, CFG_AKS_ADVA2);
+CGI_MAP(AKS_ADVA3, CFG_AKS_ADVA3);
+CGI_MAP(AKS_ADVA4, CFG_AKS_ADVA4);
+CGI_MAP(AKS_ADVA5, CFG_AKS_ADVA5);
+CGI_MAP(AKS_ADVA6, CFG_AKS_ADVA6);
+CGI_MAP(AKS_ADVA7, CFG_AKS_ADVA7);
+CGI_MAP(AKS_ADVA8, CFG_AKS_ADVA8);
+CGI_MAP(AKS_ADVA9, CFG_AKS_ADVA9);
+CGI_MAP(AKS_ADVA10, CFG_AKS_ADVA10);
+CGI_MAP(AKS_ADVA11, CFG_AKS_ADVA11);
+CGI_MAP(AKS_ADVA12, CFG_AKS_ADVA12);
+CGI_MAP(AKS_ADVA13, CFG_AKS_ADVA13);
+CGI_MAP(AKS_ADVA14, CFG_AKS_ADVA14);
+CGI_MAP(AKS_ADVA15, CFG_AKS_ADVA15);
+CGI_MAP(AKS_ADVA16, CFG_AKS_ADVA16);
 %>
 
 REAL*/
