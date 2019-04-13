@@ -190,12 +190,12 @@ static int USER_FUNC cmd_web_para_node_name(pat_session_t s,int argc,char *argv[
 	
 	if(0 == argc)
 	{
-		CFG_get_str( CFG_str2id("AKS_NAME"), temp_buf);
+		ratpac_get_str( CFG_str2id("AKS_NAME"), temp_buf);
 		sprintf(rsp, "=%s", temp_buf);
 	}
 	else
 	{
-		CFG_set_str( CFG_str2id("AKS_NAME"), argv[0]);
+		ratpac_set_str( CFG_str2id("AKS_NAME"), argv[0]);
 		CFG_save(0);
 	}
 	return 0;
@@ -237,7 +237,7 @@ static int USER_FUNC cmd_web_para_universe(pat_session_t s,int argc,char *argv[]
 	
 	if(0 == argc)
 	{
-		CFG_get_str( CFG_str2id("AKS_UNIVERSE"), temp_buf);
+		ratpac_get_str( CFG_str2id("AKS_UNIVERSE"), temp_buf);
 		sprintf(rsp, "=%s", temp_buf);
 	}
 	else
@@ -246,7 +246,7 @@ static int USER_FUNC cmd_web_para_universe(pat_session_t s,int argc,char *argv[]
 		printf("universe_value=%s_%d\n",argv[0],temp_value);
 		if((temp_value>=0)&&(temp_value<=9))
 		{
-			CFG_set_str( CFG_str2id("AKS_UNIVERSE"), argv[0]);
+			ratpac_set_str( CFG_str2id("AKS_UNIVERSE"), argv[0]);
 			CFG_save(0);
 		}
 		else
@@ -268,7 +268,7 @@ static int USER_FUNC cmd_web_para_timopower(pat_session_t s,int argc,char *argv[
 	
 	if(0 == argc)
 	{
-		CFG_get_str( CFG_str2id("TIMO_POWER"), temp_buf);
+		ratpac_get_str( CFG_str2id("TIMO_POWER"), temp_buf);
 		sprintf(rsp, "=%s", temp_buf);
 	}
 	else
@@ -277,7 +277,7 @@ static int USER_FUNC cmd_web_para_timopower(pat_session_t s,int argc,char *argv[
 		printf("TIMO_POWER=%s_%d\n",argv[0],temp_value);
 		if((temp_value>=0)&&(temp_value<=5))
 		{
-			CFG_set_str( CFG_str2id("TIMO_POWER"), argv[0]);
+			ratpac_set_str( CFG_str2id("TIMO_POWER"), argv[0]);
 			CFG_save(0);
 		}
 		else
@@ -300,7 +300,7 @@ static int USER_FUNC cmd_web_para_channelwidth(pat_session_t s,int argc,char *ar
 	
 	if(0 == argc)
 	{
-		CFG_get_str( CFG_str2id("AKS_CHANNEL_WIDTH"), temp_buf);
+		ratpac_get_str( CFG_str2id("AKS_CHANNEL_WIDTH"), temp_buf);
 		sprintf(rsp, "=%s", temp_buf);
 	}
 	else
@@ -309,7 +309,7 @@ static int USER_FUNC cmd_web_para_channelwidth(pat_session_t s,int argc,char *ar
 		printf("AKS_CHANNEL_WIDTH=%s_%d\n",argv[0],temp_value);
 		if((temp_value>=9)&&(temp_value<=18))
 		{
-			CFG_set_str( CFG_str2id("AKS_CHANNEL_WIDTH"), argv[0]);
+			ratpac_set_str( CFG_str2id("AKS_CHANNEL_WIDTH"), argv[0]);
 			CFG_save(0);
 		}
 		else
@@ -333,7 +333,7 @@ static int USER_FUNC cmd_web_para_secondchannel(pat_session_t s,int argc,char *a
 	
 	if(0 == argc)
 	{
-		CFG_get_str( CFG_str2id("AKS_SECOND_CHANNEL"), temp_buf);
+		ratpac_get_str( CFG_str2id("AKS_SECOND_CHANNEL"), temp_buf);
 		sprintf(rsp, "=%s", temp_buf);
 	}
 	else
@@ -342,7 +342,7 @@ static int USER_FUNC cmd_web_para_secondchannel(pat_session_t s,int argc,char *a
 		printf("AKS_SECOND_CHANNEL=%s_%d\n",argv[0],temp_value);
 		if((temp_value>=0)&&(temp_value<=11))
 		{
-			CFG_set_str( CFG_str2id("AKS_SECOND_CHANNEL"), argv[0]);
+			ratpac_set_str( CFG_str2id("AKS_SECOND_CHANNEL"), argv[0]);
 			CFG_save(0);
 		}
 		else
@@ -366,7 +366,7 @@ static int USER_FUNC cmd_web_para_bitsetting(pat_session_t s,int argc,char *argv
 	
 	if(0 == argc)
 	{
-		CFG_get_str( CFG_str2id("AKS_BIT_SETTINGS"), temp_buf);
+		ratpac_get_str( CFG_str2id("AKS_BIT_SETTINGS"), temp_buf);
 		sprintf(rsp, "=%s", temp_buf);
 	}
 	else
@@ -375,7 +375,7 @@ static int USER_FUNC cmd_web_para_bitsetting(pat_session_t s,int argc,char *argv
 		printf("AKS_BIT_SETTINGS=%s_%d\n",argv[0],temp_value);
 		if((temp_value>=0)&&(temp_value<=1))
 		{
-			CFG_set_str( CFG_str2id("AKS_BIT_SETTINGS"), argv[0]);
+			ratpac_set_str( CFG_str2id("AKS_BIT_SETTINGS"), argv[0]);
 			CFG_save(0);
 		}
 		else
@@ -569,66 +569,66 @@ void init_webdata_when_reload(void)
 	printf("___ g_web_config.name=%s_%d\n",g_web_config.name,strlen(g_web_config.name));
 	if(strlen(g_web_config.name)>0)
 	{
-		CFG_set_str( CFG_str2id("AKS_NAME"), g_web_config.name);
+		ratpac_set_str( CFG_str2id("AKS_NAME"), g_web_config.name);
 	}
 	else
 	{
-		CFG_set_str( CFG_str2id("AKS_NAME"), "Ratpac AKS");
+		ratpac_set_str( CFG_str2id("AKS_NAME"), "Ratpac AKS");
 	}
 	
 	temp_value = atoi(g_web_config.universe);
 	printf("___ g_web_config.universe=%s_%d\n",g_web_config.universe,temp_value);
 	if((temp_value>0)&&(temp_value<=15))
 	{
-		CFG_set_str( CFG_str2id("AKS_UNIVERSE"), g_web_config.universe);
+		ratpac_set_str( CFG_str2id("AKS_UNIVERSE"), g_web_config.universe);
 	}
 	else
 	{
-		CFG_set_str( CFG_str2id("AKS_UNIVERSE"), "0");
+		ratpac_set_str( CFG_str2id("AKS_UNIVERSE"), "0");
 	}
 	
 	temp_value = atoi(g_web_config.timopower);
 	printf("___ g_web_config.timopower=%s_%d\n",g_web_config.timopower,temp_value);
 	if((temp_value>0)&&(temp_value<=5))
 	{
-		CFG_set_str( CFG_str2id("TIMO_POWER"), g_web_config.timopower);
+		ratpac_set_str( CFG_str2id("TIMO_POWER"), g_web_config.timopower);
 	}
 	else
 	{
-		CFG_set_str( CFG_str2id("TIMO_POWER"), "3");
+		ratpac_set_str( CFG_str2id("TIMO_POWER"), "3");
 	}
 
 	temp_value = atoi(g_web_config.channelWidth);
 	printf("___ g_web_config.channelWidth=%s_%d\n",g_web_config.channelWidth,temp_value);
 	if((temp_value>9)&&(temp_value<=18))
 	{
-		CFG_set_str( CFG_str2id("AKS_CHANNEL_WIDTH"), g_web_config.channelWidth);
+		ratpac_set_str( CFG_str2id("AKS_CHANNEL_WIDTH"), g_web_config.channelWidth);
 	}
 	else
 	{
-		CFG_set_str( CFG_str2id("AKS_CHANNEL_WIDTH"), "16");
+		ratpac_set_str( CFG_str2id("AKS_CHANNEL_WIDTH"), "16");
 	}
 
 	temp_value = atoi(g_web_config.secondChannel);
 	printf("___ g_web_config.secondChannel=%s_%d\n",g_web_config.secondChannel,temp_value);
 	if((temp_value>0)&&(temp_value<=11))
 	{
-		CFG_set_str( CFG_str2id("AKS_SECOND_CHANNEL"), g_web_config.secondChannel);
+		ratpac_set_str( CFG_str2id("AKS_SECOND_CHANNEL"), g_web_config.secondChannel);
 	}
 	else
 	{
-		CFG_set_str( CFG_str2id("AKS_SECOND_CHANNEL"), "0");
+		ratpac_set_str( CFG_str2id("AKS_SECOND_CHANNEL"), "0");
 	}
 
 	temp_value = atoi(g_web_config.bitSetting);
 	printf("___ g_web_config.bitSetting=%s_%d\n",g_web_config.secondChannel,temp_value);
 	if((temp_value>0)&&(temp_value<=1))
 	{
-		CFG_set_str( CFG_str2id("AKS_BIT_SETTINGS"), g_web_config.bitSetting);
+		ratpac_set_str( CFG_str2id("AKS_BIT_SETTINGS"), g_web_config.bitSetting);
 	}
 	else
 	{
-		CFG_set_str( CFG_str2id("AKS_BIT_SETTINGS"), "0");
+		ratpac_set_str( CFG_str2id("AKS_BIT_SETTINGS"), "0");
 	}
 }
 
@@ -755,9 +755,9 @@ static int USER_FUNC socketa_recv_callback(uint32_t event,char *data,uint32_t le
 		if(strncmp(data, label, 7)==0)
 		{
 			check_gaffer_packet(data, len);
-			CFG_get_str(CFG_str2id("AKS_UNIVERSE"),Uni);	
+			ratpac_get_str(CFG_str2id("AKS_UNIVERSE"),Uni);	
 			uni_num = atoi(Uni);;
-			CFG_get_str(CFG_str2id("AKS_SUBNET"),Uni);
+			ratpac_get_str(CFG_str2id("AKS_SUBNET"),Uni);
 			art_sub = atoi(Uni);
 			art_sub <<= 4;
 			uni_num = ((uni_num | art_sub) & 0xff);
@@ -903,7 +903,7 @@ void UserMain(void *arg)
 		}
 		/*
 		char TimoEnable[1] = {};
-		CFG_get_str(CFG_str2id("AKS_SETTINGS"),TimoEnable);
+		ratpac_get_str(CFG_str2id("AKS_SETTINGS"),TimoEnable);
 		if(TimoEnable[0] == 48)
 		{
 			*/
@@ -917,11 +917,11 @@ void UserMain(void *arg)
 			channel[0] = (char)atoi(channel);
 
 			char width[2]={};
-			CFG_get_str(CFG_str2id("AKS_CHANNEL_WIDTH"),width);
+			ratpac_get_str(CFG_str2id("AKS_CHANNEL_WIDTH"),width);
 			width[0] = (char)atoi(width);
 
 			char channelTwo[2]={};
-			CFG_get_str(CFG_str2id("AKS_SECOND_CHANNEL"),channelTwo);
+			ratpac_get_str(CFG_str2id("AKS_SECOND_CHANNEL"),channelTwo);
 			channelTwo[0] = (char)atoi(channelTwo);
 
 			//hfuart_send(HFUART0, channel,sizeof(channel),1000);
@@ -959,7 +959,7 @@ void UserMain(void *arg)
 		            }
 		        }
 		    }
-			CFG_get_str(CFG_str2id("TIMO_POWER"),TimoPower);
+			ratpac_get_str(CFG_str2id("TIMO_POWER"),TimoPower);
 			TimoPower[0] = TimoPower[0] - 48;
 
 			char Battery[8] = {0b00110100, 0b00011011, 0b01100000, 0b00010001, 0b10110010, 0b10011010, 0b00000011, 0b01001011};
@@ -988,7 +988,7 @@ void UserMain(void *arg)
 			ipAddress[3] = (char)atoi(token);
 
 			char name[18]={' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',0};
-			CFG_get_str(CFG_str2id("AKS_NAME"),name);
+			ratpac_get_str(CFG_str2id("AKS_NAME"),name);
 			char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 1,name[0],name[1],name[2],name[3],name[4],name[5],name[6],name[7],name[8],name[9],name[10],name[11],name[12],name[13],name[14],name[15],name[16],name[17],ipAddress[0],ipAddress[1],ipAddress[2],ipAddress[3]};
 			hfuart_send(HFUART0, Settings,sizeof(Settings),100);
 
@@ -1098,11 +1098,11 @@ static void server_thread_main(void* arg)
   while(1) 
   {
 
-	CFG_get_str( CFG_str2id("AKS_NAME"), tmp_buff);
+	ratpac_get_str( CFG_str2id("AKS_NAME"), tmp_buff);
 	sprintf(client_list[0].node_name, "%s", tmp_buff);
-	CFG_get_str( CFG_str2id("AKS_UNIVERSE"), tmp_buff);
+	ratpac_get_str( CFG_str2id("AKS_UNIVERSE"), tmp_buff);
 	sprintf(client_list[0].universe, tmp_buff);	
-	CFG_get_str( CFG_str2id("AKS_SUBNET"), tmp_buff);
+	ratpac_get_str( CFG_str2id("AKS_SUBNET"), tmp_buff);
 	sprintf(client_list[0].subnet, tmp_buff);	
 	
    	if (0 == refresh_clients)
@@ -1310,9 +1310,9 @@ USER_FUNC static void client_thread_main(void* arg)
 			//g_web_config.name[19] = 0;
 			//g_web_config.universe[2] = 0;
 			//eprintf("Node name = %s, Uni = %s\n", g_web_config.name, g_web_config.universe);
-			CFG_get_str( CFG_str2id("AKS_NAME"), &cli_recv[0]);
-			CFG_get_str( CFG_str2id("AKS_UNIVERSE"), &cli_recv[20]);
-			CFG_get_str( CFG_str2id("AKS_SUBNET"), &cli_recv[24]);
+			ratpac_get_str( CFG_str2id("AKS_NAME"), &cli_recv[0]);
+			ratpac_get_str( CFG_str2id("AKS_UNIVERSE"), &cli_recv[20]);
+			ratpac_get_str( CFG_str2id("AKS_SUBNET"), &cli_recv[24]);
 			//sprintf(&cli_recv[0], "AKS" );
 			//sprintf(&cli_recv[20], "10");
 #if 0
@@ -1390,22 +1390,22 @@ void check_gaffer_packet(char *data, uint32_t len)
 	{
 		return;				// 50 magic number for arnet data packet
 	}
-	CFG_get_str(CFG_str2id("GAFFER_ENABLE"),Uni);
+	ratpac_get_str(CFG_str2id("GAFFER_ENABLE"),Uni);
 	if (Uni[0] == '1')      // Gaffer is disabled
 	{
 		return;
 	}
-	CFG_get_str(CFG_str2id("GAFFER_UNIVERSE"),Uni);	
+	ratpac_get_str(CFG_str2id("GAFFER_UNIVERSE"),Uni);	
 	uni_num = atoi(Uni);;
-	CFG_get_str(CFG_str2id("GAFFER_SUBNET"),Uni);
+	ratpac_get_str(CFG_str2id("GAFFER_SUBNET"),Uni);
 	art_sub = atoi(Uni);
 	art_sub <<= 4;
 	uni_num = ((uni_num | art_sub) & 0xff);
 	if(uni_num == (int)data[14])
 	{
-		CFG_get_str(CFG_str2id("GAFFER_LOWER"),Uni);
+		ratpac_get_str(CFG_str2id("GAFFER_LOWER"),Uni);
 		lower = atoi(Uni);
- 		CFG_get_str(CFG_str2id("GAFFER_UPPER"),Uni);
+ 		ratpac_get_str(CFG_str2id("GAFFER_UPPER"),Uni);
 		upper = atoi(Uni);
 		tmp = &data[17];											// lower start from 1, upper is 512
 		memmove(&gaffer_data[lower], &tmp[lower], upper-lower+1);  // when lower==upper, it is 1 byte
@@ -1418,14 +1418,14 @@ void replace_channel_data(char *data, uint32_t len)
 	int lower, upper;
 	char *tmp;
 	
-	CFG_get_str(CFG_str2id("GAFFER_ENABLE"),Uni);
+	ratpac_get_str(CFG_str2id("GAFFER_ENABLE"),Uni);
 	if (Uni[0] == '1')      // Gaffer is disabled
 	{
 		return;
 	}
-	CFG_get_str(CFG_str2id("GAFFER_LOWER"),Uni);
+	ratpac_get_str(CFG_str2id("GAFFER_LOWER"),Uni);
 	lower = atoi(Uni);
- 	CFG_get_str(CFG_str2id("GAFFER_UPPER"),Uni);
+ 	ratpac_get_str(CFG_str2id("GAFFER_UPPER"),Uni);
 	upper = atoi(Uni);
 	tmp = &data[17];											// lower start from 1, upper is 512
 	memmove(&tmp[lower], &gaffer_data[lower], upper-lower+1);  // when lower==upper, it is 1 byte	
