@@ -584,7 +584,11 @@ void CGI_var_map(http_req *req, char *name, int id)
 		case CFG_AKS_ADVA15:
 		case CFG_AKS_ADVA16:
 			base_idx = ((CFG_AKS_ADVA1 >> 16) & 0xff);
-			
+			idx = ((id >> 16) & 0xff) - base_idx;
+			if (-1 == get_client_entry(idx, node_name, ip_addr, universe, art_sub, battery))
+			{
+				return;
+			}		
 			return;
 		case CFG_AKS_CONS1:
 		case CFG_AKS_CONS2:
