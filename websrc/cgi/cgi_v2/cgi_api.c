@@ -185,6 +185,7 @@ int  refresh_client_done(void);
 int ratpac_get_str(int id, char *val);
 int ratpac_set_str(int id, char *val);
 int SAMD_firmware_download(char *firmware, int len);
+void get_eCos_ver(char *buffer);
 
 cgi_cmd ps_cgi_cmds[]=
 {
@@ -588,7 +589,30 @@ void CGI_var_map(http_req *req, char *name, int id)
 			if (-1 == get_client_entry(idx, node_name, ip_addr, universe, art_sub, battery))
 			{
 				return;
-			}		
+			}
+			WEB_printf(req, "displayMsg('%s',",name);
+			
+			sprintf(ip_addr_save, "%s", ip_addr);	
+			sprintf(href_link, "<a href=\"http://%s\" target=\"_blank\">%s</a>", ip_addr, node_name);
+			
+			link_len = strlen(href_link);
+			node_len = strlen(node_name);
+			fill_space(href_link, link_len + 17 - node_len);
+			fill_space(ip_addr, 17);			
+			sprintf(val, "%s", href_link);
+			strcat(val, ip_addr);	
+			sc_convert(val);
+			WEB_printf(req, "'%s'+",val);
+			
+			get_eCos_ver(val);
+			sprintf(cmd_buff, "<button type=\"button\" onclick=\"updateFirmware('document.Upgrade_eCos', 'http://%s/EN/update_firmware.html');\">Update</button>", ip_addr_save);
+			link_len = strlen(cmd_buff);
+			fill_space(cmd_buff, link_len+6);
+			strcat(val, cmd_buff);
+			sc_convert(val);
+			//WEB_printf(req, "'%s'+",val);
+			WEB_printf(req, "'%s'",val);			// last one
+			WEB_printf(req, ");\n");				// close quote		
 			return;
 		case CFG_AKS_CONS1:
 		case CFG_AKS_CONS2:
