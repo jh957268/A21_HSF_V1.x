@@ -605,12 +605,27 @@ void CGI_var_map(http_req *req, char *name, int id)
 			WEB_printf(req, "'%s'+",val);
 			
 			get_eCos_ver(val);
-			sprintf(cmd_buff, "<button type=\"button\" onclick=\"updateFirmware('document.Upgrade_eCos', 'http://%s/EN/update_firmware.html');\">Update</button>", ip_addr_save);
+			sprintf(cmd_buff, "<button type=\"button\" onclick=\"updateFirmware(document.Upgrade_eCos, 'http://%s/EN/update_firmware.html');\">Update</button>", ip_addr_save);
 			link_len = strlen(cmd_buff);
-			fill_space(cmd_buff, link_len+6);
+			fill_space(cmd_buff, link_len+4);
 			strcat(val, cmd_buff);
 			sc_convert(val);
-			//WEB_printf(req, "'%s'+",val);
+			WEB_printf(req, "'%s'+",val);
+	
+			get_eCos_ver(val);
+			sprintf(cmd_buff, "<button type=\"button\" onclick=\"updateFirmware(document.Upgrade_SAMD, 'http://%s/EN/update_firmware.html');\">Update</button>", ip_addr_save);
+			link_len = strlen(cmd_buff);
+			fill_space(cmd_buff, link_len+4);
+			strcat(val, cmd_buff);
+			sc_convert(val);
+			WEB_printf(req, "'%s'+",val);
+			
+			get_eCos_ver(val);
+			sprintf(cmd_buff, "<button type=\"button\" onclick=\"updateFirmware(document.Upgrade_TIMO, 'http://%s/EN/update_firmware.html');\">Update</button>", ip_addr_save);
+			link_len = strlen(cmd_buff);
+			fill_space(cmd_buff, link_len+2);
+			strcat(val, cmd_buff);
+			sc_convert(val);			
 			WEB_printf(req, "'%s'",val);			// last one
 			WEB_printf(req, ");\n");				// close quote		
 			return;
