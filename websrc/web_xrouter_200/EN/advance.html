@@ -325,12 +325,73 @@ function Apply_refresh() {
 
 <script>pageTail();
 
-function do_SetUniverse(url, universe) {
-	var f=document.HFA21TEST;
-	alert("Do Universe");
-	form2Cfg(f);
-	subForm(f, url + 'do_constellation.html','SET_UNIVERSE=' + universe,cPage);
+function updateFirmware(fwform, whichunit)
+ {
+	alert("updateFirmware "+fwform);
+	
+	var f=fwform;
+	var m='';
+	if(f.files.value=="")
+    {
+		if(slanV=="en")
+		alert("Please select the file!");
+		else
+		alert("?????!");
+		return ;
+	}  
+	if(slanV=="en")
+		m='Are you sure you want to upgrade?';
+	else
+	    m='????????';
+	if(confirm(m))
+	{	
+		var elemiFrm = document.getElementById('subIframeId');
+		if (elemiFrm)
+		{
+			//alert("Found IFRAME!");
+			elemiFrm.parentNode.removeChild(elemiFrm);
+		}	
+		elemiFrm = document.getElementById('subIframeId2');
+		if (elemiFrm)
+		{
+			//alert("Found IFRAME!");
+			elemiFrm.parentNode.removeChild(elemiFrm);
+		}	
+		
+	    var ifrm = document.createElement('iframe');
+		ifrm.setAttribute('name', 'subIframe');
+		ifrm.setAttribute('id', 'subIframeId'); // assign an id
+		ifrm.height = "30";
+		ifrm.width = "540";
+		ifrm.frameborder="0"
+		f.parentNode.appendChild(ifrm);
+		var html = '<body>Upgrade SAMD Firmware, Please Wait...</body>';
+		ifrm.contentWindow.document.open();
+		alert("Alert2!");		
+		ifrm.contentWindow.document.write(html);
+		//alert("Alert3!");		
+		//ifrm.contentWindow.document.close();
+		//alert("Alert4!");
+
+	    var ifrm2 = document.createElement('iframe');
+		ifrm2.setAttribute('name', 'subIframe2');
+		ifrm2.setAttribute('id', 'subIframeId2'); // assign an id
+		ifrm2.height = "60";
+		ifrm2.width = "540";
+		ifrm2.frameborder="0"
+		f.parentNode.appendChild(ifrm2);		
+		alert("Alert5!");
+		//f.parentNode.appendChild(ifrm);
+		//alert("Alert6!");
+		f.action = whichunit;
+		f.target = 'subIframe2';
+		alert("Alert7");		
+		//subForm(f,'update_firmware.html','SAMD_UPG',cPage);
+		f.submit();
+    }
 }
+
+
 
 function popupCenter(url, title, w, h) 
 {
@@ -346,34 +407,7 @@ function displayMsg(eleID, strMsg)
 	strMessage1.innerHTML = strMsg;
 }
 
-function setUniverse(url, eleID)
-{
-	var strUser;
-	var subnet;
-	var myEle = document.getElementById('univ' + eleID);
-	if (myEle)
-	{
-		strUser = myEle.options[myEle.selectedIndex].value;
-		//popupCenter(url + 'univ' + strUser + '.html', 'myPop1',700,500)
-		//alert(url + 'univ' + strUser + '.html');
-	}
-	else
-	{
-		//alert('univ' + eleID + ' not found');
-		strUser = '0';
-	}
-	myEle = document.getElementById('artsub' + eleID);
-	if (myEle)
-	{
-		subnet = myEle.options[myEle.selectedIndex].value;
-	}
-	else
-	{
-		alert('artsub' + eleID + ' not found');
-		subnet = '0';
-	}	
-	do_SetUniverse(url, subnet + '-' + strUser);
-}
+
 
 /*REAL
 <%
