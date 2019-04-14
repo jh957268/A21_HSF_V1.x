@@ -63,7 +63,7 @@ char ebuffer[128];
 #define eprintf(fmt, ...)
 #endif
 	
-char at_rsp[64] = {0};
+char at_rsp[96] = {0};
 
 const int hf_gpio_fid_to_pid_map_table[HFM_MAX_FUNC_CODE]=
 {
@@ -390,7 +390,6 @@ static int USER_FUNC cmd_web_para_bitsetting(pat_session_t s,int argc,char *argv
 
 static int USER_FUNC reload_cmd_web_para_node_name(pat_session_t s,int argc,char *argv[],char *rsp,int len)
 {
-
 	if(argc > 1)
 		return -1;
 	
@@ -402,7 +401,7 @@ static int USER_FUNC reload_cmd_web_para_node_name(pat_session_t s,int argc,char
 	{
 		sprintf(g_web_config.name,"%s",argv[0]);
 		write_data_to_flash();
-	}
+	}	
 	return 0;
 }
 static int USER_FUNC reload_cmd_web_para_universe(pat_session_t s,int argc,char *argv[],char *rsp,int len)
@@ -562,6 +561,7 @@ const hfat_cmd_t user_define_at_cmds_table[]=
 //system event ,use for system relaod here
 void init_webdata_when_reload(void)
 {
+#if 0	
 	int temp_value = -1;
 	
 	memset(&g_web_config,0,sizeof(WEB_DATA_T));
@@ -631,6 +631,7 @@ void init_webdata_when_reload(void)
 	{
 		ratpac_set_str( CFG_str2id("AKS_BIT_SETTINGS"), "0");
 	}
+#endif	
 }
 
 static int hfsys_event_callback( uint32_t event_id,void * param)
@@ -679,7 +680,6 @@ void web_flash_data_init(void)
 	{
 		ck_sum ^= fls_data[i];
 	}
-
 	if(g_web_config.initFlag != ck_sum)
 	{
 		memset(&g_web_config,0,sizeof(WEB_DATA_T));
@@ -814,7 +814,7 @@ void UserMain(void *arg)
 	{
 		u_printf("register system event fail\n");
 	}
-	web_flash_data_init();
+	web_flash_data_init();   // cannot print UART0, since it is not started yet. If so, system will crash, and box is not recovery!!! */
 	if(hfnet_start_assis(ASSIS_PORT)!=HF_SUCCESS)
 	{
 		HF_Debug(DEBUG_WARN,"start assis fail\n");
@@ -845,13 +845,13 @@ void UserMain(void *arg)
 	}
 
 	if (strstr(at_rsp, "+ok=Enable"))
-	{
+	{		
 		ret1 = hfthread_create(client_thread_main,"udp_client_main",512+128,(void*)1,HFTHREAD_PRIORITIES_NORMAL,NULL,NULL);
 
 		if (HF_SUCCESS != ret1)
 		{
 			eprintf("Create UDP client fails, %d\n", ret1);
-		}
+		}		
 	}
 	else
 	{
@@ -889,6 +889,7 @@ void UserMain(void *arg)
 	
 
 	Joo_uart_send("__system_reboot");
+
 	while(1)
 	{
 		if (0 == artnet_enable)
@@ -1266,7 +1267,7 @@ USER_FUNC static void client_thread_main(void* arg)
 		}
 		break;
 	}
-
+	
 	artnet_enable = 1;
 	
 	memset((char*)&addr,0,sizeof(addr));
