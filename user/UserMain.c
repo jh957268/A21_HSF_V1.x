@@ -65,6 +65,8 @@ char ebuffer[128];
 	
 char at_rsp[96] = {0};
 
+char *eCos_ver="1.01";
+
 const int hf_gpio_fid_to_pid_map_table[HFM_MAX_FUNC_CODE]=
 {
 	HFM_NOPIN,		//0HFGPIO_F_JTAG_TCK
@@ -1240,7 +1242,7 @@ USER_FUNC static void client_thread_main(void* arg)
 	{
 		// eprintf("Send AT+WANN\n");
 
- 		rc = hfat_send_cmd("AT+WANN\r\n", sizeof("AT+WANN\r\n"),at_rsp,96);
+ 		rc = hfat_send_cmd("AT+WANN\r\n", sizeof("AT+WANN\r\n"),at_rsp,sizeof(at_rsp));
  
  		at_rsp[16] = 0;
 		if (HF_SUCCESS != rc)
@@ -1642,6 +1644,11 @@ int SAMD_firmware_download(unsigned char *firmware, int len)
 		}
 	}
 	return 0;
+}
+
+void get_eCos_ver(char *buffer)
+{
+	strcpy(buffer, eCos_ver);
 }	
 
 
