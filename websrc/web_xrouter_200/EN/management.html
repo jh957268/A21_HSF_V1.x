@@ -104,9 +104,9 @@ function Apply_2()
     }
 }
 
-function Apply_3()
+function Apply_3(whichf)
  {
-	var f=document.Update_SAMD;
+	var f=whichf;
 	var m='';
 	if(f.files.value=="")
     {
@@ -144,11 +144,8 @@ function Apply_3()
 		f.parentNode.appendChild(ifrm);
 		var html = '<body>Upgrade SAMD Firmware, Please Wait...</body>';
 		ifrm.contentWindow.document.open();
-		alert("Alert2!");		
 		ifrm.contentWindow.document.write(html);
-		//alert("Alert3!");		
-		//ifrm.contentWindow.document.close();
-		//alert("Alert4!");
+		ifrm.contentWindow.document.close();
 
 	    var ifrm2 = document.createElement('iframe');
 		ifrm2.setAttribute('name', 'subIframe2');
@@ -157,12 +154,12 @@ function Apply_3()
 		ifrm2.width = "540";
 		ifrm2.frameborder="0"
 		f.parentNode.appendChild(ifrm2);		
-		alert("Alert5!");
+		//alert("Alert5!");
 		//f.parentNode.appendChild(ifrm);
 		//alert("Alert6!");
-		f.action = 'http://10.10.100.254/EN/update_firmware.html';
+		//f.action = 'http://10.10.100.254/EN/update_firmware.html';
 		f.target = 'subIframe2';
-		alert("Alert7");		
+		//alert("Alert7");		
 		//subForm(f,'update_firmware.html','SAMD_UPG',cPage);
 		f.submit();
     }
@@ -311,7 +308,22 @@ var secs;
         <td> <input name="files" size="20" maxlength="256" type="file" value=""></td>
 </tr>
 </tbody></table>
-<input value="Apply" id="uploadSAMDApply" type="button" onclick="Apply_3()" > &nbsp;&nbsp;
+<input value="Apply" id="uploadSAMDApply" type="button" onclick="Apply_3(document.Update_SAMD)" > &nbsp;&nbsp;
+</form>
+
+<form name="Update_TIMO" method=POST action=update_firmware.html enctype=multipart/form-data >
+<INPUT type=hidden name=CMD value=TIMO_UPG>
+<INPUT type=hidden name=GO value=management.htm>
+<table width="540" border="1" cellspacing="1" cellpadding="3" bordercolor="#9BABBD">
+<tbody><tr>
+  <td class="title" colspan="2" id="uploadTIMO">Update TIMO Firmware</td>
+</tr>
+<tr>
+  <td class="head" width="40%" id="uploadTIMOLocation">Location:</td>
+        <td> <input name="files" size="20" maxlength="256" type="file" value=""></td>
+</tr>
+</tbody></table>
+<input value="Apply" id="uploadTIMOApply" type="button" onclick="Apply_3(document.Update_TIMO)" > &nbsp;&nbsp;
 </form>
 
 <script>pageTail();</script>
