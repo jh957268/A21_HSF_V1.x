@@ -149,7 +149,7 @@ function Apply_refresh() {
 		<table width="540" border="1" cellspacing="1" cellpadding="3"   bordercolor="#9BABBD">
 			<tr>
 				<td class="head">
-					<font id="aks_adva"><pre>Node Name     IP Address    eCos Ver.       SAMD Ver.        Timo Ver.</pre></font><br>
+					<font id="aks_adva"><pre>Node Name     IP Address    eCos Ver.       SAMD Ver.       TIMO Ver.</pre></font><br>
 				</td>
 			</tr>
 			<tr>
@@ -348,10 +348,10 @@ function updateFirmware(fwform, whichunit)
 		f.parentNode.appendChild(ifrm);
 		var html = '<body>Upgrade SAMD Firmware, Please Wait...</body>';
 		ifrm.contentWindow.document.open();
-		alert("Alert2!");		
+		//alert("Alert2!");		
 		ifrm.contentWindow.document.write(html);
 		//alert("Alert3!");		
-		//ifrm.contentWindow.document.close();
+		ifrm.contentWindow.document.close();
 		//alert("Alert4!");
 
 	    var ifrm2 = document.createElement('iframe');
@@ -361,12 +361,12 @@ function updateFirmware(fwform, whichunit)
 		ifrm2.width = "540";
 		ifrm2.frameborder="0"
 		f.parentNode.appendChild(ifrm2);		
-		alert("Alert5!");
+		//alert("Alert5!");
 		//f.parentNode.appendChild(ifrm);
 		//alert("Alert6!");
 		f.action = whichunit;
 		f.target = 'subIframe2';
-		alert("Alert7");		
+		//alert("Alert7");		
 		//subForm(f,'update_firmware.html','SAMD_UPG',cPage);
 		f.submit();
     }
