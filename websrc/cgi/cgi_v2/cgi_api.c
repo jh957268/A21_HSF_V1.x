@@ -186,6 +186,7 @@ int ratpac_get_str(int id, char *val);
 int ratpac_set_str(int id, char *val);
 int SAMD_firmware_download(char *firmware, int len);
 void get_eCos_ver(char *buffer);
+void get_eCos_rel_build(char *buff);
 
 cgi_cmd ps_cgi_cmds[]=
 {
@@ -802,7 +803,13 @@ void CGI_var_map(http_req *req, char *name, int id)
 			}
 			WEB_printf(req, "displayMsg('%s','%s');\n",name, val);
 			return;
-
+		case CFG_AKS_REL_BUILD:
+			get_eCos_rel_build(val);
+			WEB_printf(req, "displayMsg('%s',",name);
+			WEB_printf(req, "'%s'",val);			// last one
+			WEB_printf(req, ");\n");				// close quote	
+			return;
+		
 		case CFG_SET_UNIV0:
 		case CFG_SET_UNIV1:
 		case CFG_SET_UNIV2:
