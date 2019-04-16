@@ -27,6 +27,8 @@
 #include <m2m_app.h>
 #include <hsf.h>
 
+#include "aks_version.h"
+
 
 void Joo_uart_send(char *data);
 
@@ -65,8 +67,8 @@ char ebuffer[128];
 	
 char at_rsp[96] = {0};
 
-char *rel_date = __DATE__" " __TIME__;
-char *eCos_ver="1.01";
+//char *rel_date = __DATE__" " __TIME__;
+//char *eCos_ver="1.01";
 
 const int hf_gpio_fid_to_pid_map_table[HFM_MAX_FUNC_CODE]=
 {
