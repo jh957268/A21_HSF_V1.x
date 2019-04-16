@@ -20,8 +20,8 @@ var Pages=new Array(
 ,new Page(0,'sta setting','sta_config.html','STA Interface Setting')
 ,new Page(0,'app setting','app_config.html',' Application Setting')
 ,new Page(0,'device management ','management.html','Device Management')
-,new Page(0,'device constellation ','constellation.html','Device constellation')
-
+,new Page(0,'constellation','constellation.html','constellation')
+,new Page(0,'sACN','sacn.html','sACN')
 );
 
 function findPage()
