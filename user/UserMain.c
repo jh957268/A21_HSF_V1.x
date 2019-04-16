@@ -65,6 +65,7 @@ char ebuffer[128];
 	
 char at_rsp[96] = {0};
 
+char *rel_date = __DATE__" " __TIME__;
 char *eCos_ver="1.01";
 
 const int hf_gpio_fid_to_pid_map_table[HFM_MAX_FUNC_CODE]=
@@ -1651,6 +1652,7 @@ void get_eCos_ver(char *buffer)
 	strcpy(buffer, eCos_ver);
 }	
 
-
-
-
+void get_eCos_rel_build(char *buffer)
+{
+	sprintf(buffer, "Release Date: %s Ver: %s", rel_date, eCos_ver);
+}
