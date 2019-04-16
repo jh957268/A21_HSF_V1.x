@@ -203,7 +203,7 @@ var secs;
 <h1 id="DM_DManagement_lan_id">Device Management</h1> 
 <!--<p><%CGI_GET_VERSION() ;%></p>-->
 <p>Version 1.9.9.9/a Beta  Built 4/19/2017</p>
-<p>Release Build: 04/14/2019 10010-3</p>
+<pre id="AKS_REL_BUILD"></pre>
 <hr />
 
 <form name=frmSetup>
@@ -326,6 +326,19 @@ var secs;
 <input value="Apply" id="uploadTIMOApply" type="button" onclick="Apply_3(document.Update_TIMO)" > &nbsp;&nbsp;
 </form>
 
-<script>pageTail();</script>
+<script>pageTail();
+function displayMsg(eleID, strMsg)
+{
+	var strMessage1 = document.getElementById(eleID) ;
+	strMessage1.innerHTML = strMsg;
+}
+
+/*REAL
+<%
+CGI_MAP(AKS_REL_BUILD, CFG_AKS_REL_BUILD);
+%>
+REAL*/
+
+</script>
 </BODY>
 </HTML>
