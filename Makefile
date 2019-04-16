@@ -12,8 +12,11 @@ TARGET = ECOS
 WEB_LANG = English
 #TFTP_DIR = /tftpboot
 TFTP_DIR = ./output
-VER = 
-IMAGE_NAME = eCos-$(VER)
+BUILD_DATE := $(shell date +%F%H%M)
+ifeq ($(VER),)
+VER = 0.00
+endif
+IMAGE_NAME = eCos
 
 PATH :=$(ECOS_TOOL_PATH):$(ECOS_MIPSTOOL_PATH):$(PATH)
 export PATH ECOS_REPOSITORY BRANCH BOOT_CODE PRJ_NAME CHIPSET WIFI_MODE TARGET TFTP_DIR IMAGE_NAME CONFIG_CROSS_COMPILER_PATH WEB_LANG
@@ -39,7 +42,7 @@ TOPDIR=$(shell pwd)
 
 export TOPDIR ENDIAN CROSS_PREFIX
 
-CFLAGS        = -I$(shell pwd)/include -I$(shell pwd)/include/tcpip/include 
+CFLAGS        = -I$(shell pwd)/include -I$(shell pwd)/include/tcpip/include -DBUILD_VER=$(VER)
 CXXFLAGS      = $(CFLAGS)
 LDFLAGS       = -nostartfiles -Ttarget.ld -L./lib
 LDMAP          = -Wl,--cref -Wl,-Map,xrouterLink.map -Wl,-O2
@@ -160,7 +163,7 @@ endif
 	-rm -f drivers.o apps.o xrouters.o appsnew.o
 	rm -f  userapps.o
 ifeq ($(CONFIG_M2M_HW_SMT),y)
-	cp -f $(IMAGE_NAME).img $(TFTP_DIR)/$(IMAGE_NAME).img
+	cp -f $(IMAGE_NAME).img $(TFTP_DIR)/$(IMAGE_NAME)-$(BUILD_DATE)-$(VER).img
 	#cp -f $(IMAGE_NAME).img $(TFTP_DIR)/$(IMAGE_NAME)_SMT.img
 else
 	cp -f $(IMAGE_NAME).img $(TFTP_DIR)/$(IMAGE_NAME).img
