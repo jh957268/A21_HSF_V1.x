@@ -164,6 +164,8 @@
 #define CFG_AKS_ADVA15			        CFG_USER_(62,CFG_TYPE_STR)
 #define CFG_AKS_ADVA16			        CFG_USER_(63,CFG_TYPE_STR)
 
+#define CFG_AKS_REL_BUILD				CFG_USER_(64,CFG_TYPE_STR)
+
 // M2M: gohuy
 #define CFG_M2M_(idx,type) 			CFG_ID_(CFG_ID_M2M,idx,type,0)
 #define CFG_M2M_RUN_MODE	            	CFG_M2M_(1,CFG_TYPE_STR)
