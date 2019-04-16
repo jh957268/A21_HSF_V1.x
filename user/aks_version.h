@@ -1,2 +1,10 @@
 static char *rel_date = __DATE__" " __TIME__;
-static char *eCos_ver="1.01";
+
+#define STR_HELPER(x) #x
+#define STR(x) STR_HELPER(x)
+#ifdef BUILD_VER
+static unsigned char *eCos_ver= STR(BUILD_VER);
+#else
+static unsigned char *eCos_ver= "9.99";
+#endif
+	
