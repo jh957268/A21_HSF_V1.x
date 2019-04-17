@@ -394,7 +394,16 @@ function cfg2Form(f)
 			else if (e.type=='select-one')
 			{
 				for (var j=0;j<e.options.length;j++)
-					 e.options[j].selected=e.options[j].defaultSelected=(e.options[j].value==CA[i].v);
+				{
+					var opt = e.options[j];
+
+					if ( opt.value === CA[i].v ) {
+						opt.selected = true;
+						opt.defaultSelected = true;
+						break;
+					}
+					//e.options[j].selected=e.options[j].defaultSelected=(e.options[j].value==CA[i].v);   fix iphone safari
+				}
 			}
 			else
 				e.value=getCfg(e.name);
