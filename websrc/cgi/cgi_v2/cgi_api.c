@@ -686,15 +686,15 @@ void CGI_var_map(http_req *req, char *name, int id)
 			link_len = strlen(href_link);
 			node_len = strlen(node_name);
 			fill_space(href_link, link_len + 17 - node_len);
-			fill_space(ip_addr, 17);
-			fill_space(battery, 10);
+			fill_space(ip_addr, 18);
+			fill_space(battery, 9);
 			sprintf(val, "%s", href_link);
 			strcat(val, ip_addr);
 			strcat(val, battery);
 			
 			sprintf(cmd_buff, "<button type=\"button\" onclick=\"popupCenter('http://%s/EN/id.html', 'myPop1',700,500);\">ID</button>", ip_addr_save);
 			link_len = strlen(cmd_buff);
-			fill_space(cmd_buff, link_len+6);
+			fill_space(cmd_buff, link_len+5);
 			strcat(val, cmd_buff);
 			
 			sprintf(cmd_buff, "<button type=\"button\" onclick=\"popupCenter('http://%s/EN/link.html', 'myPop1',700,500);\">Link</button>", ip_addr_save);			
