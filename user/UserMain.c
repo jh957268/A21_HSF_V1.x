@@ -39,6 +39,8 @@ USER_FUNC static void client_thread_main(void* arg);
 void check_gaffer_packet(char *data, uint32_t len);
 void replace_channel_data(char *data, uint32_t len);
 int check_duplicate_ip(char *ip_addr);
+int ratpac_get_str(int id, char *val);
+int ratpac_set_str(int id, char *val);
 
 static int refresh_clients;
 static char gaffer_data[514];
@@ -225,6 +227,38 @@ static int USER_FUNC cmd_web_para_artnet(pat_session_t s,int argc,char *argv[],c
 	{
 		input = argv[0];
 		artnet_enable = input[0] - '0';
+	}
+	
+	//refresh_clients = 1;
+
+	return 0;
+}
+
+static int USER_FUNC cmd_web_para_rd(pat_session_t s,int argc,char *argv[],char *rsp,int len)
+{
+	int ret = 0;
+	char *input;
+	unsigned int addr, val;
+	
+	if(argc > 1)
+		return -1;
+	
+	if(0 == argc)
+	{
+		sprintf(rsp, "=%d", artnet_enable);
+	}
+	else
+	{
+		input = argv[0];
+		if ( 0 == sscanf( argv[ 0 ], "%x", &addr ) )
+		{
+			eprintf( "No valid addr input\n" );
+			return ( -1 );
+		}
+		eprintf("Enter %08x\n", addr);
+		hf_thread_delay(500);
+		val = *((unsigned int *)addr);
+		sprintf(rsp, "val = %08x\n", val);
 	}
 	
 	//refresh_clients = 1;
@@ -548,6 +582,7 @@ const hfat_cmd_t user_define_at_cmds_table[]=
 	{"SECONDCHANNEL",cmd_web_para_secondchannel,"AT+SECONDCHANNEL: get/set SECONDCHANNEL,value must be 0~11\r\n",NULL},
 	{"BITSETTING",cmd_web_para_bitsetting,"AT+BITSETTING: get/set BITSETTING,value must be 0 or 1\r\n",NULL},
 	{"ARTNET",cmd_web_para_artnet,"AT+ARTNET: get/set ARTNET,value must be on or off\r\n",NULL},
+	{"RD",cmd_web_para_rd,"AT+RD: RD register value\r\n",NULL},
 	
 //AT CMD: init data after reload
 	{"WNODENAME",reload_cmd_web_para_node_name,"AT+WNODENAME: get/set device node init name after reload\r\n",NULL},
