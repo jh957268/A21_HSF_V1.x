@@ -185,6 +185,7 @@ clean:
 	-rm -rf webpages
 	-rm -f webdata.bin
 	-rm -f profile.txt
+	-rm -f jooxroutermap
 	-rm -f ./output/*
 	make clean -C ./user/
 	
