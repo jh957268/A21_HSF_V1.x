@@ -1213,8 +1213,7 @@ static void server_thread_main(void* arg)
 			msg[26] = 0;
 			
 			char ip_addr[20];
-			sprintf(ip_addr, inet_ntoa(cliAddr.sin_addr));
-			
+			sprintf(ip_addr, "%s", inet_ntoa(cliAddr.sin_addr));
 			if (0 == check_duplicate_ip(ip_addr))
 			{	
 				sprintf(client_list[client_valid_num].node_name, "%s", &msg[0]);
@@ -1236,7 +1235,7 @@ int check_duplicate_ip(char *ip_addr)
 	
 	for (i = 0; i < client_valid_num; i++)
 	{
-		if (!strcmp(client_list[client_valid_num].ip_addr, ip_addr))
+		if (!strcmp(client_list[i].ip_addr, ip_addr))
 		{
 			return 1;
 		}
