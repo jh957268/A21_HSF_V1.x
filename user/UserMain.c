@@ -1367,7 +1367,7 @@ USER_FUNC static void client_thread_main(void* arg)
 				continue;
 			}
 			cli_recv[recv_num] = 0;
-			eprintf("thread %d, msg=%s, IP=%s\n",id, recv, inet_ntoa(addr.sin_addr));
+			eprintf("thread %d, msg=%s, IP=%s\n",id, cli_recv, inet_ntoa(addr.sin_addr));
 			//g_web_config.name[19] = 0;
 			//g_web_config.universe[2] = 0;
 			//eprintf("Node name = %s, Uni = %s\n", g_web_config.name, g_web_config.universe);
