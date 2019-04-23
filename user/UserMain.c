@@ -28,6 +28,7 @@
 #include <hsf.h>
 
 #include "aks_version.h"
+#include "e131.h"
 
 
 void Joo_uart_send(char *data);
@@ -822,10 +823,47 @@ static int USER_FUNC socketa_recv_callback(uint32_t event,char *data,uint32_t le
 	return 0;
 }
 
+#if 1
+static int USER_FUNC socketb_recv_callback(uint32_t event,char *data,uint32_t len,uint32_t buf_len)
+{
+	e131_error_t error;
+	static uint8_t last_seq = 0x00;
+	e131_packet_t *packet;
+	
+	if(event==HFNET_SOCKETB_CONNECTED)
+	{
+		//hfgpio_fset_out_low(HFGPIO_F_TCP_LINK);
+	}
+	else if(event==HFNET_SOCKETB_DISCONNECTED)
+	{
+		//hfgpio_fset_out_high(HFGPIO_F_TCP_LINK);
+	}
+	else if(event==HFNET_SOCKETB_DATA_READY)
+	{
+		packet = (e131_packet_t *)data;
+		
+		if ((error = e131_pkt_validate(packet)) != E131_ERR_NONE) {
+			eprintf("e131_pkt_validate: %s\n", e131_strerror(error));
+			return 0;
+		}
+		if (e131_pkt_discard(packet, last_seq)) {
+			eprintf("warning: packet out of order received\n");
+			last_seq = packet->frame.seq_number;
+			return 0;
+		}
+		//e131_pkt_dump(stderr, &packet);
+		eprintf("receive sACN packet %d\n", last_seq);
+		last_seq = packet->frame.seq_number;
+	}
+	return 0;
+}
+#endif
+
+
 void UserMain(void *arg)
 {
 	
-	int ret1, ret2;
+	int ret1;
 	
 	int level;
 	level = DEBUG_LEVEL;
@@ -867,7 +905,7 @@ void UserMain(void *arg)
 	{
 		HF_Debug(DEBUG_WARN,"start socketa fail\n");
 	}
-	if(hfnet_start_socketb(HFTHREAD_PRIORITIES_LOW,(hfnet_callback_t)NULL)!=HF_SUCCESS)
+	if(hfnet_start_socketb(HFTHREAD_PRIORITIES_LOW,(hfnet_callback_t)socketb_recv_callback)!=HF_SUCCESS)
 	{
 		HF_Debug(DEBUG_WARN,"start socketb fail\n");
 	}
@@ -925,7 +963,7 @@ void UserMain(void *arg)
 			}
 		}
 	}
-	int i=0;
+	// int i=0;
 	
 
 	Joo_uart_send("__system_reboot");
