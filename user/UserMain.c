@@ -70,6 +70,9 @@ char ebuffer[128];
 	
 char at_rsp[96] = {0};
 
+extern cyg_netdevtab_entry_t devive_wireless_netdev0;
+cyg_netdevtab_entry_t *pWIFIDev;
+
 //char *rel_date = __DATE__" " __TIME__;
 //char *eCos_ver="1.01";
 
@@ -874,7 +877,7 @@ void UserMain(void *arg)
 	time_t time_now;
 	time_now = time(NULL);
 	HF_Debug(DEBUG_LEVEL,"sdk version(%s),the app_main start time is %d %s\n",hfsys_get_sdk_version(),time_now,ctime(&time_now));
-
+	pWIFIDev = &devive_wireless_netdev0;
 	if(hfgpio_fmap_check(HFM_TYPE_A21)!=0)
 	{
 		while(1)
