@@ -908,7 +908,7 @@ void UserMain(void *arg)
 	{
 		HF_Debug(DEBUG_WARN,"start socketa fail\n");
 	}
-	if(hfnet_start_socketb(HFTHREAD_PRIORITIES_LOW,(hfnet_callback_t)socketb_recv_callback)!=HF_SUCCESS)
+	if(hfnet_start_socketb(HFTHREAD_PRIORITIES_LOW,(hfnet_callback_t)NULL)!=HF_SUCCESS)
 	{
 		HF_Debug(DEBUG_WARN,"start socketb fail\n");
 	}
@@ -1570,6 +1570,12 @@ int ratpac_get_str(int id, char *val)
 			break;
 		case CFG_AKS_SECOND_CHANNEL:
 			sprintf(val, "%s", g_web_config.secondChannel);			
+			break;	
+		case CFG_SACN_OUTPUT:
+			sprintf(val,"0");
+			break;
+		case CFG_SACN_UNIV:
+			sprintf(val,"300");
 			break;			
 		default:
 			return -1;
@@ -1616,7 +1622,12 @@ int ratpac_set_str(int id, char *val)
 		case CFG_AKS_SECOND_CHANNEL:
 			sprintf(g_web_config.secondChannel, "%s", val);		
 			break;
-		
+		case CFG_SACN_OUTPUT:
+			//sprintf(val,"0");
+			break;
+		case CFG_SACN_UNIV:
+			//sprintf(val,"300");
+			break;
 		default:
 			return -1;
 	}
