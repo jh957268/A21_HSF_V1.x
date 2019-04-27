@@ -1,0 +1,124 @@
+<HTML>
+<HEAD>
+<META http-equiv="Pragma" content="no-cache">
+<META http-equiv=Content-Type 	content="text/html" charset="gb2312">
+<link rel="stylesheet" href="../style/normal_ws.css" type="text/css">
+<TITLE>RatPac AKS sACN Settings</TITLE>
+<SCRIPT language=JavaScript src="../utils.js"></SCRIPT>
+<SCRIPT language=JavaScript src=spec.js></SCRIPT>
+<SCRIPT language=JavaScript>
+/*DEMO*/
+addCfg("SACN_OUTPUT",212,"1");
+addCfg("SACN_UNIV",212,"200");
+/*END_DEMO*/
+
+/*REAL
+<%
+CGI_MAP(SACN_OUTPUT, CFG_SACN_OUTPUT);
+CGI_MAP(SACN_UNIV, CFG_SACN_UNIV);
+%>
+
+REAL*/
+
+function initvalue()
+ {
+ }
+
+function init(){
+	var f=document.SACNFORM;
+	var slanV="<%CGI_GET_FLANG() ;%>";
+	var logoV="<%CGI_GET_FLOGO();%>";	
+	
+	cfg2Form(f);
+	initvalue();
+}
+
+function Reset() {
+	init();
+}
+
+function sacn_Apply() {
+	var f=document.SACNFORM;
+	var p= f.sacn_port.value;
+
+	if (p== "")
+	{
+		alert('Please input the port value!');
+		f.net_port.focus();
+		f.net_port.select();
+		return false;	
+	}
+		
+	p= 1*p;
+	if (!((p>0)&&(p<=65535)))
+    {
+		alert('The port value shall be: > 0 and <= 65535');
+		f.net_port.focus();
+		f.net_port.select();
+		return false;
+    }
+
+	form2Cfg(f);
+	subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
+}
+
+function sacn_Cancel() {
+	init();
+}
+
+</SCRIPT>
+</HEAD>
+<BODY leftmargin=0 topmargin=0 onload=init()>
+<script>pageHead();</script>
+
+<h1 id="sacnconfigTitle">sACN Settings</h1>
+
+<hr>
+
+<form method=post name=SACNFORM>
+		<table width="540" border="1" cellspacing="1" cellpadding="3"   bordercolor="#9BABBD">
+			<tr>
+				<td class="title" colspan="2" id="sacn_id">sACN Settings</td>
+			</tr>
+			<tr> 
+				<td class="head">
+					<font id="sacn_output_id">sACN Output</font><br>	
+				</td>
+				<td>
+					<select name="SACN_OUTPUT" size="1">
+						<option value="0">Enabled</option>
+						<option value="1">Disabled</option>
+					</select>						
+				</td>
+			</tr>
+			<tr> 
+				<td class="head">
+					<font id="sacn_univ_id">Universe</font><br>	
+				</td>
+				<td>
+					<input name="SACN_UNIV" maxlength=32 size=20>
+				</td>
+			</tr>
+			<tr> 
+				<td class="head">
+					<font id="sacn_prio_id">Priority:(Default 100)</font><br>	
+				</td>
+				<td>
+					<input name="SACN_PRIO" maxlength=32 size=20 value="100" readonly>
+				</td>
+			</tr>					
+			<tr > 
+				<td class="head" id="sacn_port_id">Port:(Default 5568)</td>
+				<td><input name="sacn_port" maxlength=32 size=20 value="5568" readonly></td>
+			</tr > 
+		</table> 
+		<p/>
+		<center>
+			<input type=button style="{width:120px;}" value="Apply" onClick="sacn_Apply()" id="sacn_apply_id">&nbsp;&nbsp;
+			<input type=button style="{width:120px;}" value="Cancel" onClick="sacn_Cancel()" id="sacn_cancel_id">
+		</center>
+</form>
+
+<script>pageTail();</script>
+</BODY>
+</HTML>
