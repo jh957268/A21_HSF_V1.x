@@ -170,6 +170,8 @@ typedef struct _web_data
 	unsigned char gaffer_univ[3];
 	unsigned char gaffer_lower[4];
 	unsigned char gaffer_upper[4];
+	unsigned char sacn_enb[2];
+	unsigned char sacn_universe[8];
 }WEB_DATA_T;
 
 WEB_DATA_T g_web_config = {0};
@@ -737,6 +739,9 @@ void web_flash_data_init(void)
 		sprintf(g_web_config.gaffer_lower,"1");
 		sprintf(g_web_config.gaffer_upper,"1");
 
+		sprintf(g_web_config.sacn_enb,"1");		// disable
+		sprintf(g_web_config.sacn_universe,"100");
+		
 		sprintf(g_web_config.timopower,"3");
 		sprintf(g_web_config.channelWidth,"16");
 		sprintf(g_web_config.secondChannel,"0");
@@ -1572,10 +1577,10 @@ int ratpac_get_str(int id, char *val)
 			sprintf(val, "%s", g_web_config.secondChannel);			
 			break;	
 		case CFG_SACN_OUTPUT:
-			sprintf(val,"0");
+			sprintf(val,"%s",g_web_config.sacn_enb );
 			break;
 		case CFG_SACN_UNIV:
-			sprintf(val,"300");
+			sprintf(val,"%s", g_web_config.sacn_universe);
 			break;			
 		default:
 			return -1;
@@ -1623,10 +1628,10 @@ int ratpac_set_str(int id, char *val)
 			sprintf(g_web_config.secondChannel, "%s", val);		
 			break;
 		case CFG_SACN_OUTPUT:
-			//sprintf(val,"0");
+			sprintf(g_web_config.sacn_enb,"%s", val);		
 			break;
 		case CFG_SACN_UNIV:
-			//sprintf(val,"300");
+			sprintf(g_web_config.sacn_universe,"%s", val);
 			break;
 		default:
 			return -1;
