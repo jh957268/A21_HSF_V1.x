@@ -46,6 +46,13 @@ int ratpac_set_str(int id, char *val);
 static int refresh_clients;
 static char gaffer_data[514];
 
+extern struct eth_drv_sc devive_wireless_sc0;
+
+int rt28xx_open(void *dev);
+
+struct eth_drv_sc	*dev;
+//RTMP_ADAPTER	*pAd;
+
 // #define debug(format, args...) fprintf (stderr, format, args)
 
 #if 0
@@ -129,6 +136,8 @@ int CGi_do_user_cmd(http_req *req)
 	char *cmd;
 	int i;
 	int rc=0;
+	
+	//rt28xx_open((void *)&devive_wireless_netdev0);
 	
 	cmd=WEB_query(req,"CMD");
 	
@@ -1748,4 +1757,38 @@ void get_eCos_ver(char *buffer)
 void get_eCos_rel_build(char *buffer)
 {
 	sprintf(buffer, "Release Date: %s Ver: %s", rel_date, eCos_ver);
+}
+
+static e131_packet_t packet;
+int sACN_main() 
+{
+  int sockfd;
+  e131_error_t error;
+  uint8_t last_seq = 0x00;
+
+  // create a socket for E1.31
+  if ((sockfd = e131_socket()) < 0)
+    eprintf("e131_socket\n");
+
+  // bind the socket to the default E1.31 port and join multicast group for universe 1
+  if (e131_bind(sockfd, E131_DEFAULT_PORT) < 0)
+    eprintf("e131_bind");
+ 
+  // loop to receive E1.31 packets
+  eprintf("waiting for E1.31 packets ...\n");
+  for (;;) {
+    if (e131_recv(sockfd, &packet) < 0)
+		continue;	
+    if ((error = e131_pkt_validate(&packet)) != E131_ERR_NONE) {
+      eprintf("e131_pkt_validate: %s\n", e131_strerror(error));
+      continue;
+    }
+    if (e131_pkt_discard(&packet, last_seq)) {
+      eprintf("warning: packet out of order received\n");
+      last_seq = packet.frame.seq_number;
+      continue;
+    }
+	// send it to SAMD
+    last_seq = packet.frame.seq_number;
+  }
 }
