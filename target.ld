@@ -10,6 +10,7 @@ ENTRY(reset_vector)
 INPUT(extras.o)
 INPUT(drivers.o)
 INPUT(apps.o)
+INPUT(rt_ap_channel.o)
 
 GROUP(libtarget.a libgcc.a libsupc++.a)
 MEMORY
