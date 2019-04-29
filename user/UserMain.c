@@ -48,7 +48,7 @@ static char gaffer_data[514];
 
 extern struct eth_drv_sc devive_wireless_sc0;
 
-int rt28xx_open(void *dev);
+int rt28xx_get_wifi_channel(void *dev);
 
 struct eth_drv_sc	*dev;
 //RTMP_ADAPTER	*pAd;
@@ -136,8 +136,6 @@ int CGi_do_user_cmd(http_req *req)
 	char *cmd;
 	int i;
 	int rc=0;
-	
-	//rt28xx_open((void *)&devive_wireless_netdev0);
 	
 	cmd=WEB_query(req,"CMD");
 	
@@ -254,6 +252,7 @@ static int USER_FUNC cmd_web_para_rd(pat_session_t s,int argc,char *argv[],char 
 	int ret = 0;
 	char *input;
 	unsigned int addr, val;
+	int chn = 0;
 	
 	if(argc > 1)
 		return -1;
@@ -273,7 +272,9 @@ static int USER_FUNC cmd_web_para_rd(pat_session_t s,int argc,char *argv[],char 
 		eprintf("Enter %08x\n", addr);
 		hf_thread_delay(500);
 		val = *((unsigned int *)addr);
-		sprintf(rsp, "val = %08x\n", val);
+		
+		chn = rt28xx_get_wifi_channel((void *)&devive_wireless_netdev0);
+		sprintf(rsp, "val = %08x, AP Channel = %d\n", val, chn);	
 	}
 	
 	//refresh_clients = 1;
