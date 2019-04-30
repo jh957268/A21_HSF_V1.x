@@ -251,7 +251,7 @@ static int USER_FUNC cmd_web_para_rd(pat_session_t s,int argc,char *argv[],char 
 {
 	int ret = 0;
 	char *input;
-	unsigned int addr, val;
+	unsigned int addr, val, val1;
 	int chn = 0;
 	
 	if(argc > 1)
@@ -272,9 +272,11 @@ static int USER_FUNC cmd_web_para_rd(pat_session_t s,int argc,char *argv[],char 
 		eprintf("Enter %08x\n", addr);
 		hf_thread_delay(500);
 		val = *((unsigned int *)addr);
+		val1 = *((unsigned int *)(addr+4));
 		
-		chn = rt28xx_get_wifi_channel((void *)&devive_wireless_netdev0);
-		sprintf(rsp, "val = %08x, AP Channel = %d\n", val, chn);	
+		//chn = rt28xx_get_wifi_channel((void *)&devive_wireless_netdev0);
+		chn = rt28xx_get_wifi_channel((void *)addr);
+		sprintf(rsp, "val = %08x, val1 = %08x, AP Channel = %d\n", val, val1, chn);	
 	}
 	
 	//refresh_clients = 1;
