@@ -58,13 +58,15 @@ int rt28xx_get_wifi_channel(IN VOID *dev)
 	PNET_DEV net_dev = (PNET_DEV)dev;
 	RTMP_ADAPTER	*pAd = NULL;
 	UCHAR ch;
+	unsigned int *ptmp;
+	int i, j;
 	
 	/* Sanity check for pAd */
 	//pAd = (PRTMP_ADAPTER) (net_dev->driver_private);
 	pAd = (PRTMP_ADAPTER) RtmpOsGetNetDevPriv(net_dev);	
 	if (pAd == NULL)
 		return -1; /* close ok */
-	
+	ptmp = (unsigned int *)pAd;
 	//ch = pAd->CommonCfg.Channel;
 	//ch = pAd->LatchRfRegs.Channel;
 	ch = pAd->OpMode;
@@ -72,6 +74,16 @@ int rt28xx_get_wifi_channel(IN VOID *dev)
 	eprintf("CSRBaseAddress=%08x\n", (unsigned int)(pAd->CSRBaseAddress));
 	eprintf("MACVersion=%08x\n", (unsigned int)(pAd->MACVersion));
 	eprintf("Intftype=%d\n", (unsigned int)(pAd->infType));
+	
+	for (i = 0; i < 32; i++);
+	{
+		for (j = 0; j < 8; j++)
+		{
+			eprintf("08x ", *ptmp);
+			ptmp++;
+		}
+		eprintf("\n");
+	}
 	//ch = AP_AUTO_CH_SEL(pAd, 2);
 	//ch = AP_AUTO_CH_SEL(pAd, pAd->ApCfg.AutoChannelAlg);
 	//pAd->chipOps.ChipSwitchChannel(pAd, ch, FALSE);
