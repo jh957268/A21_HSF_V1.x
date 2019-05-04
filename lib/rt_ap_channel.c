@@ -58,7 +58,7 @@ int rt28xx_get_wifi_channel(IN VOID *dev)
 	PNET_DEV net_dev = (PNET_DEV)dev;
 	RTMP_ADAPTER	*pAd = NULL;
 	UCHAR ch;
-	unsigned int *ptmp;
+	unsigned int *ptmp, macVersionAddr;;
 	int i, j;
 	
 	/* Sanity check for pAd */
@@ -70,20 +70,37 @@ int rt28xx_get_wifi_channel(IN VOID *dev)
 	//ch = pAd->CommonCfg.Channel;
 	//ch = pAd->LatchRfRegs.Channel;
 	ch = pAd->OpMode;
+	eprintf("pAd Addr=%08x\n", (unsigned int)pAd);
 	eprintf("OpMode = %d\n", (int)ch);
 	eprintf("CSRBaseAddress=%08x\n", (unsigned int)(pAd->CSRBaseAddress));
 	eprintf("MACVersion=%08x\n", (unsigned int)(pAd->MACVersion));
+	eprintf("MACVersion Addr=%08x\n", (unsigned int)&(pAd->MACVersion));
+	macVersionAddr = (unsigned int)&(pAd->MACVersion);
 	eprintf("Intftype=%d\n", (unsigned int)(pAd->infType));
 	
-	for (i = 0; i < 32; i++);
+	for (i = 0; i < 32; i++)
 	{
 		for (j = 0; j < 8; j++)
 		{
-			eprintf("08x ", *ptmp);
+			eprintf("%08x ", *ptmp);
 			ptmp++;
 		}
 		eprintf("\n");
 	}
+	ptmp = (unsigned int *)(macVersionAddr - 1024);
+	for (i = 0; i < 64; i++)
+	{
+		for (j = 0; j < 8; j++)
+		{
+			eprintf("%08x ", *ptmp);
+			ptmp++;
+		}
+		eprintf("\n");
+	}	
+	pAd = (RTMP_ADAPTER	*)((unsigned int)pAd - 0x18);
+	eprintf("MACVersion=%08x\n", (unsigned int)(pAd->MACVersion));
+	eprintf("MACVersion Addr=%08x\n", (unsigned int)&(pAd->MACVersion));
+	eprintf("Intftype=%d\n", (unsigned int)(pAd->infType));
 	//ch = AP_AUTO_CH_SEL(pAd, 2);
 	//ch = AP_AUTO_CH_SEL(pAd, pAd->ApCfg.AutoChannelAlg);
 	//pAd->chipOps.ChipSwitchChannel(pAd, ch, FALSE);
