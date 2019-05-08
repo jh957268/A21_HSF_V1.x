@@ -53,6 +53,11 @@ int rt28xx_get_wifi_channel(void *dev);
 struct eth_drv_sc	*dev;
 //RTMP_ADAPTER	*pAd;
 
+#define AP_MODE 		1
+#define STA_ETH_MODE	2
+
+static int operation_mode;
+
 // #define debug(format, args...) fprintf (stderr, format, args)
 
 #if 0
@@ -944,7 +949,7 @@ void UserMain(void *arg)
 
 	if (strstr(at_rsp, "+ok=Enable"))
 	{		
-		ret1 = hfthread_create(client_thread_main,"udp_client_main",512+128,(void*)1,HFTHREAD_PRIORITIES_NORMAL,NULL,NULL);
+		ret1 = hfthread_create(client_thread_main,"udp_client_main",1024,(void*)1,HFTHREAD_PRIORITIES_NORMAL,NULL,NULL);
 
 		if (HF_SUCCESS != ret1)
 		{
@@ -966,7 +971,7 @@ void UserMain(void *arg)
 		}
 		if (strstr(at_rsp, "+ok=STA"))
 		{
-			ret1 = hfthread_create(client_thread_main,"udp_client_main",512+128,(void*)1,HFTHREAD_PRIORITIES_NORMAL,NULL,NULL);
+			ret1 = hfthread_create(client_thread_main,"udp_client_main",1024,(void*)1,HFTHREAD_PRIORITIES_NORMAL,NULL,NULL);
 
 			if (HF_SUCCESS != ret1)
 			{
@@ -975,7 +980,7 @@ void UserMain(void *arg)
 		}
 		else
 		{
-			ret1 = hfthread_create(server_thread_main,"udp_server_main",512+128,(void*)1,HFTHREAD_PRIORITIES_NORMAL,NULL,NULL);
+			ret1 = hfthread_create(server_thread_main,"udp_server_main",1024,(void*)1,HFTHREAD_PRIORITIES_NORMAL,NULL,NULL);
 
 			if (HF_SUCCESS != ret1)
 			{
@@ -1066,7 +1071,53 @@ void UserMain(void *arg)
 			char Timo[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 0, 0b10000010, 0b00000000, timo_DMX_Window[0], timo_DMX_Window[1], timo_DMX_Window[2], timo_DMX_Window[3], timo_DMX_Spec[0], timo_DMX_Spec[1], timo_DMX_Spec[2], timo_DMX_Spec[3], timo_DMX_Spec[4], timo_DMX_Spec[5], timo_DMX_Spec[6], timo_DMX_Spec[7], 0b00000001, TimoPower[0], timo_Blocked_Channel[0], timo_Blocked_Channel[1], timo_Blocked_Channel[2], timo_Blocked_Channel[3], timo_Blocked_Channel[4], timo_Blocked_Channel[5], timo_Blocked_Channel[6], timo_Blocked_Channel[7], timo_Blocked_Channel[8], timo_Blocked_Channel[9], timo_Blocked_Channel[10], Battery[0], Battery[1], Battery[2], Battery[3], Battery[4], Battery[5], Battery[6], Battery[7]};
 			hfuart_send(HFUART0, Timo,sizeof(Timo),100);
 
-
+			char ipAddress[4]={};
+			if (AP_MODE == operation_mode)
+			{
+				ipAddress[0] = 0xa;
+				ipAddress[1] = 0xa;
+				ipAddress[2] = 0x64;
+				ipAddress[3] = 0xfe;
+			}
+			else
+			{
+				int rc;
+				
+				rc = hfat_send_cmd("AT+WANN\r\n", sizeof("AT+WANN\r\n"),at_rsp,sizeof(at_rsp));
+				at_rsp[16] = 0;
+				if (HF_SUCCESS != rc)
+				{
+					eprintf("WAN Command fails.\n");
+					ipAddress[0] = 0x0;
+					ipAddress[1] = 0x0;
+					ipAddress[2] = 0x0;
+					ipAddress[3] = 0x0;
+				}
+				else if (strstr(at_rsp, "+ERR"))
+				{
+					eprintf("WAN Command Err.\n");
+					ipAddress[0] = 0x0;
+					ipAddress[1] = 0x0;
+					ipAddress[2] = 0x0;
+					ipAddress[3] = 0x0;
+				}
+				else if (strstr(at_rsp, "+ok=DHCP,0.0.0.0"))
+				{
+					ipAddress[0] = 0x0;
+					ipAddress[1] = 0x0;
+					ipAddress[2] = 0x0;
+					ipAddress[3] = 0x0;
+				}
+				else
+				{
+					// fake adddres indicate address is acquired
+					ipAddress[0] = 0xa;
+					ipAddress[1] = 0xa;
+					ipAddress[2] = 0x64;
+					ipAddress[3] = 0xfe;
+				}
+			}
+#if 0			
 		    char ipAddressSTR[20]={};
 			CFG_get_str(CFG_str2id("LAN_IP"),ipAddressSTR);
 			char lenth = strlen(ipAddressSTR);
@@ -1078,6 +1129,7 @@ void UserMain(void *arg)
 			const char s[] = ".";
 			char *token;
 
+			rc = hfat_send_cmd("AT+WANN\r\n", sizeof("AT+WANN\r\n"),at_rsp,sizeof(at_rsp));
 			token = strtok(ipAddressSTRTrimmed, s);
 			ipAddress[0] = (char)atoi(token);
 			token = strtok(NULL, s);
@@ -1086,16 +1138,26 @@ void UserMain(void *arg)
 			ipAddress[2] = (char)atoi(token);
 			token = strtok(NULL, s);
 			ipAddress[3] = (char)atoi(token);
-
+#endif
 			char name[18]={' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',0};
 			ratpac_get_str(CFG_str2id("AKS_NAME"),name);
 			char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 1,name[0],name[1],name[2],name[3],name[4],name[5],name[6],name[7],name[8],name[9],name[10],name[11],name[12],name[13],name[14],name[15],name[16],name[17],ipAddress[0],ipAddress[1],ipAddress[2],ipAddress[3]};
 			hfuart_send(HFUART0, Settings,sizeof(Settings),100);
 
-
-
 			char Settings2[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 2, 1, 0};
 			hfuart_send(HFUART0, Settings2,sizeof(Settings2),100);
+			
+			char gaf_enb, gaf_low_lsb, gaf_low_msb, gaf_high_lsb, gaf_high_msb;
+			int gaf_chn;
+			gaf_enb = atoi(g_web_config.gaffer_enb);
+			gaf_chn = atoi(g_web_config.gaffer_lower);
+			gaf_low_lsb = (char)(gaf_chn & 0xff);
+			gaf_low_msb = (char)((gaf_chn >> 8) & 0xff);
+			gaf_chn = atoi(g_web_config.gaffer_upper);
+			gaf_high_lsb = (char)(gaf_chn & 0xff);
+			gaf_high_msb = (char)((gaf_chn >> 8) & 0xff);			
+			char Settings6[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 6, gaf_enb, gaf_low_lsb, gaf_low_msb, gaf_high_lsb, gaf_high_msb};
+			hfuart_send(HFUART0, Settings2,sizeof(Settings6),100);			
 
 		//}
 		hf_thread_delay(5000);
@@ -1142,6 +1204,7 @@ static void server_thread_main(void* arg)
   refresh_clients = 0;
 
   eprintf("server_thread_main started\n");
+  operation_mode = AP_MODE;
   artnet_enable = 1;  
   /* socket creation */
   sd=socket(AF_INET, SOCK_DGRAM, 0);
@@ -1332,7 +1395,10 @@ USER_FUNC static void client_thread_main(void* arg)
 	artnet_enable = 0;
 #endif
 
-	hf_thread_delay(300);
+	operation_mode = STA_ETH_MODE;
+	hf_thread_delay(100);
+	
+#if 0	
 	while (1)
 	{
 		// eprintf("Send AT+WANN\n");
@@ -1364,6 +1430,7 @@ USER_FUNC static void client_thread_main(void* arg)
 		}
 		break;
 	}
+#endif	
 	
 	artnet_enable = 1;
 	
@@ -1471,7 +1538,7 @@ int get_client_entry(int idx, char *node_name, char *ip_addr, char *universe, ch
 	sprintf(universe, "%s", client_list[idx].universe);
 	sprintf(art_sub, "%s", client_list[idx].subnet);	
 
-	sprintf(battery, "88\%");
+	sprintf(battery, "88");
 	return 0;
 }
 
@@ -1689,11 +1756,10 @@ int Send_SAMD_CMD(char *cmd, int len, char *expect_resp, cyg_tick_count_t timeou
 		return (-1);
 	}
 	uart_rvc_done = 0;
-	if (strstr(uart_rcv_data, expect_resp))
-	{
-		return 0;
-	}
-	return (-1);
+	uart_rcv_data[31] = 0; // for the safe side
+	strcpy(expect_resp, uart_rcv_data);
+	
+	return 0;
 }
 
 #define PKT_SIZE 256
@@ -1702,6 +1768,7 @@ static unsigned char expect_buff[8] = {'o', 'k', ':', 0, 0};
 
 int SAMD_firmware_download(unsigned char *firmware, int len)
 {
+#if 0	
 	unsigned char cksum, blk;
 	int cpy_len;
 	int remain_len = len;
@@ -1749,6 +1816,7 @@ int SAMD_firmware_download(unsigned char *firmware, int len)
 			return -1;
 		}
 	}
+#endif	
 	return 0;
 }
 
@@ -1796,34 +1864,87 @@ int sACN_main()
   }
 }
 
+static char ret_buff[32];
+#define NUM_TRY 2
 int Send_Link_Command(void)
 {
-	int ret;
-	char ret_buff[32];
+	int ret, try;
+
 	char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 3, 1};
-	ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
+	artnet_enable = 0;
+	for (try = 0; try < NUM_TRY; try++)
+	{
+		ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
+		if (ret == -1)
+		{
+			hf_thread_delay(2);
+			continue;
+		}
+		if (strstr(ret_buff,"ok"))
+		{
+			break;
+		}
+		hf_thread_delay(2);
+	}
+	
+	artnet_enable = 1;
 	return (ret);
 }
 
 int Send_UnLink_Command(void)
 {
-	int ret;
+	int ret, try;
+	
 	char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 3, 2};
-	ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
+	artnet_enable = 0;
+	for (try = 0; try < NUM_TRY; try++)
+	{
+		ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
+		if (ret == -1)
+		{
+			hf_thread_delay(2);
+			continue;
+		}
+		if (strstr(ret_buff,"ok"))
+		{
+			break;
+		}
+		hf_thread_delay(2);
+	}
+	
+	artnet_enable = 1;
 	return (ret);
 }
 
 int Send_ID_Command(void)
 {
-	int ret;
+	int ret, try;
+
 	char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 4};
-	ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
+	artnet_enable = 0;
+	for (try = 0; try < NUM_TRY; try++)
+	{
+		ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
+		if (ret == -1)
+		{
+			hf_thread_delay(2);
+			continue;
+		}
+		if (strstr(ret_buff,"ok"))
+		{
+			break;
+		}
+		hf_thread_delay(2);
+	}
+	
+	artnet_enable = 1;
 	return (ret);
 }
 
 int Send_Battery_Command(void)
 {
 	int ret;
+
 	char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 5};
 	ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
 	return (ret);
@@ -1832,6 +1953,7 @@ int Send_Battery_Command(void)
 int Send_Gaffer_Command(void)
 {
 	int ret;
+
 	char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 6};
 	ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
 	return (ret);
