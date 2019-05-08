@@ -1663,7 +1663,7 @@ void clear_uart_recv(void)
 	uart_rvc_len = 0;
 }
 
-int Joo_uart_cmd(char *cmd, int len, char *expect_resp, cyg_tick_count_t timeout_tick)
+int Send_SAMD_CMD(char *cmd, int len, char *expect_resp, cyg_tick_count_t timeout_tick)
 {
 	int i;
 	cyg_tick_count_t cur_tick;
@@ -1794,4 +1794,45 @@ int sACN_main()
 	// send it to SAMD
     last_seq = packet.frame.seq_number;
   }
+}
+
+int Send_Link_Command(void)
+{
+	int ret;
+	char ret_buff[32];
+	char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 3, 1};
+	ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
+	return (ret);
+}
+
+int Send_UnLink_Command(void)
+{
+	int ret;
+	char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 3, 2};
+	ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
+	return (ret);
+}
+
+int Send_ID_Command(void)
+{
+	int ret;
+	char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 4};
+	ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
+	return (ret);
+}
+
+int Send_Battery_Command(void)
+{
+	int ret;
+	char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 5};
+	ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
+	return (ret);
+}
+
+int Send_Gaffer_Command(void)
+{
+	int ret;
+	char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 6};
+	ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
+	return (ret);
 }
