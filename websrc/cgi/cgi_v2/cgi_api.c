@@ -188,6 +188,10 @@ int SAMD_firmware_download(char *firmware, int len);
 void get_eCos_ver(char *buffer);
 void get_eCos_rel_build(char *buff);
 
+int Send_Link_Command(void);
+int Send_UnLink_Command(void);
+int Send_ID_Command(void);
+
 cgi_cmd ps_cgi_cmds[]=
 {
 	{ "SYS_CONF", &CGI_do_sys_config },
@@ -771,7 +775,7 @@ void CGI_var_map(http_req *req, char *name, int id)
 			return;
 
 		case CFG_SET_ID:
-			if (Joo_uart_cmd("Artnet:ID\n", strlen("Artnet:ID\n"), "ok:ID", 200) == 0)
+			if (Send_ID_Command() == 0)
 			{
 				sprintf(val, "Command Status : Success");
 			}
@@ -782,7 +786,7 @@ void CGI_var_map(http_req *req, char *name, int id)
 			WEB_printf(req, "displayMsg('%s','%s');\n",name, val);
 			return;
 		case CFG_SET_LINK:
-			if (Joo_uart_cmd("Artnet:Link\n",strlen("Artnet:Link\n"), "ok:ID", 200) == 0)
+			if (Send_Link_Command() == 0)
 			{
 				sprintf(val, "Command Status : Success");
 			}
@@ -793,7 +797,7 @@ void CGI_var_map(http_req *req, char *name, int id)
 			WEB_printf(req, "displayMsg('%s','%s');\n",name, val);
 			return;	
 		case CFG_SET_UNLINK:
-			if (Joo_uart_cmd("Artnet:Unlink\n",strlen("Artnet:Unlink\n"), "ok:ID", 200) == 0)
+			if (Send_UnLink_Command() == 0)
 			{
 				sprintf(val, "Command Status : Success");
 			}
