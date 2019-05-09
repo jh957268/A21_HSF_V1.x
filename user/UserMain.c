@@ -42,6 +42,7 @@ void replace_channel_data(char *data, uint32_t len);
 int check_duplicate_ip(char *ip_addr);
 int ratpac_get_str(int id, char *val);
 int ratpac_set_str(int id, char *val);
+int Send_Battery_Command(void);
 
 static int refresh_clients;
 static char gaffer_data[514];
@@ -796,7 +797,7 @@ static int USER_FUNC uart_recv_callback(uint32_t event,char *data,uint32_t len,u
 		else		
 			Joo_uart_send("TW?");
 #endif		
-		uart_rvc_len = 0;
+		//uart_rvc_len = 0;
 		return (copy_len);
 	}
 //	Joo_uart_send("PD");
@@ -997,13 +998,15 @@ void UserMain(void *arg)
 	{
 		if (0 == artnet_enable)
 		{
-			hf_thread_delay(1000);
+			hf_thread_delay(500);
+#if 0  // only for testing UART receive			
 			if (1 == uart_rvc_done)
 			{
 				Joo_uart_send(uart_rcv_data);
 				uart_rvc_done = 0;
 				uart_rvc_len = 0;
 			}
+#endif			
 			continue;
 		}
 		/*
@@ -1157,7 +1160,9 @@ void UserMain(void *arg)
 			gaf_high_lsb = (char)(gaf_chn & 0xff);
 			gaf_high_msb = (char)((gaf_chn >> 8) & 0xff);			
 			char Settings6[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 6, gaf_enb, gaf_low_lsb, gaf_low_msb, gaf_high_lsb, gaf_high_msb};
-			hfuart_send(HFUART0, Settings2,sizeof(Settings6),100);			
+			hfuart_send(HFUART0, Settings6,sizeof(Settings6),100);
+
+			Send_Battery_Command();
 
 		//}
 		hf_thread_delay(5000);
@@ -1732,34 +1737,45 @@ void clear_uart_recv(void)
 
 int Send_SAMD_CMD(char *cmd, int len, char *expect_resp, cyg_tick_count_t timeout_tick)
 {
-	int i;
+	int i, try_snd;
 	cyg_tick_count_t cur_tick;
 	
-	set_artnet_enable(0);
-	clear_uart_recv();
-	if (len)
-	{
-		hfuart_send(HFUART0, cmd, len, 100);
-	}	
-	cur_tick = cyg_current_time();
+	expect_resp[0] = 0;		// for the safe side
 	
-	// for (i = 0; i < 1200; i++)
-	while (	(cyg_current_time() - cur_tick) < timeout_tick)   // every tick is 10ms
+	if ( 0 == len)
 	{
-		hf_thread_delay(2);
-		if ( 1 == uart_rvc_done)
-			break;
-	}
-	if (0 == uart_rvc_done)
-	{
-		Joo_uart_send("SAMD no response\n");
 		return (-1);
 	}
-	uart_rvc_done = 0;
-	uart_rcv_data[31] = 0; // for the safe side
-	strcpy(expect_resp, uart_rcv_data);
+	set_artnet_enable(0);
 	
-	return 0;
+	for (try_snd = 0; try_snd < 2; try_snd++)
+	{
+		clear_uart_recv();
+		hfuart_send(HFUART0, cmd, len, 100);
+		
+		cur_tick = cyg_current_time();
+	
+		// for (i = 0; i < 1200; i++)
+		while (	(cyg_current_time() - cur_tick) < timeout_tick)   // every tick is 10ms
+		{
+			hf_thread_delay(2);
+			if ( 1 == uart_rvc_done)
+				break;
+		}
+		if (0 == uart_rvc_done)
+		{
+			Joo_uart_send("SAMD no response\n");
+			continue;
+		}
+		uart_rvc_done = 0;
+		uart_rcv_data[31] = 0; // for the safe side
+		memmove(expect_resp, uart_rcv_data,uart_rvc_len );
+		expect_resp[uart_rvc_len] = 0;
+		set_artnet_enable(1);
+		return 0;
+	}
+	set_artnet_enable(1);
+	return (-1);
 }
 
 #define PKT_SIZE 256
@@ -1865,30 +1881,24 @@ int sACN_main()
 }
 
 static char ret_buff[32];
-#define NUM_TRY 2
+#define NUM_TRY 1
 int Send_Link_Command(void)
 {
 	int ret, try;
 
 	char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 3, 1};
-	artnet_enable = 0;
-	for (try = 0; try < NUM_TRY; try++)
+
+	ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
+	if (ret == -1)
 	{
-		ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
-		if (ret == -1)
-		{
-			hf_thread_delay(2);
-			continue;
-		}
-		if (strstr(ret_buff,"ok"))
-		{
-			break;
-		}
-		hf_thread_delay(2);
+		return (-1);
 	}
-	
-	artnet_enable = 1;
-	return (ret);
+	if (strstr(ret_buff,"ok"))
+	{
+		return (0);
+	}
+
+	return (-1);
 }
 
 int Send_UnLink_Command(void)
@@ -1896,24 +1906,17 @@ int Send_UnLink_Command(void)
 	int ret, try;
 	
 	char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 3, 2};
-	artnet_enable = 0;
-	for (try = 0; try < NUM_TRY; try++)
+	ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
+	if (ret == -1)
 	{
-		ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
-		if (ret == -1)
-		{
-			hf_thread_delay(2);
-			continue;
-		}
-		if (strstr(ret_buff,"ok"))
-		{
-			break;
-		}
-		hf_thread_delay(2);
+		return (-1);
 	}
-	
-	artnet_enable = 1;
-	return (ret);
+	if (strstr(ret_buff,"ok"))
+	{
+		return (0);
+	}
+
+	return (-1);	
 }
 
 int Send_ID_Command(void)
@@ -1921,24 +1924,17 @@ int Send_ID_Command(void)
 	int ret, try;
 
 	char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 4};
-	artnet_enable = 0;
-	for (try = 0; try < NUM_TRY; try++)
+	ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
+	if (ret == -1)
 	{
-		ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
-		if (ret == -1)
-		{
-			hf_thread_delay(2);
-			continue;
-		}
-		if (strstr(ret_buff,"ok"))
-		{
-			break;
-		}
-		hf_thread_delay(2);
+		return (-1);
 	}
-	
-	artnet_enable = 1;
-	return (ret);
+	if (strstr(ret_buff,"ok"))
+	{
+		return (0);
+	}
+
+	return (-1);
 }
 
 int Send_Battery_Command(void)
@@ -1947,7 +1943,13 @@ int Send_Battery_Command(void)
 
 	char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 5};
 	ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
-	return (ret);
+	if (ret == -1)
+	{
+		return (-1);
+	}
+	// save the battery information
+
+	return (0);
 }
 
 int Send_Gaffer_Command(void)
