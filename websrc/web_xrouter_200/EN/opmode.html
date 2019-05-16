@@ -273,7 +273,7 @@ function Apply_2() {
 <script>pageHead();</script>
 
 <h1 id="opmodeconfigTitle">Ratpac AKS Main Settings</h1>
-
+<h3 id="BATTERY_ID"></h3>
 <hr>
 <form method=post name="opmode">
 <input type="hidden" name="country_code">
@@ -583,6 +583,20 @@ function Apply_2() {
 </form>
 </div>
 
-<script>pageTail();</script>
+<script>pageTail();
+function displayMsg(eleID, strMsg)
+{
+	var strMessage1 = document.getElementById(eleID) ;
+	strMessage1.innerHTML = strMsg;
+}
+
+/*REAL
+<%
+CGI_MAP(BATTERY_ID, CFG_BATTERY_ID);
+%>
+REAL*/
+
+displayMsg("BATTERY_ID", "Battery: 88%");
+</script>
 </BODY>
 </HTML>
