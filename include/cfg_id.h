@@ -167,6 +167,8 @@
 #define CFG_AKS_REL_BUILD				CFG_USER_(64,CFG_TYPE_STR)
 #define	CFG_SACN_OUTPUT					CFG_USER_(65,CFG_TYPE_STR)
 #define	CFG_SACN_UNIV					CFG_USER_(66,CFG_TYPE_STR)
+#define	CFG_LED_COLOR					CFG_USER_(67,CFG_TYPE_STR)
+#define CFG_BATTERY_ID					CFG_USER_(68,CFG_TYPE_STR)
 
 // M2M: gohuy
 #define CFG_M2M_(idx,type) 			CFG_ID_(CFG_ID_M2M,idx,type,0)
