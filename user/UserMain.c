@@ -935,6 +935,8 @@ void UserMain(void *arg)
 	{
 		HF_Debug(DEBUG_WARN,"start socketb fail\n");
 	}
+	
+	// Check a dedicated IO Pin if we should bring up the whole system
 
 	ret1 = hfat_send_cmd("AT+FVEW\r\n", strlen("AT+FVEW\r\n"), at_rsp, sizeof(at_rsp));
 	if (HF_SUCCESS != ret1)
@@ -949,7 +951,14 @@ void UserMain(void *arg)
 	}
 
 	if (strstr(at_rsp, "+ok=Enable"))
-	{		
+	{	
+		// turn off the wifi module
+		ret1 = hfat_send_cmd("AT+MSLP=OFF\r\n", strlen("AT+MSLP=OFF\r\n"), at_rsp, sizeof(at_rsp));
+		if (HF_SUCCESS != ret1)
+		{	
+			at_rsp[0] = 0;
+			eprintf("MSLP=OFF fails\n");
+		}
 		ret1 = hfthread_create(client_thread_main,"udp_client_main",1024,(void*)1,HFTHREAD_PRIORITIES_NORMAL,NULL,NULL);
 
 		if (HF_SUCCESS != ret1)
