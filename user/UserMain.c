@@ -800,7 +800,7 @@ static int USER_FUNC uart_recv_callback(uint32_t event,char *data,uint32_t len,u
 		//uart_rvc_len = 0;
 		return (copy_len);
 	}
-//	Joo_uart_send("PD");
+	//Joo_uart_send("PD");
 	return (copy_len);
 }	
 
@@ -1767,9 +1767,10 @@ int Send_SAMD_CMD(char *cmd, int len, char *expect_resp, cyg_tick_count_t timeou
 		// for (i = 0; i < 1200; i++)
 		while (	(cyg_current_time() - cur_tick) < timeout_tick)   // every tick is 10ms
 		{
-			hf_thread_delay(2);
+			//hf_thread_delay(2);
 			if ( 1 == uart_rvc_done)
 				break;
+			msleep(20);
 		}
 		if (0 == uart_rvc_done)
 		{
