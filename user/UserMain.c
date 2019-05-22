@@ -1171,7 +1171,7 @@ void UserMain(void *arg)
 			char Settings6[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 6, gaf_enb, gaf_low_lsb, gaf_low_msb, gaf_high_lsb, gaf_high_msb};
 			hfuart_send(HFUART0, Settings6,sizeof(Settings6),100);
 
-			Send_Battery_Command();
+			//Send_Battery_Command();
 
 		//}
 		hf_thread_delay(5000);
