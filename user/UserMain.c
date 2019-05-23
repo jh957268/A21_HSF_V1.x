@@ -952,13 +952,15 @@ void UserMain(void *arg)
 
 	if (strstr(at_rsp, "+ok=Enable"))
 	{	
-		// turn off the wifi module
+		// turn off the wifi module, no need, SAMD does it
+#if 0		
 		ret1 = hfat_send_cmd("AT+MSLP=OFF\r\n", strlen("AT+MSLP=OFF\r\n"), at_rsp, sizeof(at_rsp));
 		if (HF_SUCCESS != ret1)
 		{	
 			at_rsp[0] = 0;
 			eprintf("MSLP=OFF fails\n");
 		}
+#endif		
 		ret1 = hfthread_create(client_thread_main,"udp_client_main",1024,(void*)1,HFTHREAD_PRIORITIES_NORMAL,NULL,NULL);
 
 		if (HF_SUCCESS != ret1)
@@ -1896,7 +1898,7 @@ int Send_Link_Command(void)
 {
 	int ret, try;
 
-	char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 3, 1};
+	char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 3, 2};
 
 	ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
 	if (ret == -1)
@@ -1915,7 +1917,7 @@ int Send_UnLink_Command(void)
 {
 	int ret, try;
 	
-	char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 3, 2};
+	char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 3, 1};
 	ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
 	if (ret == -1)
 	{
