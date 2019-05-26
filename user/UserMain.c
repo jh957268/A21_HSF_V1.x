@@ -1757,7 +1757,7 @@ int Send_SAMD_CMD(char *cmd, int len, char *expect_resp, cyg_tick_count_t timeou
 	{
 		return (-1);
 	}
-	set_artnet_enable(0);
+	//set_artnet_enable(0);
 	
 	for (try_snd = 0; try_snd < 2; try_snd++)
 	{
@@ -1772,6 +1772,7 @@ int Send_SAMD_CMD(char *cmd, int len, char *expect_resp, cyg_tick_count_t timeou
 			//hf_thread_delay(2);
 			if ( 1 == uart_rvc_done)
 				break;
+			//cyg_thread_yield();
 			msleep(20);
 		}
 		if (0 == uart_rvc_done)
@@ -1783,68 +1784,92 @@ int Send_SAMD_CMD(char *cmd, int len, char *expect_resp, cyg_tick_count_t timeou
 		uart_rcv_data[31] = 0; // for the safe side
 		memmove(expect_resp, uart_rcv_data,uart_rvc_len );
 		expect_resp[uart_rvc_len] = 0;
-		set_artnet_enable(1);
+		//set_artnet_enable(1);
 		return 0;
 	}
-	set_artnet_enable(1);
+	//set_artnet_enable(1);
 	return (-1);
 }
 
-#define PKT_SIZE 256
+#define PKT_SIZE 512
 static unsigned char pkt_buff[PKT_SIZE+16];
 static unsigned char expect_buff[8] = {'o', 'k', ':', 0, 0};
+static char ret_buff[32];
 
 int SAMD_firmware_download(unsigned char *firmware, int len)
 {
-#if 0	
-	unsigned char cksum, blk;
+	int ret, try;
+		unsigned char cksum, blk;
 	int cpy_len;
 	int remain_len = len;
 	int total_len = 0;
 	int i;
 	
-	if (Joo_uart_cmd("Artnet:Reset\n", strlen("Artnet:Reset\n"), "ok:Reset", 200) != 0)
+	
+	char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 7};
+	
+	set_artnet_enable(0);
+	ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
+	if (ret == -1)
 	{
-		return -1;
+		set_artnet_enable(1);
+		return (-1);
 	}
-	if (Joo_uart_cmd(0, "ok:Hello", 0, 200) != 0)
+	if (!strstr(ret_buff,"update"))
 	{
-		return -1;
+		set_artnet_enable(1);
+		return (-1);
 	}
-	if (Joo_uart_cmd("Artnet:Update\n", strlen("Artnet:Update\n"), "ok:Update", 200) != 0)
+	ret = Send_SAMD_CMD("yes", strlen("yes"), ret_buff, 200);
+	if (ret == -1)
 	{
-		return -1;
+		set_artnet_enable(1);
+		return (-1);
+	}
+	if (!strstr(ret_buff,"ok"))
+	{
+		set_artnet_enable(1);
+		return (-1);
 	}
 	
-	blk = 16;
-	sprintf(pkt_buff, "Artnet:");
-	pkt_buff[8] = ':';
-	
+	total_len = 0;
 	while (remain_len)
 	{
 		cpy_len = ((remain_len >= PKT_SIZE) ? PKT_SIZE : remain_len);
 		cksum = 0;
 		for (i = 0; i < cpy_len; i++)
 		{
-			cksum += firmware[total_len + i];
-			pkt_buff[9 + i] = firmware[total_len + i];
+			cksum ^= firmware[total_len + i];
+			pkt_buff[i] = firmware[total_len + i];
 		}
 		if (cpy_len < PKT_SIZE)
 		{
-			memset(&pkt_buff[9 + i], 0x0, (PKT_SIZE - cpy_len));
+			memset(&pkt_buff[i], 0x0, (PKT_SIZE - cpy_len));
 		}
-		pkt_buff[7]= blk;
-		pkt_buff[9+PKT_SIZE] = cksum;
+		pkt_buff[PKT_SIZE] = cksum;
 		remain_len -= cpy_len;
 		total_len += cpy_len;
-		expect_buff[3] = blk;
-		blk++;
-		if (Joo_uart_cmd(pkt_buff,9+PKT_SIZE+1, expect_buff, 100) != 0)  // 1 is for cksum
+		
+		for (try = 0; try < 2; try++)
 		{
-			return -1;
+			ret = Send_SAMD_CMD(pkt_buff, PKT_SIZE+1, ret_buff, 200);
+			if (ret == -1)
+			{
+				set_artnet_enable(1);
+				return (-1);
+			}
+			if (!strstr(ret_buff,"ok"))
+			{
+				if (0 == try)
+					continue;
+				set_artnet_enable(1);
+				return (-1);				
+			}
+			break;
 		}
 	}
-#endif	
+	Send_SAMD_CMD("done", strlen("done"), ret_buff, 200);
+	set_artnet_enable(1);
 	return 0;
 }
 
@@ -1892,60 +1917,70 @@ int sACN_main()
   }
 }
 
-static char ret_buff[32];
 #define NUM_TRY 1
 int Send_Link_Command(void)
 {
-	int ret, try;
+	int ret;
 
 	char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 3, 2};
-
+	
+	set_artnet_enable(0);
 	ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
 	if (ret == -1)
 	{
+		set_artnet_enable(1);
 		return (-1);
 	}
 	if (strstr(ret_buff,"ok"))
 	{
+		set_artnet_enable(1);		
 		return (0);
 	}
-
+	set_artnet_enable(1);
 	return (-1);
 }
 
 int Send_UnLink_Command(void)
 {
-	int ret, try;
+	int ret;
 	
 	char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 3, 1};
+
+	set_artnet_enable(0);	
 	ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
 	if (ret == -1)
 	{
+		set_artnet_enable(1);
 		return (-1);
 	}
 	if (strstr(ret_buff,"ok"))
 	{
+		set_artnet_enable(1);
 		return (0);
 	}
-
+	set_artnet_enable(1);
 	return (-1);	
 }
 
 int Send_ID_Command(void)
 {
-	int ret, try;
+	int ret;
 
 	char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 4};
+	
+	set_artnet_enable(0);
 	ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
 	if (ret == -1)
 	{
+		set_artnet_enable(1);
 		return (-1);
 	}
 	if (strstr(ret_buff,"ok"))
 	{
+		set_artnet_enable(1);
 		return (0);
 	}
-
+	set_artnet_enable(1);
 	return (-1);
 }
 
