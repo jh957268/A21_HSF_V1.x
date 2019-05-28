@@ -776,6 +776,19 @@ static int uart_rvc_done = 0;
 static int USER_FUNC uart_recv_callback(uint32_t event,char *data,uint32_t len,uint32_t buf_len)
 {
 	int copy_len;
+	static int first_time = 0;
+	static cyg_priority_t pri;
+	static cyg_handle_t uartHandle;
+	
+	if (0 == first_time)
+	{
+		uartHandle = cyg_thread_self();
+		pri = cyg_thread_get_priority(uartHandle);
+		eprintf ("Uart Thread Pri = %d\n", (int)pri);
+		pri = cyg_thread_get_current_priority(uartHandle);
+		eprintf ("Uart Thread Cur Pri = %d\n", (int)pri);
+		first_time = 1;
+	}
 	
 	if (1 == artnet_enable)
 	{
@@ -1383,7 +1396,7 @@ int check_duplicate_ip(char *ip_addr)
 static char cli_recv[128]={0};
 USER_FUNC static void client_thread_main(void* arg)
 {
-	int sd,id, rc, i;
+	int sd,id, rc;
 	int tmp=1,recv_num=0;
 	//char recv[128]={0};
 	//char *p;
@@ -1748,7 +1761,7 @@ void clear_uart_recv(void)
 
 int Send_SAMD_CMD(char *cmd, int len, char *expect_resp, cyg_tick_count_t timeout_tick)
 {
-	int i, try_snd;
+	int try_snd;
 	cyg_tick_count_t cur_tick;
 	
 	expect_resp[0] = 0;		// for the safe side
@@ -1799,7 +1812,7 @@ static char ret_buff[32];
 int SAMD_firmware_download(unsigned char *firmware, int len)
 {
 	int ret, try;
-		unsigned char cksum, blk;
+		unsigned char cksum;
 	int cpy_len;
 	int remain_len = len;
 	int total_len = 0;
@@ -1808,7 +1821,22 @@ int SAMD_firmware_download(unsigned char *firmware, int len)
 	
 	char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 7};
 	
+	static int first_time = 0;
+	static cyg_priority_t pri;
+	static cyg_handle_t uartHandle;
+	
+	if (0 == first_time)
+	{
+		uartHandle = cyg_thread_self();
+		pri = cyg_thread_get_priority(uartHandle);
+		eprintf ("WEB Thread Pri = %d\n", (int)pri);
+		pri = cyg_thread_get_current_priority(uartHandle);
+		eprintf ("WEB Thread Cur Pri = %d\n", (int)pri);
+		first_time = 1;
+	}
+	
 	set_artnet_enable(0);
+
 	ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
 	if (ret == -1)
 	{
