@@ -776,6 +776,7 @@ static int uart_rvc_done = 0;
 static int USER_FUNC uart_recv_callback(uint32_t event,char *data,uint32_t len,uint32_t buf_len)
 {
 	int copy_len;
+#if 0	
 	static int first_time = 0;
 	static cyg_priority_t pri;
 	static cyg_handle_t uartHandle;
@@ -789,6 +790,7 @@ static int USER_FUNC uart_recv_callback(uint32_t event,char *data,uint32_t len,u
 		eprintf ("Uart Thread Cur Pri = %d\n", (int)pri);
 		first_time = 1;
 	}
+#endif
 	
 	if (1 == artnet_enable)
 	{
@@ -1763,6 +1765,7 @@ int Send_SAMD_CMD(char *cmd, int len, char *expect_resp, cyg_tick_count_t timeou
 {
 	int try_snd;
 	cyg_tick_count_t cur_tick;
+	static cyg_handle_t webHandle;
 	
 	expect_resp[0] = 0;		// for the safe side
 	
@@ -1771,7 +1774,8 @@ int Send_SAMD_CMD(char *cmd, int len, char *expect_resp, cyg_tick_count_t timeou
 		return (-1);
 	}
 	//set_artnet_enable(0);
-	
+	webHandle = cyg_thread_self();
+	cyg_thread_set_priority(webHandle, 14 );
 	for (try_snd = 0; try_snd < 2; try_snd++)
 	{
 		clear_uart_recv();
@@ -1785,8 +1789,8 @@ int Send_SAMD_CMD(char *cmd, int len, char *expect_resp, cyg_tick_count_t timeou
 			//hf_thread_delay(2);
 			if ( 1 == uart_rvc_done)
 				break;
-			//cyg_thread_yield();
-			msleep(20);
+			cyg_thread_yield();
+			//msleep(20);
 		}
 		if (0 == uart_rvc_done)
 		{
@@ -1798,9 +1802,11 @@ int Send_SAMD_CMD(char *cmd, int len, char *expect_resp, cyg_tick_count_t timeou
 		memmove(expect_resp, uart_rcv_data,uart_rvc_len );
 		expect_resp[uart_rvc_len] = 0;
 		//set_artnet_enable(1);
+		cyg_thread_set_priority(webHandle, 8 );
 		return 0;
 	}
 	//set_artnet_enable(1);
+	cyg_thread_set_priority(webHandle, 8 );
 	return (-1);
 }
 
@@ -1825,6 +1831,7 @@ int SAMD_firmware_download(unsigned char *firmware, int len)
 	static cyg_priority_t pri;
 	static cyg_handle_t uartHandle;
 	
+#if 0	
 	if (0 == first_time)
 	{
 		uartHandle = cyg_thread_self();
@@ -1834,6 +1841,7 @@ int SAMD_firmware_download(unsigned char *firmware, int len)
 		eprintf ("WEB Thread Cur Pri = %d\n", (int)pri);
 		first_time = 1;
 	}
+#endif
 	
 	set_artnet_enable(0);
 
