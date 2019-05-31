@@ -1844,7 +1844,8 @@ int SAMD_firmware_download(unsigned char *firmware, int len)
 #endif
 	
 	set_artnet_enable(0);
-
+	msleep(20);				// make sure at least 20ms gap between two artnet packet
+	
 	ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
 	if (ret == -1)
 	{
