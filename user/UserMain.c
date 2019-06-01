@@ -1818,7 +1818,7 @@ static char ret_buff[32];
 int SAMD_firmware_download(unsigned char *firmware, int len)
 {
 	int ret, try;
-		unsigned char cksum;
+	unsigned char cksum, code_cksum;
 	int cpy_len;
 	int remain_len = len;
 	int total_len = 0;
@@ -1826,12 +1826,12 @@ int SAMD_firmware_download(unsigned char *firmware, int len)
 	
 	
 	char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 7};
-	
+	char done_msg[7] = {'d','o','n','e', 0x1 , 0x2, 0x3};
+#if 0	
 	static int first_time = 0;
 	static cyg_priority_t pri;
 	static cyg_handle_t uartHandle;
-	
-#if 0	
+		
 	if (0 == first_time)
 	{
 		uartHandle = cyg_thread_self();
@@ -1870,6 +1870,7 @@ int SAMD_firmware_download(unsigned char *firmware, int len)
 	}
 	
 	total_len = 0;
+	code_cksum = 0;
 	while (remain_len)
 	{
 		cpy_len = ((remain_len >= PKT_SIZE) ? PKT_SIZE : remain_len);
@@ -1886,7 +1887,7 @@ int SAMD_firmware_download(unsigned char *firmware, int len)
 		pkt_buff[PKT_SIZE] = cksum;
 		remain_len -= cpy_len;
 		total_len += cpy_len;
-		
+		code_cksum ^= cksum;
 		for (try = 0; try < 2; try++)
 		{
 			ret = Send_SAMD_CMD(pkt_buff, PKT_SIZE+1, ret_buff, 200);
@@ -1905,7 +1906,10 @@ int SAMD_firmware_download(unsigned char *firmware, int len)
 			break;
 		}
 	}
-	Send_SAMD_CMD("done", strlen("done"), ret_buff, 200);
+	done_msg[4] = len & 0xff;
+	done_msg[5] = (len >> 8) & 0xff;
+	done_msg[6] = code_cksum;
+	Send_SAMD_CMD(done_msg, 7, ret_buff, 200);
 	set_artnet_enable(1);
 	return 0;
 }
