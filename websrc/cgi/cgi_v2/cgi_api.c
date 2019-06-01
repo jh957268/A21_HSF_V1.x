@@ -2149,7 +2149,7 @@ int CGI_upgrade(http_req *req)
 	//if (len >= 0xA0000)
 	//sprintf(val, "Filesize=%d\n", len);	
 	//Joo_uart_send(val);	
-	if(len>=FLASH_FWM_MAX_SIZE)
+	if(len <= (760 * 1024) || len>=FLASH_FWM_MAX_SIZE)
 	{
 		CGI_upgrade_free();
 		return CGI_RC_FILE_INVALID;
