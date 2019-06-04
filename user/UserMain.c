@@ -1818,8 +1818,11 @@ static char ret_buff[32];
 int SAMD_firmware_download(unsigned char *firmware, int len)
 {
 	int ret, try;
-	unsigned char cksum, code_cksum;
-	int cpy_len;
+	//unsigned char cksum, code_cksum;
+	uint32_t cksum, code_cksum;
+	uint32_t *pSrc, *pDst;
+	//int cpy_len;
+	unsigned char bcksum, *pCksum;
 	int remain_len = len;
 	int total_len = 0;
 	int i;
@@ -1871,8 +1874,11 @@ int SAMD_firmware_download(unsigned char *firmware, int len)
 	
 	total_len = 0;
 	code_cksum = 0;
+	pCksum = (unsigned char *)&cksum;
+	
 	while (remain_len)
 	{
+#if 0		
 		cpy_len = ((remain_len >= PKT_SIZE) ? PKT_SIZE : remain_len);
 		cksum = 0;
 		for (i = 0; i < cpy_len; i++)
@@ -1888,6 +1894,21 @@ int SAMD_firmware_download(unsigned char *firmware, int len)
 		remain_len -= cpy_len;
 		total_len += cpy_len;
 		code_cksum ^= cksum;
+#endif
+		pSrc = (uint32_t *)&firmware[total_len];
+		pDst = (uint32_t *)pkt_buff;
+		cksum = 0;
+		for (i = 0; i < (PKT_SIZE >> 2); i++)
+		{
+			cksum ^= *pSrc;
+			*pDst++ = *pSrc++;
+		}
+		bcksum = pCksum[0] ^ pCksum[1] ^ pCksum[2] ^ pCksum[3];
+		pkt_buff[PKT_SIZE] = bcksum;
+		total_len += PKT_SIZE;
+		remain_len -= PKT_SIZE;
+		code_cksum ^= cksum;
+		
 		for (try = 0; try < 2; try++)
 		{
 			ret = Send_SAMD_CMD(pkt_buff, PKT_SIZE+1, ret_buff, 200);
@@ -1906,9 +1927,12 @@ int SAMD_firmware_download(unsigned char *firmware, int len)
 			break;
 		}
 	}
+	pCksum = (unsigned char *)&code_cksum;
+	bcksum = pCksum[0] ^ pCksum[1] ^ pCksum[2] ^ pCksum[3];
 	done_msg[4] = len & 0xff;
 	done_msg[5] = (len >> 8) & 0xff;
-	done_msg[6] = code_cksum;
+	//done_msg[6] = code_cksum;
+	done_msg[6] = bcksum;	
 	Send_SAMD_CMD(done_msg, 7, ret_buff, 200);
 	set_artnet_enable(1);
 	return 0;
