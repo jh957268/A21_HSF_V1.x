@@ -1815,7 +1815,7 @@ static unsigned char pkt_buff[PKT_SIZE+16];
 static unsigned char expect_buff[8] = {'o', 'k', ':', 0, 0};
 static char ret_buff[32];
 
-int SAMD_firmware_download(unsigned char *firmware, int len)
+int SAMD_firmware_download(unsigned char *firmware, int len, int which)
 {
 	int ret, try;
 	//unsigned char cksum, code_cksum;
@@ -1845,7 +1845,14 @@ int SAMD_firmware_download(unsigned char *firmware, int len)
 		first_time = 1;
 	}
 #endif
-	
+	if (0 == which)
+	{
+		Settings[12] = 7;
+	}
+	else
+	{
+		Settings[12] = 8;
+	}
 	set_artnet_enable(0);
 	msleep(20);				// make sure at least 20ms gap between two artnet packet
 	
