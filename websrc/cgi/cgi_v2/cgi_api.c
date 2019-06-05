@@ -168,6 +168,7 @@ int CGI_do_sys_log_mail(http_req *req);
 int CGI_do_ntp_config(http_req *req);
 int CGI_upgrade(http_req *req);
 int CGI_SAMD_upgrade(http_req *req);
+int CGI_TIMO_upgrade(http_req *req);
 int CGI_upgrade_upload(http_req *req);
 int CGI_upgrade_save(http_req *req);
 void CGI_upgrade_free(void);
@@ -184,7 +185,7 @@ void do_refresh_clients(void);
 int  refresh_client_done(void);
 int ratpac_get_str(int id, char *val);
 int ratpac_set_str(int id, char *val);
-int SAMD_firmware_download(char *firmware, int len);
+int SAMD_firmware_download(char *firmware, int len, int which);
 void get_eCos_ver(char *buffer);
 void get_eCos_rel_build(char *buff);
 
@@ -204,6 +205,7 @@ cgi_cmd ps_cgi_cmds[]=
 	{ "SYS_UPG", &CGI_upgrade },
 	{ "SYS_ULD", &CGI_upgrade_upload },
 	{ "SAMD_UPG", &CGI_SAMD_upgrade },
+	{ "TIMO_UPG", &CGI_TIMO_upgrade },
 #if	MODULE_DHCPS
 	{ "LAN_DHC", &CGI_do_lan_dhcp_clients },
 #endif
@@ -2183,7 +2185,7 @@ int CGI_SAMD_upgrade(http_req *req)
 	}
 	file = WEB_upload_file(req, "files", &len);
 
-	rc = SAMD_firmware_download(file, len);
+	rc = SAMD_firmware_download(file, len, 0);
 #if 1
 	if (-1 == rc)
 	{
@@ -2214,6 +2216,52 @@ int CGI_SAMD_upgrade(http_req *req)
 #endif
 	return CGI_RC_UPGRADE;
 }
+
+int CGI_TIMO_upgrade(http_req *req)
+{    
+	char *file;
+	int len,rc;
+	char val[48];
+	
+	if (upgrade_mem)
+	{
+		Joo_uart_send("CGI_RC_FILE_INVALID\n");
+		return CGI_RC_FILE_INVALID; // avoid incorrect cgi call
+	}
+	file = WEB_upload_file(req, "files", &len);
+
+	rc = SAMD_firmware_download(file, len, 1);
+#if 1
+	if (-1 == rc)
+	{
+		sprintf(val, "SAMD Upgrade Fails, Filesize=%d\n", len);	
+		Joo_uart_send(val);
+	}
+#endif
+
+#if 0	
+	if(len>=FLASH_FWM_MAX_SIZE)
+	{
+		CGI_upgrade_free();
+		return CGI_RC_FILE_INVALID;
+	}
+   	//rc = CFG_put_file(1, file, len) ;
+    rc = http_put_file(1, req->content, file, len);
+#endif
+	
+	upgrade_mem = req->content;
+	req->content = 0;
+	CGI_upgrade_free();
+	if (rc)
+		return CGI_RC_FILE_INVALID;
+	
+	// mon_snd_cmd(MON_CMD_REBOOT);
+#ifdef	CONFIG_ZWEB
+	zweb_location = 0;
+#endif
+	return CGI_RC_UPGRADE;
+}
+
 
 int CGI_upgrade_upload(http_req *req)
 {
