@@ -1811,7 +1811,8 @@ int Send_SAMD_CMD(char *cmd, int len, char *expect_resp, cyg_tick_count_t timeou
 }
 
 #define PKT_SIZE 512
-static unsigned char pkt_buff[PKT_SIZE+16];
+unsigned char samd_pkt_buff[PKT_SIZE+16];
+unsigned char align_buff[PKT_SIZE+16];
 static unsigned char expect_buff[8] = {'o', 'k', ':', 0, 0};
 static char ret_buff[32];
 
@@ -1873,6 +1874,7 @@ int SAMD_firmware_download(unsigned char *firmware, int len, int which)
 		set_artnet_enable(1);
 		return (-1);
 	}
+	
 	if (!strstr(ret_buff,"ok"))
 	{
 		set_artnet_enable(1);
@@ -1902,23 +1904,35 @@ int SAMD_firmware_download(unsigned char *firmware, int len, int which)
 		total_len += cpy_len;
 		code_cksum ^= cksum;
 #endif
-		pSrc = (uint32_t *)&firmware[total_len];
-		pDst = (uint32_t *)pkt_buff;
-		cksum = 0;
-		for (i = 0; i < (PKT_SIZE >> 2); i++)
+		//pSrc = (uint32_t *)&firmware[total_len];
+		pSrc = (uint32_t *)align_buff;
+		pDst = (uint32_t *)samd_pkt_buff;
+		cksum = 0x0;
+
+		//memset(align_buff, 0x0, 512);
+		for (i = 0; i < 512; i++)
+		{
+			//cksum ^= pSrc[i];
+			//*pDst++ = *pSrc++;
+			//pDst[i] = pSrc[i];
+			align_buff[i] = firmware[total_len + i];
+		}
+		for (i = 0; (i < PKT_SIZE >> 2); i++)
 		{
 			cksum ^= *pSrc;
 			*pDst++ = *pSrc++;
-		}
+			//pDst[i] = pSrc[i];
+			//samd_pkt_buff[i] = firmware[total_len + i];
+		}		
 		bcksum = pCksum[0] ^ pCksum[1] ^ pCksum[2] ^ pCksum[3];
-		pkt_buff[PKT_SIZE] = bcksum;
+		samd_pkt_buff[PKT_SIZE] = bcksum;
 		total_len += PKT_SIZE;
 		remain_len -= PKT_SIZE;
 		code_cksum ^= cksum;
-		
+	
 		for (try = 0; try < 2; try++)
 		{
-			ret = Send_SAMD_CMD(pkt_buff, PKT_SIZE+1, ret_buff, 200);
+			ret = Send_SAMD_CMD(samd_pkt_buff, PKT_SIZE+1, ret_buff, 200);
 			if (ret == -1)
 			{
 				set_artnet_enable(1);
