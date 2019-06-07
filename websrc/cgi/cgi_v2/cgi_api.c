@@ -2212,7 +2212,7 @@ int CGI_SAMD_upgrade(http_req *req)
 	
 	// mon_snd_cmd(MON_CMD_REBOOT);
 #ifdef	CONFIG_ZWEB
-	zweb_location = 0;
+	// zweb_location = 0;
 #endif
 	return CGI_RC_UPGRADE;
 }
