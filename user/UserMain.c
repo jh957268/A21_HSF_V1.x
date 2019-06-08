@@ -1815,6 +1815,7 @@ unsigned char samd_pkt_buff[PKT_SIZE+16];
 unsigned char align_buff[PKT_SIZE+16];
 static unsigned char expect_buff[8] = {'o', 'k', ':', 0, 0};
 static char ret_buff[32];
+#define NUM_TRY 2
 
 int SAMD_firmware_download(unsigned char *firmware, int len, int which)
 {
@@ -1857,17 +1858,28 @@ int SAMD_firmware_download(unsigned char *firmware, int len, int which)
 	set_artnet_enable(0);
 	msleep(20);				// make sure at least 20ms gap between two artnet packet
 	
-	ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
-	if (ret == -1)
+	for (i = 0; i < NUM_TRY; i++)
 	{
-		set_artnet_enable(1);
-		return (-1);
-	}
-	if (!strstr(ret_buff,"update"))
-	{
-		set_artnet_enable(1);
-		return (-1);
-	}
+		ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 500);
+		if (ret == -1)
+		{
+			set_artnet_enable(1);
+			return (-1);
+		}
+		if (!strstr(ret_buff,"update"))
+		{
+			if ((which == 1) || (i == 1) )
+			{
+				set_artnet_enable(1);
+				return (-1);
+			}
+			hf_thread_delay(1000);    // garbage data
+		}
+		else
+		{
+			break;
+		}
+	}	
 	ret = Send_SAMD_CMD("yes", strlen("yes"), ret_buff, 200);
 	if (ret == -1)
 	{
@@ -2003,7 +2015,6 @@ int sACN_main()
   }
 }
 
-#define NUM_TRY 1
 int Send_Link_Command(void)
 {
 	int ret;
