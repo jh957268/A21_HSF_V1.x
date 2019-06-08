@@ -698,17 +698,17 @@ void CGI_var_map(http_req *req, char *name, int id)
 			strcat(val, ip_addr);
 			strcat(val, battery);
 			
-			sprintf(cmd_buff, "<button type=\"button\" onclick=\"popupCenter('http://%s/EN/id.html', 'myPop1',700,500);\">ID</button>", ip_addr_save);
+			sprintf(cmd_buff, "<button type=\"button\" onclick=\"popupCenter('http://%s/EN/id.html', 'myPop1',400,300);\">ID</button>", ip_addr_save);
 			link_len = strlen(cmd_buff);
 			fill_space(cmd_buff, link_len+5);
 			strcat(val, cmd_buff);
 			
-			sprintf(cmd_buff, "<button type=\"button\" onclick=\"popupCenter('http://%s/EN/link.html', 'myPop1',700,500);\">Link</button>", ip_addr_save);			
+			sprintf(cmd_buff, "<button type=\"button\" onclick=\"popupCenter('http://%s/EN/link.html', 'myPop1',400,300);\">Link</button>", ip_addr_save);			
 			link_len = strlen(cmd_buff);
 			fill_space(cmd_buff, link_len+1);	
 			strcat(val, cmd_buff);
 			
-			sprintf(cmd_buff, "<button type=\"button\" onclick=\"popupCenter('http://%s/EN/unlink.html', 'myPop1',700,500);\">Unlink</button>", ip_addr_save);
+			sprintf(cmd_buff, "<button type=\"button\" onclick=\"popupCenter('http://%s/EN/unlink.html', 'myPop1',400,300);\">Unlink</button>", ip_addr_save);
 			link_len = strlen(cmd_buff);
 			fill_space(cmd_buff, link_len+4);
 			strcat(val, cmd_buff);
