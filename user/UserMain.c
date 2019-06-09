@@ -43,6 +43,9 @@ int check_duplicate_ip(char *ip_addr);
 int ratpac_get_str(int id, char *val);
 int ratpac_set_str(int id, char *val);
 int Send_Battery_Command(void);
+void age_client_list(void);
+void populate_new_client(char *ip_ad, char *rcv_msg);
+void save_valid_client_entry(int i);
 
 static int refresh_clients;
 static char gaffer_data[514];
@@ -1206,7 +1209,7 @@ void Joo_uart_send(char *data)
 #define LOCAL_SERVER_PORT 10000
 #define REMOTE_CLIENT_PORT 10001
 #define MAX_MSG 100
-char msg[MAX_MSG];
+static char msg[MAX_MSG];
 #define MAX_NUM_ENTRY 16
 
 struct client_ent
@@ -1216,9 +1219,11 @@ struct client_ent
 	char universe[4];
 	char subnet[4];
 	char baterry[4];
+	int	 age_cnt;
 };
 
 struct client_ent client_list[MAX_NUM_ENTRY];
+struct client_ent client_valid_list[MAX_NUM_ENTRY];
 static client_valid_num = 0;
 static char tmp_buff[20];
 
@@ -1237,6 +1242,13 @@ static void server_thread_main(void* arg)
   eprintf("server_thread_main started\n");
   operation_mode = AP_MODE;
   artnet_enable = 1;  
+  
+  for (i = 0; i < MAX_NUM_ENTRY; i++)
+  {
+	  client_list[i].age_cnt = 0;
+	  client_list[i].ip_addr[19] = 0;
+  }
+	  
   /* socket creation */
   sd=socket(AF_INET, SOCK_DGRAM, 0);
   if(sd<0) {
@@ -1287,7 +1299,7 @@ static void server_thread_main(void* arg)
 #endif
 
   sprintf(client_list[0].ip_addr, "10.10.100.254");
-  client_valid_num = 1;
+  client_valid_num = 0;
    /* server infinite loop */
   while(1) 
   {
@@ -1297,16 +1309,23 @@ static void server_thread_main(void* arg)
 	ratpac_get_str( CFG_str2id("AKS_UNIVERSE"), tmp_buff);
 	sprintf(client_list[0].universe, tmp_buff);	
 	ratpac_get_str( CFG_str2id("AKS_SUBNET"), tmp_buff);
-	sprintf(client_list[0].subnet, tmp_buff);	
+	sprintf(client_list[0].subnet, tmp_buff);
+	client_list[0].age_cnt = 3;
 	
+	age_client_list();
+
+#if 0	
    	if (0 == refresh_clients)
 	{
 		hf_thread_delay(1000);
 		continue;
 	}
+#endif
+	hf_thread_delay(2000);
+	
     /* init buffer */
 	// refresh_clients = 0;
-	client_valid_num = 1;
+	// client_valid_num = 1;
 	sprintf(msg, "Registering UDP broadcast message.\n");
 	eprintf("Registering UDP broadcast message.\n");
 	// continue;
@@ -1363,9 +1382,11 @@ static void server_thread_main(void* arg)
 			msg[19] = 0;
 			msg[22] = 0;
 			msg[26] = 0;
-			
+				
 			char ip_addr[20];
 			sprintf(ip_addr, "%s", inet_ntoa(cliAddr.sin_addr));
+			populate_new_client(ip_addr, msg);
+#if 0			
 			if (0 == check_duplicate_ip(ip_addr))
 			{	
 				sprintf(client_list[client_valid_num].node_name, "%s", &msg[0]);
@@ -1374,6 +1395,7 @@ static void server_thread_main(void* arg)
 				sprintf(client_list[client_valid_num].subnet, &msg[24]);
 				client_valid_num++;
 			}
+#endif			
 		}
 	}
 
@@ -1560,14 +1582,14 @@ int get_client_entry(int idx, char *node_name, char *ip_addr, char *universe, ch
 		universe[0] = 0;
 		return -1;
 	}
-	sprintf(node_name, "%s", client_list[idx].node_name);
+	sprintf(node_name, "%s", client_valid_list[idx].node_name);
 	if (strlen(node_name) == 0)
 	{
 		sprintf(node_name,"NoName");
 	}
-	sprintf(ip_addr, "%s", client_list[idx].ip_addr);
-	sprintf(universe, "%s", client_list[idx].universe);
-	sprintf(art_sub, "%s", client_list[idx].subnet);	
+	sprintf(ip_addr, "%s", client_valid_list[idx].ip_addr);
+	sprintf(universe, "%s", client_valid_list[idx].universe);
+	sprintf(art_sub, "%s", client_valid_list[idx].subnet);	
 
 	sprintf(battery, "88");
 	return 0;
@@ -1576,6 +1598,8 @@ int get_client_entry(int idx, char *node_name, char *ip_addr, char *universe, ch
 void do_refresh_clients(void)
 {
 	refresh_clients = 1;
+	
+	return;
 	
 	while (1)
 	{
@@ -2104,3 +2128,64 @@ int Send_Gaffer_Command(void)
 	ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
 	return (ret);
 }
+
+void save_valid_client_entry(int i)
+{
+	client_valid_list[client_valid_num] = client_list[i];
+	client_valid_num++;
+}
+
+
+void age_client_list(void)
+{
+	int i;
+
+	client_valid_list[0] = client_list[0];
+	client_valid_num = 1;
+	
+	for (i = 1; i < MAX_NUM_ENTRY; i++)
+	{
+		
+		if (client_list[i].age_cnt > 0)
+		{
+			if (--client_list[i].age_cnt > 0)
+			{
+				save_valid_client_entry(i);
+			}
+		}
+	}
+}
+
+#define AGE_COUNT	3
+void populate_new_client(char *ip_ad, char *rcv_msg)
+{
+	int i;
+	
+	for (i = 1; i < MAX_NUM_ENTRY; i++)
+	{
+		if ((!strcmp(client_list[i].ip_addr, ip_ad)) && (client_list[i].age_cnt > 0))
+		{
+			sprintf(client_list[i].node_name, "%s", &rcv_msg[0]);
+			//sprintf(client_list[i].ip_addr, "%s", inet_ntoa(cliAddr.sin_addr));
+			sprintf(client_list[i].universe, &rcv_msg[20]);
+			sprintf(client_list[i].subnet, &rcv_msg[24]);
+			client_list[i].age_cnt = AGE_COUNT;	
+			return;
+		}
+	}
+	
+	
+	for (i = 1; i < MAX_NUM_ENTRY; i++)
+	{
+		if (client_list[i].age_cnt == 0)
+		{
+			sprintf(client_list[i].node_name, "%s", &rcv_msg[0]);
+			sprintf(client_list[i].ip_addr, "%s", ip_ad);
+			sprintf(client_list[i].universe, &rcv_msg[20]);
+			sprintf(client_list[i].subnet, &rcv_msg[24]);
+			client_list[i].age_cnt = AGE_COUNT;	
+			return;
+		}
+	}	
+}	
+
