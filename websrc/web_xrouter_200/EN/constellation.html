@@ -163,13 +163,15 @@ function reload_constellation()
 }
 
 function Apply_refresh() {
-	var f=document.HFA21TEST;
+	//var f=document.HFA21TEST;
 
-	form2Cfg(f);
+	//form2Cfg(f);
 	// subForm(f,'http://www.expert-exchange.com','CONSTELLATION_REFRESH=10',cPage);
-	subForm(f,'do_constellation.html','CONSTELLATION_REFRESH',cPage);
-	setTimeout(function(){ reload_constellation(); }, 5000);
+	//subForm(f,'do_constellation.html','CONSTELLATION_REFRESH',cPage);
+	//setTimeout(function(){ reload_constellation(); }, 5000);
 	// cannot reload constellation here, it will be excuted before refresh is done
+	var URL = '/EN/constellation.html';
+    document.location.href = URL;
 }
 
 function Apply_advance() {
