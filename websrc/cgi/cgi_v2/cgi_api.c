@@ -188,6 +188,9 @@ int ratpac_set_str(int id, char *val);
 int SAMD_firmware_download(char *firmware, int len, int which);
 void get_eCos_ver(char *buffer);
 void get_eCos_rel_build(char *buff);
+void get_SAMD_ver(char *buffer);
+void get_TIMO_ver(char *buffer);
+void get_battery_info(char *buffer);
 
 int Send_Link_Command(void);
 int Send_UnLink_Command(void);
@@ -620,7 +623,7 @@ void CGI_var_map(http_req *req, char *name, int id)
 			sc_convert(val);
 			WEB_printf(req, "'%s'+",val);
 	
-			get_eCos_ver(val);
+			get_SAMD_ver(val);
 			strcat(val, " ");			
 			sprintf(cmd_buff, "<button type=\"button\" onclick=\"updateFirmware(document.Upgrade_SAMD, 'http://%s/EN/update_firmware.html');\">Update</button>", ip_addr_save);
 			link_len = strlen(cmd_buff);
@@ -629,7 +632,7 @@ void CGI_var_map(http_req *req, char *name, int id)
 			sc_convert(val);
 			WEB_printf(req, "'%s'+",val);
 			
-			get_eCos_ver(val);
+			get_TIMO_ver(val);
 			strcat(val, " ");			
 			sprintf(cmd_buff, "<button type=\"button\" onclick=\"updateFirmware(document.Upgrade_TIMO, 'http://%s/EN/update_firmware.html');\">Update</button>", ip_addr_save);
 			link_len = strlen(cmd_buff);
@@ -811,6 +814,23 @@ void CGI_var_map(http_req *req, char *name, int id)
 			return;
 		case CFG_AKS_REL_BUILD:
 			get_eCos_rel_build(val);
+			get_SAMD_ver(cmd_buff);
+			strcat(val, "  SAMD:");
+			strcat(val, cmd_buff);
+			get_TIMO_ver(cmd_buff);	
+			strcat(val, "  TIMO:");
+			strcat(val, cmd_buff);			
+			WEB_printf(req, "displayMsg('%s',",name);
+			WEB_printf(req, "'%s'",val);			// last one
+			WEB_printf(req, ");\n");				// close quote	
+			return;
+			
+		case CFG_BATTERY_ID:
+			get_battery_info(cmd_buff);
+			//Joo_uart_send(cmd_buff);
+			//sprintf(cmd_buff,"USB 88");
+			sprintf(val, "Battery: %s", cmd_buff);
+			//Joo_uart_send(val);
 			WEB_printf(req, "displayMsg('%s',",name);
 			WEB_printf(req, "'%s'",val);			// last one
 			WEB_printf(req, ");\n");				// close quote	
