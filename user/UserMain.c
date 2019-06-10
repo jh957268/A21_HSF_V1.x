@@ -72,7 +72,7 @@ static int operation_mode;
 
 #endif
 
-#define E_DEBUG_PRINT	1
+#define E_DEBUG_PRINT	0
 
 #if E_DEBUG_PRINT
 char ebuffer[128];
@@ -85,6 +85,9 @@ char ebuffer[128];
 #endif
 	
 char at_rsp[96] = {0};
+char samd_ver[4] = {'1', '.', 'x', 0};
+char timo_ver[4] = {'1', '.', 'y', 0};
+char battery_info[32] = {0};
 
 extern cyg_netdevtab_entry_t devive_wireless_netdev0;
 cyg_netdevtab_entry_t *pWIFIDev;
@@ -1043,7 +1046,7 @@ void UserMain(void *arg)
 		ratpac_get_str(CFG_str2id("AKS_SETTINGS"),TimoEnable);
 		if(TimoEnable[0] == 48)
 		{
-			*/
+			*/			
 			char timo_DMX_Window[4] = {0b00000000, 0b00000000, 0b00000010, 0b00000000};
 			char timo_DMX_Spec[8] = {0b00000000, 0b00000010, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b01100001, 0b10101000};
 			char TimoPower[1] = {};
@@ -1177,6 +1180,7 @@ void UserMain(void *arg)
 			hfuart_send(HFUART0, Settings,sizeof(Settings),100);
 
 			char Settings2[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 2, 1, 0};
+			//char Settings2[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 5};
 			hfuart_send(HFUART0, Settings2,sizeof(Settings2),100);
 			
 			char gaf_enb, gaf_low_lsb, gaf_low_msb, gaf_high_lsb, gaf_high_msb;
@@ -1191,10 +1195,12 @@ void UserMain(void *arg)
 			char Settings6[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 6, gaf_enb, gaf_low_lsb, gaf_low_msb, gaf_high_lsb, gaf_high_msb};
 			hfuart_send(HFUART0, Settings6,sizeof(Settings6),100);
 
-			//Send_Battery_Command();
+			hf_thread_delay(2000);
+			
+			Send_Battery_Command();
 
 		//}
-		hf_thread_delay(5000);
+		hf_thread_delay(3000);
 	}
 	return ;
 }
@@ -1591,7 +1597,7 @@ int get_client_entry(int idx, char *node_name, char *ip_addr, char *universe, ch
 	sprintf(universe, "%s", client_valid_list[idx].universe);
 	sprintf(art_sub, "%s", client_valid_list[idx].subnet);	
 
-	sprintf(battery, "88");
+	sprintf(battery, "%s", battery_info);
 	return 0;
 }
 
@@ -1998,11 +2004,30 @@ int SAMD_firmware_download(unsigned char *firmware, int len, int which)
 void get_eCos_ver(char *buffer)
 {
 	strcpy(buffer, eCos_ver);
-}	
+}
+
+void get_SAMD_ver(char *buffer)
+{
+	strcpy(buffer, samd_ver);
+}
+
+void get_TIMO_ver(char *buffer)
+{
+	strcpy(buffer, timo_ver);
+}			
 
 void get_eCos_rel_build(char *buffer)
 {
-	sprintf(buffer, "Release Date: %s Ver: %s", rel_date, eCos_ver);
+	sprintf(buffer, "Release Date: %s Ver:%s", rel_date, eCos_ver);
+}
+
+void get_battery_info(char *buffer)
+{
+	battery_info[6] = 0;
+	//eprintf("!!Battery : %s\n", battery_info);
+	//strcpy(buffer, battery_info);
+	sprintf(buffer,"%s", battery_info);
+	//eprintf("**Battery : %s\n", buffer);
 }
 
 static e131_packet_t packet;
@@ -2110,13 +2135,21 @@ int Send_Battery_Command(void)
 	int ret;
 
 	char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 5};
+	
+	set_artnet_enable(0);
 	ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
 	if (ret == -1)
 	{
+		set_artnet_enable(1);
 		return (-1);
 	}
-	// save the battery information
-
+	samd_ver[0] = ret_buff[0];
+	samd_ver[2] = ret_buff[2];
+	//hfuart_send(HFUART0, ret_buff,6,100);  //for debug
+	sprintf(battery_info, "%s", (char *)&ret_buff[3]);
+	//hfuart_send(HFUART0, battery_info,6,100);  //for debug
+	battery_info[6] = 0;     // remove LF and CR sent by SAMD, or the web displayMsg cannot display
+	set_artnet_enable(1);
 	return (0);
 }
 
