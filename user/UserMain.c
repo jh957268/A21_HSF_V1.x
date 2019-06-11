@@ -47,6 +47,8 @@ void age_client_list(void);
 void populate_new_client(char *ip_ad, char *rcv_msg);
 void save_valid_client_entry(int i);
 
+void send_artpollreply_msg(void);
+
 static int refresh_clients;
 static char gaffer_data[514];
 
@@ -825,6 +827,8 @@ static int USER_FUNC uart_recv_callback(uint32_t event,char *data,uint32_t len,u
 	return (copy_len);
 }	
 
+hfnet_socketa_client_t artpoll_client;
+
 static int USER_FUNC socketa_recv_callback(uint32_t event,char *data,uint32_t len,uint32_t buf_len)
 {
 	if(event==HFNET_SOCKETA_CONNECTED)
@@ -863,6 +867,10 @@ static int USER_FUNC socketa_recv_callback(uint32_t event,char *data,uint32_t le
 				}
 			}else
 			{
+				// check if this is artnet poll request
+				//send_artpollreply_msg();
+				// hfnet_socketa_get_client(0, &artpoll_client);
+				// send_artpollreply_msg(&artpoll_client);
 				hfuart_send(HFUART0, data,len,1000);
 			}
 		}
