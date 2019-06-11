@@ -10,7 +10,7 @@ else
 DOS2UNIX=dos2unix -k
 endif
 
-ALL_OBJS = UserMain.o UserCfgData.o e131.o
+ALL_OBJS = UserMain.o UserCfgData.o e131.o ArtPollReply.o
 ALL_HEADS = 
 
 
