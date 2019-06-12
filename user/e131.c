@@ -27,7 +27,14 @@
 #include <netdb.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+
+#include <hsf.h>
+
 #include "e131.h"
+
+//#include "aks_debug_printf.h"
+
+#define aks_printf(fmt, ...)
 
 /* E1.31 Public Constants */
 const uint16_t E131_DEFAULT_PORT = 5568;
@@ -43,6 +50,10 @@ const uint8_t _E131_DMP_VECTOR = 0x02;
 const uint8_t _E131_DMP_TYPE = 0xa1;
 const uint16_t _E131_DMP_FIRST_ADDR = 0x0000;
 const uint16_t _E131_DMP_ADDR_INC = 0x0001;
+
+const uint16_t ARTNET_DEFAULT_PORT = 3359;
+
+extern int ratpac_get_str(int id, char *val);
 
 /* Create a socket file descriptor suitable for E1.31 communication */
 int e131_socket(void) {
@@ -299,3 +310,60 @@ const char *e131_strerror(const e131_error_t error)
       return "Unknown error";
   }
 }
+
+#if 1
+static e131_packet_t *packet;
+static char udp_msg[1024];
+
+void sACN_main(void *arg) 
+{
+  int sockfd;
+  e131_error_t error;
+  uint8_t last_seq = 0x00;
+  char temp_buf[16];
+  uint16_t udp_port;
+
+  ratpac_get_str( CFG_str2id("AKS_SECOND_CHANNEL"), temp_buf);
+
+  // create a socket for E1.31
+  if ((sockfd = e131_socket()) < 0)
+  {
+    aks_printf("e131_socket\n");
+  }
+  // bind the socket to the default E1.31 port and join multicast group for universe 1
+  if (temp_buf[0] == '1')
+	  udp_port = E131_DEFAULT_PORT;
+  else
+	  udp_port = ARTNET_DEFAULT_PORT;
+  if (e131_bind(sockfd, udp_port) < 0)
+  {
+    aks_printf("e131_bind");
+  }
+  // loop to receive E1.31 packets
+  aks_printf("waiting for E1.31 packets ...\n");
+  for (;;) {
+    if (e131_recv(sockfd, udp_msg) < 0)
+		continue;
+
+	if (temp_buf[0] == '2')
+	{
+		//process_artnet_msg(sockfd, udp_msg);
+		continue;
+	}
+	
+	packet = (e131_packet_t *)udp_msg;
+    if ((error = e131_pkt_validate(packet)) != E131_ERR_NONE) {
+      aks_printf("e131_pkt_validate: %s\n", e131_strerror(error));
+      continue;
+    }
+    if (e131_pkt_discard(packet, last_seq)) {
+      aks_printf("warning: packet out of order received\n");
+      last_seq = packet->frame.seq_number;
+      continue;
+    }
+	// send it to SAMD
+    last_seq = packet->frame.seq_number;
+  }
+}
+#endif
+
