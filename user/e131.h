@@ -130,7 +130,7 @@ extern int e131_set_option(e131_packet_t *packet, const e131_option_t option, co
 extern ssize_t e131_send(int sockfd, const e131_packet_t *packet, const e131_addr_t *dest);
 
 /* Receive an E1.31 packet from a socket file descriptor */
-extern ssize_t e131_recv(int sockfd, e131_packet_t *packet);
+extern ssize_t e131_recv(int sockfd, e131_packet_t *packet, e131_addr_t *addr);
 
 /* Validate that an E1.31 packet is well-formed */
 extern e131_error_t e131_pkt_validate(const e131_packet_t *packet);
