@@ -54,6 +54,7 @@ const uint16_t _E131_DMP_ADDR_INC = 0x0001;
 const uint16_t ARTNET_DEFAULT_PORT = 3359;
 
 extern int ratpac_get_str(int id, char *val);
+extern void process_artnet_msg(int sockfd, uint8_t *raw, int len, struct sockaddr_in from);
 
 /* Create a socket file descriptor suitable for E1.31 communication */
 int e131_socket(void) {
@@ -198,12 +199,21 @@ ssize_t e131_send(int sockfd, const e131_packet_t *packet, const e131_addr_t *de
 }
 
 /* Receive an E1.31 packet from a socket file descriptor */
-ssize_t e131_recv(int sockfd, e131_packet_t *packet) {
+ssize_t e131_recv(int sockfd, e131_packet_t *packet, e131_addr_t *addr) 
+{
+  int tmp=1,recv_num=0;
+  
   if (packet == NULL) {
     errno = EINVAL;
     return -1;
   }
-  return recv(sockfd, packet->raw, sizeof packet->raw, 0);
+  
+  tmp = sizeof(e131_addr_t);
+  recv_num = recvfrom(sockfd, packet->raw, sizeof packet->raw, 0, (struct sockaddr *)addr, (socklen_t*)&tmp);
+  
+  return (recv_num);
+  
+  //return recv(sockfd, packet->raw, sizeof packet->raw, 0);
 }
 
 /* Validate that an E1.31 packet is well-formed */
@@ -312,16 +322,16 @@ const char *e131_strerror(const e131_error_t error)
 }
 
 #if 1
-static e131_packet_t *packet;
-static char udp_msg[1024];
+static e131_packet_t packet;
 
 void sACN_main(void *arg) 
 {
-  int sockfd;
+  int sockfd, rcv_len;
   e131_error_t error;
   uint8_t last_seq = 0x00;
   char temp_buf[16];
   uint16_t udp_port;
+  struct sockaddr_in cli_addr;
 
   ratpac_get_str( CFG_str2id("AKS_SECOND_CHANNEL"), temp_buf);
 
@@ -342,27 +352,26 @@ void sACN_main(void *arg)
   // loop to receive E1.31 packets
   aks_printf("waiting for E1.31 packets ...\n");
   for (;;) {
-    if (e131_recv(sockfd, udp_msg) < 0)
+    if ((rcv_len = e131_recv(sockfd, &packet, &cli_addr)) <= 0)
 		continue;
 
 	if (temp_buf[0] == '2')
 	{
-		//process_artnet_msg(sockfd, udp_msg);
+		process_artnet_msg(sockfd, packet.raw, rcv_len, cli_addr);
 		continue;
 	}
 	
-	packet = (e131_packet_t *)udp_msg;
-    if ((error = e131_pkt_validate(packet)) != E131_ERR_NONE) {
+    if ((error = e131_pkt_validate(&packet)) != E131_ERR_NONE) {
       aks_printf("e131_pkt_validate: %s\n", e131_strerror(error));
       continue;
     }
-    if (e131_pkt_discard(packet, last_seq)) {
+    if (e131_pkt_discard(&packet, last_seq)) {
       aks_printf("warning: packet out of order received\n");
-      last_seq = packet->frame.seq_number;
+      last_seq = packet.frame.seq_number;
       continue;
     }
 	// send it to SAMD
-    last_seq = packet->frame.seq_number;
+    last_seq = packet.frame.seq_number;
   }
 }
 #endif
