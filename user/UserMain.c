@@ -975,6 +975,7 @@ void UserMain(void *arg)
 	}
 #endif
 
+	// just stop here in case of crashing
 	while(1)
 	{
 		if (0 == artnet_enable)
