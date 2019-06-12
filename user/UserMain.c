@@ -29,6 +29,7 @@
 
 #include "aks_version.h"
 #include "e131.h"
+#include "aks_debug_printf.h"
 
 
 void Joo_uart_send(char *data);
@@ -36,6 +37,7 @@ void Joo_uart_send(char *data);
 static void server_thread_main(void* arg);
 
 USER_FUNC static void client_thread_main(void* arg);
+void sACN_main(void *arg); 
 
 void check_gaffer_packet(char *data, uint32_t len);
 void replace_channel_data(char *data, uint32_t len);
@@ -62,6 +64,8 @@ struct eth_drv_sc	*dev;
 #define AP_MODE 		1
 #define STA_ETH_MODE	2
 
+#define AKS_PRIORITIES	8			// since the web server uses 8, the UserMain thread need to change 8 too
+
 static int operation_mode;
 
 // #define debug(format, args...) fprintf (stderr, format, args)
@@ -71,8 +75,6 @@ static int operation_mode;
 							sprintf (ebuffer, fmt, args);
 							Joo_uart_send((char *)ebuffer);
 						}
-
-#endif
 
 #define E_DEBUG_PRINT	0
 
@@ -84,6 +86,8 @@ char ebuffer[128];
 	                             } while (0)
 #else
 #define eprintf(fmt, ...)
+#endif
+
 #endif
 	
 char at_rsp[96] = {0};
@@ -827,6 +831,7 @@ static int USER_FUNC uart_recv_callback(uint32_t event,char *data,uint32_t len,u
 	return (copy_len);
 }	
 
+#if 0
 hfnet_socketa_client_t artpoll_client;
 
 static int USER_FUNC socketa_recv_callback(uint32_t event,char *data,uint32_t len,uint32_t buf_len)
@@ -878,7 +883,6 @@ static int USER_FUNC socketa_recv_callback(uint32_t event,char *data,uint32_t le
 	return 0;
 }
 
-#if 1
 static int USER_FUNC socketb_recv_callback(uint32_t event,char *data,uint32_t len,uint32_t buf_len)
 {
 	e131_error_t error;
@@ -951,11 +955,16 @@ void UserMain(void *arg)
 	if(hfnet_start_assis(ASSIS_PORT)!=HF_SUCCESS)
 	{
 		HF_Debug(DEBUG_WARN,"start assis fail\n");
-	}	
+	}
+
+	// Need to start UART, or calling the uart send function will crash and system is not recoverable
+	
 	if(hfnet_start_uart(HFTHREAD_PRIORITIES_LOW,(hfnet_callback_t)uart_recv_callback)!=HF_SUCCESS)
 	{
 		HF_Debug(DEBUG_WARN,"start uart fail\n");
 	}
+
+#if 0	
 	if(hfnet_start_socketa(HFTHREAD_PRIORITIES_LOW,(hfnet_callback_t)socketa_recv_callback)!=HF_SUCCESS)
 	{
 		HF_Debug(DEBUG_WARN,"start socketa fail\n");
@@ -964,6 +973,14 @@ void UserMain(void *arg)
 	{
 		HF_Debug(DEBUG_WARN,"start socketb fail\n");
 	}
+#endif
+	
+	ret1 = hfthread_create(sACN_main,"udp_sACN_main",1024,(void*)1,AKS_PRIORITIES,NULL,NULL);
+
+	if (HF_SUCCESS != ret1)
+	{
+		eprintf("Create UDP server fails, %d\n", ret1);
+	}	
 	
 	// Check a dedicated IO Pin if we should bring up the whole system
 
@@ -2036,40 +2053,6 @@ void get_battery_info(char *buffer)
 	//strcpy(buffer, battery_info);
 	sprintf(buffer,"%s", battery_info);
 	//eprintf("**Battery : %s\n", buffer);
-}
-
-static e131_packet_t packet;
-int sACN_main() 
-{
-  int sockfd;
-  e131_error_t error;
-  uint8_t last_seq = 0x00;
-
-  // create a socket for E1.31
-  if ((sockfd = e131_socket()) < 0)
-    eprintf("e131_socket\n");
-
-  // bind the socket to the default E1.31 port and join multicast group for universe 1
-  if (e131_bind(sockfd, E131_DEFAULT_PORT) < 0)
-    eprintf("e131_bind");
- 
-  // loop to receive E1.31 packets
-  eprintf("waiting for E1.31 packets ...\n");
-  for (;;) {
-    if (e131_recv(sockfd, &packet) < 0)
-		continue;	
-    if ((error = e131_pkt_validate(&packet)) != E131_ERR_NONE) {
-      eprintf("e131_pkt_validate: %s\n", e131_strerror(error));
-      continue;
-    }
-    if (e131_pkt_discard(&packet, last_seq)) {
-      eprintf("warning: packet out of order received\n");
-      last_seq = packet.frame.seq_number;
-      continue;
-    }
-	// send it to SAMD
-    last_seq = packet.frame.seq_number;
-  }
 }
 
 int Send_Link_Command(void)
