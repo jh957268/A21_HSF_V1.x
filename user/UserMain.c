@@ -974,6 +974,16 @@ void UserMain(void *arg)
 		HF_Debug(DEBUG_WARN,"start socketb fail\n");
 	}
 #endif
+
+	while(1)
+	{
+		if (0 == artnet_enable)
+		{
+			hf_thread_delay(1000);	
+			continue;
+		}
+		break;
+	}
 	
 	ret1 = hfthread_create(sACN_main,"udp_sACN_main",1024,(void*)1,AKS_PRIORITIES,NULL,NULL);
 
