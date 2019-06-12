@@ -36,6 +36,12 @@ struct artnetpollreply {
 	uint8_t		Filler[26];
 } __attribute__((packed));
 
+#define ARTNET_DEFAULT_PORT	3939
+
+extern int ratpac_get_str(int id, char *val);
+extern void check_gaffer_packet(char *data, uint32_t len);
+extern void replace_channel_data(char *data, uint32_t len); 
+
 struct artnetpollreply	artpollreply_msg;
 
 void init_artpollreply_msg(void)
@@ -48,5 +54,44 @@ void init_artpollreply_msg(void)
 void send_artpollreply_msg(void)
 {
 	init_artpollreply_msg();
-	hfnet_socketa_send((char *)&artpollreply_msg, sizeof(artpollreply_msg), 100);
+}
+
+void process_artnet_msg(int sockfd, uint8_t *raw, int len, struct sockaddr_in from)
+{
+	struct sockaddr_in dest;
+	char Uni[4]={0};
+	int uni_num, art_sub;	
+	
+	raw[7] = 0;
+	
+	if (strcmp((char *)raw, "Art-Net"))
+	{
+		return;
+	}
+	memset((char*)&dest,0,sizeof(dest));
+	dest.sin_family = AF_INET;
+	dest.sin_addr.s_addr = from.sin_addr.s_addr;
+	dest.sin_port = htons(ARTNET_DEFAULT_PORT);
+	
+	if (len <= 50)
+	{
+		init_artpollreply_msg();
+		sendto(sockfd, (char *)&artpollreply_msg, sizeof artpollreply_msg, 0, (struct sockaddr *) &dest, sizeof(dest));
+	}
+	else
+	{
+		//Artnet DMX packet
+		check_gaffer_packet((char *)raw, len);
+		ratpac_get_str(CFG_str2id("AKS_UNIVERSE"),Uni);	
+		uni_num = atoi(Uni);;
+		ratpac_get_str(CFG_str2id("AKS_SUBNET"),Uni);
+		art_sub = atoi(Uni);
+		art_sub <<= 4;
+		uni_num = ((uni_num | art_sub) & 0xff);
+		if(uni_num == (int)raw[14])
+		{
+			replace_channel_data((char *)raw, len); 
+			hfuart_send(HFUART0, raw,len,1000);
+		}			
+	}
 }
