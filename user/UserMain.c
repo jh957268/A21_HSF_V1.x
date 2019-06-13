@@ -54,6 +54,8 @@ void send_artpollreply_msg(void);
 static int refresh_clients;
 static char gaffer_data[514];
 
+cyg_mutex_t samd_mutex;
+
 extern struct eth_drv_sc devive_wireless_sc0;
 
 int rt28xx_get_wifi_channel(void *dev);
@@ -788,18 +790,19 @@ static int uart_rvc_done = 0;
 static int USER_FUNC uart_recv_callback(uint32_t event,char *data,uint32_t len,uint32_t buf_len)
 {
 	int copy_len;
-#if 0	
+#if 1	
 	static int first_time = 0;
-	static cyg_priority_t pri;
+	//static cyg_priority_t pri;
 	static cyg_handle_t uartHandle;
 	
 	if (0 == first_time)
 	{
 		uartHandle = cyg_thread_self();
-		pri = cyg_thread_get_priority(uartHandle);
-		eprintf ("Uart Thread Pri = %d\n", (int)pri);
-		pri = cyg_thread_get_current_priority(uartHandle);
-		eprintf ("Uart Thread Cur Pri = %d\n", (int)pri);
+		cyg_thread_set_priority(uartHandle, AKS_PRIORITIES );    // was 14 set by default vendor
+		//pri = cyg_thread_get_priority(uartHandle);
+		//eprintf ("Uart Thread Pri = %d\n", (int)pri);
+		//pri = cyg_thread_get_current_priority(uartHandle);
+		//eprintf ("Uart Thread Cur Pri = %d\n", (int)pri);
 		first_time = 1;
 	}
 #endif
@@ -807,7 +810,7 @@ static int USER_FUNC uart_recv_callback(uint32_t event,char *data,uint32_t len,u
 	if (1 == artnet_enable)
 	{
 		uart_rvc_len=0;
-		return len;
+		return len;			// was len before, now 0 => don't send to UDP port
 	}
 	copy_len = ((len > 60) ? 60 : len);
 	strncpy(&uart_rcv_data[uart_rvc_len], data, copy_len);
@@ -959,7 +962,7 @@ void UserMain(void *arg)
 
 	// Need to start UART, or calling the uart send function will crash and system is not recoverable
 	
-	if(hfnet_start_uart(HFTHREAD_PRIORITIES_LOW,(hfnet_callback_t)uart_recv_callback)!=HF_SUCCESS)
+	if(hfnet_start_uart(AKS_PRIORITIES,(hfnet_callback_t)uart_recv_callback)!=HF_SUCCESS)
 	{
 		HF_Debug(DEBUG_WARN,"start uart fail\n");
 	}
@@ -975,6 +978,19 @@ void UserMain(void *arg)
 	}
 #endif
 
+	{
+		//static cyg_priority_t pri;
+		static cyg_handle_t userHandle;
+		
+		userHandle = cyg_thread_self();
+		cyg_thread_set_priority(userHandle, AKS_PRIORITIES );    // was 6 set by default vendor
+		//pri = cyg_thread_get_priority(uartHandle);
+		//eprintf ("UserMain Thread Pri = %d\n", (int)pri);
+		//pri = cyg_thread_get_current_priority(uartHandle);
+		//eprintf ("UserMain Thread Cur Pri = %d\n", (int)pri);
+	}
+
+	Joo_uart_send("__system_reboot");
 	// just stop here in case of crashing
 	while(1)
 	{
@@ -985,6 +1001,8 @@ void UserMain(void *arg)
 		}
 		break;
 	}
+	
+	cyg_mutex_init(&samd_mutex);
 	
 	ret1 = hfthread_create(sACN_main,"udp_sACN_main",1024,(void*)1,AKS_PRIORITIES,NULL,NULL);
 
@@ -1018,7 +1036,7 @@ void UserMain(void *arg)
 			eprintf("MSLP=OFF fails\n");
 		}
 #endif		
-		ret1 = hfthread_create(client_thread_main,"udp_client_main",1024,(void*)1,HFTHREAD_PRIORITIES_NORMAL,NULL,NULL);
+		ret1 = hfthread_create(client_thread_main,"udp_client_main",1024,(void*)1,AKS_PRIORITIES,NULL,NULL);
 
 		if (HF_SUCCESS != ret1)
 		{
@@ -1040,7 +1058,7 @@ void UserMain(void *arg)
 		}
 		if (strstr(at_rsp, "+ok=STA"))
 		{
-			ret1 = hfthread_create(client_thread_main,"udp_client_main",1024,(void*)1,HFTHREAD_PRIORITIES_NORMAL,NULL,NULL);
+			ret1 = hfthread_create(client_thread_main,"udp_client_main",1024,(void*)1,AKS_PRIORITIES,NULL,NULL);
 
 			if (HF_SUCCESS != ret1)
 			{
@@ -1049,7 +1067,7 @@ void UserMain(void *arg)
 		}
 		else
 		{
-			ret1 = hfthread_create(server_thread_main,"udp_server_main",1024,(void*)1,HFTHREAD_PRIORITIES_NORMAL,NULL,NULL);
+			ret1 = hfthread_create(server_thread_main,"udp_server_main",1024,(void*)1,AKS_PRIORITIES,NULL,NULL);
 
 			if (HF_SUCCESS != ret1)
 			{
@@ -1060,7 +1078,7 @@ void UserMain(void *arg)
 	// int i=0;
 	
 
-	Joo_uart_send("__system_reboot");
+	// Joo_uart_send("__system_reboot");
 
 	while(1)
 	{
@@ -1831,7 +1849,7 @@ int Send_SAMD_CMD(char *cmd, int len, char *expect_resp, cyg_tick_count_t timeou
 {
 	int try_snd;
 	cyg_tick_count_t cur_tick;
-	static cyg_handle_t webHandle;
+	//static cyg_handle_t webHandle;
 	
 	expect_resp[0] = 0;		// for the safe side
 	
@@ -1839,9 +1857,11 @@ int Send_SAMD_CMD(char *cmd, int len, char *expect_resp, cyg_tick_count_t timeou
 	{
 		return (-1);
 	}
+	
+	cyg_mutex_lock(&samd_mutex);			// since userMain and web server can call this function, and wait for global response  uart_rcv data
 	//set_artnet_enable(0);
-	webHandle = cyg_thread_self();
-	cyg_thread_set_priority(webHandle, 14 );
+	//webHandle = cyg_thread_self();
+	//cyg_thread_set_priority(webHandle, 14 );
 	for (try_snd = 0; try_snd < 2; try_snd++)
 	{
 		clear_uart_recv();
@@ -1868,11 +1888,13 @@ int Send_SAMD_CMD(char *cmd, int len, char *expect_resp, cyg_tick_count_t timeou
 		memmove(expect_resp, uart_rcv_data,uart_rvc_len );
 		expect_resp[uart_rvc_len] = 0;
 		//set_artnet_enable(1);
-		cyg_thread_set_priority(webHandle, 8 );
+		//cyg_thread_set_priority(webHandle, 8 );
+		cyg_mutex_unlock(&samd_mutex);
 		return 0;
 	}
 	//set_artnet_enable(1);
-	cyg_thread_set_priority(webHandle, 8 );
+	//cyg_thread_set_priority(webHandle, 8 );
+	cyg_mutex_unlock(&samd_mutex);
 	return (-1);
 }
 
@@ -1913,6 +1935,7 @@ int SAMD_firmware_download(unsigned char *firmware, int len, int which)
 		first_time = 1;
 	}
 #endif
+
 	if (0 == which)
 	{
 		Settings[12] = 7;
