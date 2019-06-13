@@ -10,7 +10,7 @@ struct artpollreply {
 	uint8_t		NetSwitch;
 	uint8_t		SubSwitch;
 	uint8_t		OemHi;
-	uint8_t		Oem;
+	uint8_t		OemLo;
 	uint8_t		Ubea_Version;
 	uint8_t		Status1;
 	uint8_t		EstaManLo;
@@ -42,18 +42,37 @@ extern int ratpac_get_str(int id, char *val);
 extern void check_gaffer_packet(char *data, uint32_t len);
 extern void replace_channel_data(char *data, uint32_t len); 
 
+extern char ipAddress[];
+
 struct artpollreply	artpollreply_msg;
 
 void init_artpollreply_msg(void)
 {
+	memset((void *)&artpollreply_msg, 0x0, sizeof (artpollreply_msg));
 	strcpy((char *)(artpollreply_msg.ID), "Art-Net");
 	artpollreply_msg.OpCode[0] = 0x00;
 	artpollreply_msg.OpCode[1] = 0x21;
-}
-
-void send_artpollreply_msg(void)
-{
-	init_artpollreply_msg();
+	artpollreply_msg.IP_Address[0] = ipAddress[0];
+	artpollreply_msg.IP_Address[1] = ipAddress[1];
+	artpollreply_msg.IP_Address[2] = ipAddress[2];
+	artpollreply_msg.IP_Address[3] = ipAddress[3];
+	artpollreply_msg.Port[0] = 0x36;
+	artpollreply_msg.Port[1] = 0x19;
+	artpollreply_msg.VersInfoH = 12;
+	artpollreply_msg.VersInfoL = 18;
+	artpollreply_msg.OemLo = 0xff;
+	artpollreply_msg.EstaManLo = 0xD7;
+	artpollreply_msg.EstaManLo = 0x51;
+	ratpac_get_str(CFG_str2id("AKS_NAME"),(char *)artpollreply_msg.ShortName);
+	strcpy((char *)artpollreply_msg.LongName, "Ratpac AKS - Designed by Ratpac Dimmers");
+	artpollreply_msg.NumPortsLo = 0x1;
+	artpollreply_msg.PortTypes[0] = 0b10000000;
+	artpollreply_msg.GoodInput[0] = 0b10000000;
+	artpollreply_msg.GoodInput[1] = 0b00001000;
+	artpollreply_msg.GoodInput[2] = 0b00001000;
+	artpollreply_msg.GoodInput[3] = 0b00001000;
+	artpollreply_msg.GoodOutput[0] = 0b10000000;
+	artpollreply_msg.Status2 = 15;
 }
 
 void process_artnet_msg(int sockfd, uint8_t *raw, int len, struct sockaddr_in from)
@@ -77,7 +96,10 @@ void process_artnet_msg(int sockfd, uint8_t *raw, int len, struct sockaddr_in fr
 	{
 		if (raw[9] != 0x20)
 			return;
-		init_artpollreply_msg();
+		artpollreply_msg.IP_Address[0] = ipAddress[0];
+		artpollreply_msg.IP_Address[1] = ipAddress[1];
+		artpollreply_msg.IP_Address[2] = ipAddress[2];
+		artpollreply_msg.IP_Address[3] = ipAddress[3];		
 		sendto(sockfd, (char *)&artpollreply_msg, sizeof artpollreply_msg, 0, (struct sockaddr *) &dest, sizeof(dest));
 	}
 	else
