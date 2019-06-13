@@ -1,6 +1,6 @@
 #include <hsf.h>
 
-struct artnetpollreply {
+struct artpollreply {
 	uint8_t		ID[8];
 	uint8_t		OpCode[2];
 	uint8_t		IP_Address[4];
@@ -36,19 +36,19 @@ struct artnetpollreply {
 	uint8_t		Filler[26];
 } __attribute__((packed));
 
-#define ARTNET_DEFAULT_PORT	3939
+#define ARTNET_DEFAULT_PORT	6454
 
 extern int ratpac_get_str(int id, char *val);
 extern void check_gaffer_packet(char *data, uint32_t len);
 extern void replace_channel_data(char *data, uint32_t len); 
 
-struct artnetpollreply	artpollreply_msg;
+struct artpollreply	artpollreply_msg;
 
 void init_artpollreply_msg(void)
 {
 	strcpy((char *)(artpollreply_msg.ID), "Art-Net");
 	artpollreply_msg.OpCode[0] = 0x00;
-	artpollreply_msg.OpCode[1] = 0x20;
+	artpollreply_msg.OpCode[1] = 0x21;
 }
 
 void send_artpollreply_msg(void)
@@ -75,11 +75,15 @@ void process_artnet_msg(int sockfd, uint8_t *raw, int len, struct sockaddr_in fr
 	
 	if (len <= 50)
 	{
+		if (raw[9] != 0x20)
+			return;
 		init_artpollreply_msg();
 		sendto(sockfd, (char *)&artpollreply_msg, sizeof artpollreply_msg, 0, (struct sockaddr *) &dest, sizeof(dest));
 	}
 	else
 	{
+		if (raw[9] != 0x50)
+			return;
 		//Artnet DMX packet
 		check_gaffer_packet((char *)raw, len);
 		ratpac_get_str(CFG_str2id("AKS_UNIVERSE"),Uni);	
