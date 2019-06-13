@@ -96,6 +96,7 @@ char at_rsp[96] = {0};
 char samd_ver[4] = {'1', '.', 'x', 0};
 char timo_ver[4] = {'1', '.', 'y', 0};
 char battery_info[32] = {0};
+char ipAddress[4]={};
 
 extern cyg_netdevtab_entry_t devive_wireless_netdev0;
 cyg_netdevtab_entry_t *pWIFIDev;
@@ -1160,7 +1161,7 @@ void UserMain(void *arg)
 			char Timo[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 0, 0b10000010, 0b00000000, timo_DMX_Window[0], timo_DMX_Window[1], timo_DMX_Window[2], timo_DMX_Window[3], timo_DMX_Spec[0], timo_DMX_Spec[1], timo_DMX_Spec[2], timo_DMX_Spec[3], timo_DMX_Spec[4], timo_DMX_Spec[5], timo_DMX_Spec[6], timo_DMX_Spec[7], 0b00000001, TimoPower[0], timo_Blocked_Channel[0], timo_Blocked_Channel[1], timo_Blocked_Channel[2], timo_Blocked_Channel[3], timo_Blocked_Channel[4], timo_Blocked_Channel[5], timo_Blocked_Channel[6], timo_Blocked_Channel[7], timo_Blocked_Channel[8], timo_Blocked_Channel[9], timo_Blocked_Channel[10], Battery[0], Battery[1], Battery[2], Battery[3], Battery[4], Battery[5], Battery[6], Battery[7]};
 			hfuart_send(HFUART0, Timo,sizeof(Timo),100);
 
-			char ipAddress[4]={};
+			//char ipAddress[4]={};
 			if (AP_MODE == operation_mode)
 			{
 				ipAddress[0] = 0xa;
