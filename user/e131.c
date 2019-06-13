@@ -37,7 +37,8 @@
 #define aks_printf(fmt, ...)
 
 /* E1.31 Public Constants */
-const uint16_t E131_DEFAULT_PORT = 5568;
+
+#define E131_DEFAULT_PORT  		5568
 const uint8_t E131_DEFAULT_PRIORITY = 0x64;
 
 /* E1.31 Private Constants */
@@ -51,10 +52,11 @@ const uint8_t _E131_DMP_TYPE = 0xa1;
 const uint16_t _E131_DMP_FIRST_ADDR = 0x0000;
 const uint16_t _E131_DMP_ADDR_INC = 0x0001;
 
-const uint16_t ARTNET_DEFAULT_PORT = 3359;
+#define ARTNET_DEFAULT_PORT 	6454
 
 extern int ratpac_get_str(int id, char *val);
 extern void process_artnet_msg(int sockfd, uint8_t *raw, int len, struct sockaddr_in from);
+extern void init_artpollreply_msg(void);
 
 /* Create a socket file descriptor suitable for E1.31 communication */
 int e131_socket(void) {
@@ -333,7 +335,8 @@ void sACN_main(void *arg)
   uint16_t udp_port;
   struct sockaddr_in cli_addr;
 
-  ratpac_get_str( CFG_str2id("AKS_SECOND_CHANNEL"), temp_buf);
+  //ratpac_get_str( CFG_str2id("AKS_SECOND_CHANNEL"), temp_buf);
+  init_artpollreply_msg();
 
   // create a socket for E1.31
   if ((sockfd = e131_socket()) < 0)
@@ -372,6 +375,8 @@ void sACN_main(void *arg)
     }
 	// send it to SAMD
     last_seq = packet.frame.seq_number;
+	//send_artnet_header();
+	//send the E131 DMX data
   }
 }
 #endif
