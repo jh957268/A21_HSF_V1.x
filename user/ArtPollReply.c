@@ -1,5 +1,16 @@
 #include <hsf.h>
 
+struct artnet_hdr {
+	uint8_t		ID[8];
+	uint8_t		OpCode[2];
+	uint8_t		ProtVer[2];
+	uint8_t		Sequence;
+	uint8_t		Physical;
+	uint8_t		SubUni;
+	uint8_t		Net;
+	uint8_t		Length[2];
+} __attribute__((packed));
+
 struct artpollreply {
 	uint8_t		ID[8];
 	uint8_t		OpCode[2];
@@ -46,6 +57,7 @@ extern char ipAddress[];
 extern int artnet_enable;
 
 struct artpollreply	artpollreply_msg;
+struct artnet_hdr artnet_hdr_msg;
 
 void init_artpollreply_msg(void)
 {
@@ -74,6 +86,15 @@ void init_artpollreply_msg(void)
 	artpollreply_msg.GoodInput[3] = 0b00001000;
 	artpollreply_msg.GoodOutput[0] = 0b10000000;
 	artpollreply_msg.Status2 = 15;
+	
+	memset((void *)&artnet_hdr_msg, 0x0, sizeof (artnet_hdr_msg));
+	strcpy((char *)(artnet_hdr_msg.ID), "Art-Net");
+	artnet_hdr_msg.OpCode[0] = 0;
+	artnet_hdr_msg.OpCode[1] = 0x50;
+	artnet_hdr_msg.ProtVer[0] = 0;
+	artnet_hdr_msg.ProtVer[1] = 0xe;
+	artnet_hdr_msg.Length[0] = 0x2;
+	artnet_hdr_msg.Length[1] = 0x0;
 }
 
 void process_artnet_msg(int sockfd, uint8_t *raw, int len, struct sockaddr_in from)
@@ -121,4 +142,9 @@ void process_artnet_msg(int sockfd, uint8_t *raw, int len, struct sockaddr_in fr
 			hfuart_send(HFUART0, raw,len,1000);
 		}			
 	}
+}
+
+void send_artnet_header(void)
+{
+	hfuart_send(HFUART0, &artnet_hdr_msg, sizeof(artnet_hdr_msg),1000);
 }
