@@ -43,6 +43,7 @@ extern void check_gaffer_packet(char *data, uint32_t len);
 extern void replace_channel_data(char *data, uint32_t len); 
 
 extern char ipAddress[];
+extern int artnet_enable;
 
 struct artpollreply	artpollreply_msg;
 
@@ -104,7 +105,7 @@ void process_artnet_msg(int sockfd, uint8_t *raw, int len, struct sockaddr_in fr
 	}
 	else
 	{
-		if (raw[9] != 0x50)
+		if ((raw[9] != 0x50) || (artnet_enable == 0))
 			return;
 		//Artnet DMX packet
 		check_gaffer_packet((char *)raw, len);
