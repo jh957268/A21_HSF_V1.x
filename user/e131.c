@@ -38,7 +38,7 @@
 static char e131_print_buffer[128];
 #define aks_printf(fmt, ...) do {  \
 	                               sprintf(e131_print_buffer, fmt, ## __VA_ARGS__); \
-	                               hfuart_send(HFUART0, e131_print_buffer, strlen(e131_print_buffer),100); \                               
+	                               hfuart_send(HFUART0, e131_print_buffer, strlen(e131_print_buffer),100); \                              
 	                             } while (0)
 
 /* E1.31 Public Constants */
@@ -130,20 +130,21 @@ int e131_dest_str(char *str, const e131_addr_t *dest) {
   return 0;
 }
 
-#if 0   //  JOO
 /* Join a socket file descriptor to an E1.31 multicast group using a universe */
 int e131_multicast_join(int sockfd, const uint16_t universe) {
+
   if (universe < 1 || universe > 63999) {
     errno = EINVAL;
     return -1;
   }
-  struct ip_mreqn mreq;
+ 
+  struct ip_mreq mreq;
+  
+  memset((char*)&mreq,0,sizeof(mreq));
   mreq.imr_multiaddr.s_addr = htonl(0xefff0000 | universe);
-  mreq.imr_address.s_addr = htonl(INADDR_ANY);
-  mreq.imr_ifindex = 0;
+  mreq.imr_interface.s_addr = htonl(INADDR_ANY);
   return setsockopt(sockfd, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof mreq);
 }
-#endif
 
 /* Initialize an E1.31 packet using a universe and a number of slots */
 int e131_pkt_init(e131_packet_t *packet, const uint16_t universe, const uint16_t num_slots) {
@@ -341,6 +342,7 @@ const char *e131_strerror(const e131_error_t error)
 
 #if 1
 static e131_packet_t packet;
+void send_artnet_header(void);
 
 void sACN_main(void *arg) 
 {
@@ -350,6 +352,7 @@ void sACN_main(void *arg)
   char temp_buf[16];
   uint16_t udp_port;
   struct sockaddr_in cli_addr;
+  int rc;
 
   //ratpac_get_str( CFG_str2id("AKS_SECOND_CHANNEL"), temp_buf);
   init_artpollreply_msg();
@@ -369,6 +372,12 @@ void sACN_main(void *arg)
   {
     aks_printf("e131_bind");
   }
+#if 0  
+  if ((rc = e131_multicast_join(sockfd, 1)) < 0)
+  {
+	aks_printf("rc = %d, e131_multicast_join", rc);
+  }
+#endif  
   // loop to receive E1.31 packets
   aks_printf("waiting for E1.31 packets ...\n");
   for (;;) {
@@ -392,8 +401,9 @@ void sACN_main(void *arg)
     }
 	// send it to SAMD
     last_seq = packet.frame.seq_number;
-	//send_artnet_header();
+	send_artnet_header();
 	//send the E131 DMX data
+	hfuart_send(HFUART0, (char *)&packet.dmp.prop_val[1], 512,1000);
   }
 }
 #endif
