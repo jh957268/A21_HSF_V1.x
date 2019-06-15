@@ -1978,7 +1978,7 @@ int SAMD_firmware_download(unsigned char *firmware, int len, int which)
 		Settings[12] = 8;
 	}
 	set_artnet_enable(0);
-	hf_thread_delay(1000);		// make sure all the command (battery) waiting for response has finished
+	hf_thread_delay(2000);		// make sure all the command (battery) waiting for response has finished
 	//msleep(20);				// make sure at least 20ms gap between two artnet packet
 	
 	cyg_mutex_lock(&samd_mutex);
@@ -2217,7 +2217,7 @@ int Send_Battery_Command(void)
 	
 	//set_artnet_enable(0);
 	cyg_mutex_lock(&samd_mutex);
-	ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 50);
+	ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 100);
 	if (ret != 0)
 	{
 		//set_artnet_enable(1);
