@@ -1253,9 +1253,9 @@ void UserMain(void *arg)
 			char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 1,name[0],name[1],name[2],name[3],name[4],name[5],name[6],name[7],name[8],name[9],name[10],name[11],name[12],name[13],name[14],name[15],name[16],name[17],ipAddress[0],ipAddress[1],ipAddress[2],ipAddress[3]};
 			hfuart_send(HFUART0, Settings,sizeof(Settings),100);
 
-			char Settings2[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 2, 1, 0};
+			//char Settings2[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 2, 1, 0};
 			//char Settings2[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 5};
-			hfuart_send(HFUART0, Settings2,sizeof(Settings2),100);
+			//hfuart_send(HFUART0, Settings2,sizeof(Settings2),100);
 			
 			char gaf_enb, gaf_low_lsb, gaf_low_msb, gaf_high_lsb, gaf_high_msb;
 			int gaf_chn;
@@ -1269,12 +1269,14 @@ void UserMain(void *arg)
 			char Settings6[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 6, gaf_enb, gaf_low_lsb, gaf_low_msb, gaf_high_lsb, gaf_high_msb};
 			hfuart_send(HFUART0, Settings6,sizeof(Settings6),100);
 
-			//hf_thread_delay(2000);
-
-			Send_Battery_Command();
+			hf_thread_delay(2000);
+			if (1 == artnet_enable)
+			{
+				Send_Battery_Command();
+			}
 
 		//}
-		hf_thread_delay(5000);
+		hf_thread_delay(3000);
 	}
 	return ;
 }
