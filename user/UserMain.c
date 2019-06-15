@@ -243,7 +243,7 @@ static int USER_FUNC cmd_web_para_node_name(pat_session_t s,int argc,char *argv[
 	return 0;
 }
 
-static int artnet_enable = 0;
+int artnet_enable = 0;
 
 static int USER_FUNC cmd_web_para_artnet(pat_session_t s,int argc,char *argv[],char *rsp,int len)
 {
@@ -786,8 +786,9 @@ void web_flash_data_init(void)
 
 static char uart_rcv_data[64];
 static int uart_rvc_len = 0;
-static int uart_rvc_done = 0;
+static int uart_rvc_done = 1;
 
+static debug_buff[16];
 static int USER_FUNC uart_recv_callback(uint32_t event,char *data,uint32_t len,uint32_t buf_len)
 {
 	int copy_len;
@@ -807,12 +808,28 @@ static int USER_FUNC uart_recv_callback(uint32_t event,char *data,uint32_t len,u
 		first_time = 1;
 	}
 #endif
-	
-	if (1 == artnet_enable)
+#if 0
+	{
+		memmove(debug_buff, data, len);
+		debug_buff[len] = 0;
+		Joo_uart_send(debug_buff);
+		
+	}
+#endif	
+	if (1 == uart_rvc_done /* artnet_enable */)
 	{
 		uart_rvc_len=0;
 		return len;			// was len before, now 0 => don't send to UDP port
 	}
+#if 0	
+	{
+		memmove(debug_buff, data, len);
+		debug_buff[len] = 0;
+		Joo_uart_send(debug_buff);
+		
+	}
+#endif
+	
 	copy_len = ((len > 60) ? 60 : len);
 	strncpy(&uart_rcv_data[uart_rvc_len], data, copy_len);
 	uart_rvc_len += copy_len;
@@ -993,6 +1010,7 @@ void UserMain(void *arg)
 
 	Joo_uart_send("__system_reboot");
 	// just stop here in case of crashing
+#if 0	
 	while(1)
 	{
 		if (0 == artnet_enable)
@@ -1002,7 +1020,8 @@ void UserMain(void *arg)
 		}
 		break;
 	}
-	
+#endif
+	hf_thread_delay(100);
 	cyg_mutex_init(&samd_mutex);
 	
 	ret1 = hfthread_create(sACN_main,"udp_sACN_main",1024,(void*)1,AKS_PRIORITIES,NULL,NULL);
@@ -1250,12 +1269,12 @@ void UserMain(void *arg)
 			char Settings6[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 6, gaf_enb, gaf_low_lsb, gaf_low_msb, gaf_high_lsb, gaf_high_msb};
 			hfuart_send(HFUART0, Settings6,sizeof(Settings6),100);
 
-			hf_thread_delay(2000);
-			
+			//hf_thread_delay(2000);
+
 			Send_Battery_Command();
 
 		//}
-		hf_thread_delay(3000);
+		hf_thread_delay(5000);
 	}
 	return ;
 }
@@ -1837,8 +1856,8 @@ int ratpac_set_str(int id, char *val)
 
 void set_artnet_enable(int val)
 {
-	// artnet_enable = val;			// no longer need to control arnet frame going to the SAMD, since all the task priority is same, AKS_PRIORITY
-	
+	artnet_enable = val;			// no longer need to control arnet frame going to the SAMD, since all the task priority is same, AKS_PRIORITY
+#if 0	
 	if (0 == val)
 	{
 		cyg_mutex_lock(&samd_mutex);
@@ -1847,6 +1866,7 @@ void set_artnet_enable(int val)
 	{
 		cyg_mutex_unlock(&samd_mutex);
 	}
+#endif	
 }
 
 void clear_uart_recv(void)
@@ -1872,7 +1892,7 @@ int Send_SAMD_CMD(char *cmd, int len, char *expect_resp, cyg_tick_count_t timeou
 	//set_artnet_enable(0);
 	//webHandle = cyg_thread_self();
 	//cyg_thread_set_priority(webHandle, 14 );
-	for (try_snd = 0; try_snd < 2; try_snd++)
+	for (try_snd = 0; try_snd < 1; try_snd++)
 	{
 		clear_uart_recv();
 		hfuart_send(HFUART0, cmd, len, 100);
@@ -1893,7 +1913,7 @@ int Send_SAMD_CMD(char *cmd, int len, char *expect_resp, cyg_tick_count_t timeou
 			Joo_uart_send("SAMD no response\n");
 			continue;
 		}
-		uart_rvc_done = 0;
+		uart_rvc_done = 1;		// no longer need data for now
 		uart_rcv_data[31] = 0; // for the safe side
 		memmove(expect_resp, uart_rcv_data,uart_rvc_len );
 		expect_resp[uart_rvc_len] = 0;
@@ -1905,6 +1925,7 @@ int Send_SAMD_CMD(char *cmd, int len, char *expect_resp, cyg_tick_count_t timeou
 	//set_artnet_enable(1);
 	//cyg_thread_set_priority(webHandle, 8 );
 	//cyg_mutex_unlock(&samd_mutex);
+	uart_rvc_done = 1;		// no longer need data for now
 	return (-101);
 }
 
@@ -1955,13 +1976,16 @@ int SAMD_firmware_download(unsigned char *firmware, int len, int which)
 		Settings[12] = 8;
 	}
 	set_artnet_enable(0);
-	msleep(20);				// make sure at least 20ms gap between two artnet packet
+	hf_thread_delay(1000);		// make sure all the command (battery) waiting for response has finished
+	//msleep(20);				// make sure at least 20ms gap between two artnet packet
 	
+	cyg_mutex_lock(&samd_mutex);
 	for (i = 0; i < NUM_TRY; i++)  // try two times because the SAMD jumps 0 and re-init uart always send some garbage at the beginning, the first always fails
 	{
-		ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 500);
+		ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
 		if (ret != 0)
 		{
+			cyg_mutex_unlock(&samd_mutex);
 			set_artnet_enable(1);
 			return (ret);
 		}
@@ -1969,6 +1993,7 @@ int SAMD_firmware_download(unsigned char *firmware, int len, int which)
 		{
 			if ((which == 1) || (i == 1) )
 			{
+				cyg_mutex_unlock(&samd_mutex);
 				set_artnet_enable(1);
 				return (-102);
 			}
@@ -1979,15 +2004,17 @@ int SAMD_firmware_download(unsigned char *firmware, int len, int which)
 			break;
 		}
 	}	
-	ret = Send_SAMD_CMD("yes", strlen("yes"), ret_buff, 200);
+	ret = Send_SAMD_CMD("yes", strlen("yes"), ret_buff, 100);
 	if (ret != 0)
 	{
+		cyg_mutex_unlock(&samd_mutex);
 		set_artnet_enable(1);
 		return (ret);
 	}
 	
 	if (!strstr(ret_buff,"ok"))
 	{
+		cyg_mutex_unlock(&samd_mutex);
 		set_artnet_enable(1);
 		return (-103);
 	}
@@ -2046,6 +2073,7 @@ int SAMD_firmware_download(unsigned char *firmware, int len, int which)
 			ret = Send_SAMD_CMD(samd_pkt_buff, PKT_SIZE+1, ret_buff, 200);
 			if (ret != 0)
 			{
+				cyg_mutex_unlock(&samd_mutex);
 				set_artnet_enable(1);
 				return (ret);
 			}
@@ -2053,6 +2081,7 @@ int SAMD_firmware_download(unsigned char *firmware, int len, int which)
 			{
 				if (0 == try)
 					continue;
+				cyg_mutex_unlock(&samd_mutex);
 				set_artnet_enable(1);
 				return (-104);				
 			}
@@ -2066,6 +2095,7 @@ int SAMD_firmware_download(unsigned char *firmware, int len, int which)
 	//done_msg[6] = code_cksum;
 	done_msg[6] = bcksum;	
 	Send_SAMD_CMD(done_msg, 7, ret_buff, 200);
+	cyg_mutex_unlock(&samd_mutex);
 	set_artnet_enable(1);
 	return 0;
 }
@@ -2105,19 +2135,23 @@ int Send_Link_Command(void)
 
 	char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 3, 2};
 	
-	set_artnet_enable(0);
+	//set_artnet_enable(0);
+	cyg_mutex_lock(&samd_mutex);
 	ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
 	if (ret != 0)
 	{
-		set_artnet_enable(1);
+		cyg_mutex_unlock(&samd_mutex);
+		//set_artnet_enable(1);
 		return (ret);
 	}
 	if (strstr(ret_buff,"ok"))
 	{
-		set_artnet_enable(1);		
+		cyg_mutex_unlock(&samd_mutex);
+		//set_artnet_enable(1);		
 		return (0);
 	}
-	set_artnet_enable(1);
+	cyg_mutex_unlock(&samd_mutex);
+	//set_artnet_enable(1);
 	return (-106);
 }
 
@@ -2127,19 +2161,23 @@ int Send_UnLink_Command(void)
 	
 	char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 3, 1};
 
-	set_artnet_enable(0);	
+	//set_artnet_enable(0);
+	cyg_mutex_lock(&samd_mutex);
 	ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
 	if (ret != 0)
 	{
-		set_artnet_enable(1);
+		//set_artnet_enable(1);
+		cyg_mutex_unlock(&samd_mutex);
 		return (ret);
 	}
 	if (strstr(ret_buff,"ok"))
 	{
-		set_artnet_enable(1);
+		//set_artnet_enable(1);
+		cyg_mutex_unlock(&samd_mutex);
 		return (0);
 	}
-	set_artnet_enable(1);
+	//set_artnet_enable(1);
+	cyg_mutex_unlock(&samd_mutex);
 	return (-106);	
 }
 
@@ -2149,19 +2187,23 @@ int Send_ID_Command(void)
 
 	char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 4};
 	
-	set_artnet_enable(0);
+	//set_artnet_enable(0);
+	cyg_mutex_lock(&samd_mutex);
 	ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
 	if (ret != 0)
 	{
-		set_artnet_enable(1);
+		//set_artnet_enable(1);
+		cyg_mutex_unlock(&samd_mutex);
 		return (ret);
 	}
 	if (strstr(ret_buff,"ok"))
 	{
-		set_artnet_enable(1);
+		//set_artnet_enable(1);
+		cyg_mutex_unlock(&samd_mutex);
 		return (0);
 	}
-	set_artnet_enable(1);
+	//set_artnet_enable(1);
+	cyg_mutex_unlock(&samd_mutex);
 	return (-106);
 }
 
@@ -2171,11 +2213,13 @@ int Send_Battery_Command(void)
 
 	char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 5};
 	
-	set_artnet_enable(0);
-	ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
+	//set_artnet_enable(0);
+	cyg_mutex_lock(&samd_mutex);
+	ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 50);
 	if (ret != 0)
 	{
-		set_artnet_enable(1);
+		//set_artnet_enable(1);
+		cyg_mutex_unlock(&samd_mutex);
 		return (ret);
 	}
 	samd_ver[0] = ret_buff[0];
@@ -2184,7 +2228,8 @@ int Send_Battery_Command(void)
 	sprintf(battery_info, "%s", (char *)&ret_buff[3]);
 	//hfuart_send(HFUART0, battery_info,6,100);  //for debug
 	battery_info[6] = 0;     // remove LF and CR sent by SAMD, or the web displayMsg cannot display
-	set_artnet_enable(1);
+	cyg_mutex_unlock(&samd_mutex);
+	//set_artnet_enable(1);
 	return (0);
 }
 
