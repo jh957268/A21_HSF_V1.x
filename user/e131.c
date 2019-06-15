@@ -34,7 +34,12 @@
 
 //#include "aks_debug_printf.h"
 
-#define aks_printf(fmt, ...)
+//#define aks_printf(fmt, ...)
+static char e131_print_buffer[128];
+#define aks_printf(fmt, ...) do {  \
+	                               sprintf(e131_print_buffer, fmt, ## __VA_ARGS__); \
+	                               hfuart_send(HFUART0, e131_print_buffer, strlen(e131_print_buffer),100); \                               
+	                             } while (0)
 
 /* E1.31 Public Constants */
 
@@ -64,13 +69,24 @@ int e131_socket(void) {
 }
 
 /* Bind a socket file descriptor to a port number for E1.31 communication */
-int e131_bind(int sockfd, const uint16_t port) {
-  e131_addr_t addr;
-  addr.sin_family = AF_INET;
-  addr.sin_addr.s_addr = INADDR_ANY;
-  addr.sin_port = htons(port);
-  memset(addr.sin_zero, 0, sizeof addr.sin_zero);
-  return bind(sockfd, (struct sockaddr *)&addr, sizeof addr);
+int e131_bind(int sockfd, const uint16_t port) 
+{
+  	struct sockaddr_in addr;	
+	int rc;
+	
+	memset((char*)&addr,0,sizeof(addr));
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(port);
+	addr.sin_addr.s_addr=htonl(INADDR_ANY);	
+	
+	rc = bind(sockfd, (struct sockaddr*)&addr, sizeof(addr));
+
+	if(rc<0) {
+    	aks_printf("cannot bind port number %d, error=%d \n", 
+	   		port, rc);
+		// close (sd);
+    }	
+	return rc;
 }
 
 /* Initialize a unicast E1.31 destination using a host and port number */
@@ -337,7 +353,8 @@ void sACN_main(void *arg)
 
   //ratpac_get_str( CFG_str2id("AKS_SECOND_CHANNEL"), temp_buf);
   init_artpollreply_msg();
-
+  temp_buf[0] = '2';
+  
   // create a socket for E1.31
   if ((sockfd = e131_socket()) < 0)
   {
