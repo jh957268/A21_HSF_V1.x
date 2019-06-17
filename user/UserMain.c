@@ -1209,7 +1209,21 @@ void UserMain(void *arg)
 					ipAddress[1] = 0x0;
 					ipAddress[2] = 0x0;
 					ipAddress[3] = 0x0;
+				}			
+				else
+				{
+					const char s[] = ".";
+					char *token;
+					token = strtok(at_rsp, s);
+					ipAddress[0] = (char)atoi(token);
+					token = strtok(NULL, s);
+					ipAddress[1] = (char)atoi(token);
+					token = strtok(NULL, s);
+					ipAddress[2] = (char)atoi(token);
+					token = strtok(NULL, s);
+					ipAddress[3] = (char)atoi(token);					
 				}
+#if 0				
 				else if (strstr(at_rsp, "+ok=DHCP,0.0.0.0"))
 				{
 					ipAddress[0] = 0x0;
@@ -1244,6 +1258,7 @@ void UserMain(void *arg)
 						ipAddress[3] = (ap.s_addr >> 24) & 0xff;										
 					}
 				}
+#endif				
 			}
 #if 0			
 		    char ipAddressSTR[20]={};
