@@ -342,7 +342,7 @@ const char *e131_strerror(const e131_error_t error)
 
 #if 1
 static e131_packet_t packet;
-void send_artnet_header(void);
+void send_artnet_header(uint8_t seq);
 
 void sACN_main(void *arg) 
 {
@@ -401,7 +401,7 @@ void sACN_main(void *arg)
     }
 	// send it to SAMD
     last_seq = packet.frame.seq_number;
-	send_artnet_header();
+	send_artnet_header(last_seq);
 	//send the E131 DMX data
 	hfuart_send(HFUART0, (char *)&packet.dmp.prop_val[1], 512,1000);
   }
