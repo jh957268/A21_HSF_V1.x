@@ -1193,7 +1193,7 @@ void UserMain(void *arg)
 				int rc;
 				
 				rc = hfat_send_cmd("AT+WANN\r\n", sizeof("AT+WANN\r\n"),at_rsp,sizeof(at_rsp));
-				at_rsp[16] = 0;
+				at_rsp[24] = 0;
 				if (HF_SUCCESS != rc)
 				{
 					eprintf("WAN Command fails.\n");
@@ -1220,10 +1220,29 @@ void UserMain(void *arg)
 				else
 				{
 					// fake adddres indicate address is acquired
-					ipAddress[0] = 0xa;
-					ipAddress[1] = 0xa;
-					ipAddress[2] = 0x64;
-					ipAddress[3] = 0xfe;
+					char *tmp = (char *)&at_rsp[9];
+					char *tmp1;
+					tmp1 = strstr(tmp, ",");
+					if (tmp1 == 0)
+					{
+						// cannot happen, just for sanity
+						ipAddress[0] = 0xa;
+						ipAddress[1] = 0xa;
+						ipAddress[2] = 0x64;
+						ipAddress[3] = 0xfe;
+					}
+					else
+					{
+						struct in_addr ap;
+						
+						*tmp1 = 0;
+						// always assume it is a valid IP address
+						inet_aton(tmp, &ap);
+						ipAddress[0] = ap.s_addr & 0xff;
+						ipAddress[1] = (ap.s_addr >> 8) & 0xff;
+						ipAddress[2] = (ap.s_addr >> 16) & 0xff;
+						ipAddress[3] = (ap.s_addr >> 24) & 0xff;										
+					}
 				}
 			}
 #if 0			
