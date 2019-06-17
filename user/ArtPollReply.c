@@ -144,7 +144,8 @@ void process_artnet_msg(int sockfd, uint8_t *raw, int len, struct sockaddr_in fr
 	}
 }
 
-void send_artnet_header(void)
+void send_artnet_header(uint8_t seq)
 {
+	artnet_hdr_msg.Sequence = seq;
 	hfuart_send(HFUART0, &artnet_hdr_msg, sizeof(artnet_hdr_msg),1000);
 }
