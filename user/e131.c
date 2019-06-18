@@ -349,8 +349,10 @@ void sACN_main(void *arg)
   int sockfd, rcv_len;
   e131_error_t error;
   uint8_t last_seq = 0x00;
-  char temp_buf[16];
+  char temp_buf[8];
+  char sacn_univ_buff[8];
   uint16_t udp_port;
+  uint16_t sacn_univ;
   struct sockaddr_in cli_addr;
   int rc;
 
@@ -399,6 +401,13 @@ void sACN_main(void *arg)
       last_seq = packet.frame.seq_number;
       continue;
     }
+
+	ratpac_get_str(CFG_SACN_UNIV, sacn_univ_buff);
+	sacn_univ = (uint16_t)atoi(sacn_univ_buff);
+	if (packet.frame.universe != htons(sacn_univ))
+	{
+		continue;
+	}
 	// send it to SAMD
     last_seq = packet.frame.seq_number;
 	send_artnet_header(last_seq);
