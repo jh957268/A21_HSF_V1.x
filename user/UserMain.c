@@ -1214,7 +1214,7 @@ void UserMain(void *arg)
 				{
 					const char s[] = ".";
 					char *token;
-					token = strtok(at_rsp, s);
+					token = strtok((char *)&at_rsp[9], s);
 					ipAddress[0] = (char)atoi(token);
 					token = strtok(NULL, s);
 					ipAddress[1] = (char)atoi(token);
