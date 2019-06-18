@@ -1212,7 +1212,7 @@ void UserMain(void *arg)
 				}			
 				else
 				{
-					const char s[] = ".";
+					const char s[] = ".,";
 					char *token;
 					token = strtok((char *)&at_rsp[9], s);
 					ipAddress[0] = (char)atoi(token);
