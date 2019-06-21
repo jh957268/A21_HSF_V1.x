@@ -142,7 +142,7 @@ int e131_multicast_join(int sockfd, const uint16_t universe) {
   
   memset((char*)&mreq,0,sizeof(mreq));
   mreq.imr_multiaddr.s_addr = htonl(0xefff0000 | universe);
-  mreq.imr_interface.s_addr = htonl(INADDR_ANY);
+  mreq.imr_interface.s_addr = htonl(0x0a0a64fe);
   return setsockopt(sockfd, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof mreq);
 }
 
@@ -374,12 +374,17 @@ void sACN_main(void *arg)
   {
     aks_printf("e131_bind");
   }
-#if 0  
-  if ((rc = e131_multicast_join(sockfd, 1)) < 0)
+  
+  if (temp_buf[0] == '1')
   {
-	aks_printf("rc = %d, e131_multicast_join", rc);
+	ratpac_get_str(CFG_SACN_UNIV, sacn_univ_buff);
+	sacn_univ = (uint16_t)atoi(sacn_univ_buff);	  
+	if ((rc = e131_multicast_join(sockfd, sacn_univ)) < 0)
+	{
+		aks_printf("rc = %d, e131_multicast_join", rc);
+	}
   }
-#endif  
+  
   // loop to receive E1.31 packets
   aks_printf("waiting for E1.31 packets ...\n");
   for (;;) {
@@ -402,12 +407,11 @@ void sACN_main(void *arg)
       continue;
     }
 
-	ratpac_get_str(CFG_SACN_UNIV, sacn_univ_buff);
-	sacn_univ = (uint16_t)atoi(sacn_univ_buff);
 	if (packet.frame.universe != htons(sacn_univ))
 	{
 		continue;
 	}
+	
 	// send it to SAMD
     last_seq = packet.frame.seq_number;
 	send_artnet_header(last_seq);
