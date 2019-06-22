@@ -63,6 +63,8 @@ extern int ratpac_get_str(int id, char *val);
 extern void process_artnet_msg(int sockfd, uint8_t *raw, int len, struct sockaddr_in from);
 extern void init_artpollreply_msg(void);
 
+extern volatile char ipAddress[];
+
 /* Create a socket file descriptor suitable for E1.31 communication */
 int e131_socket(void) {
   return socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
@@ -142,7 +144,8 @@ int e131_multicast_join(int sockfd, const uint16_t universe) {
   
   memset((char*)&mreq,0,sizeof(mreq));
   mreq.imr_multiaddr.s_addr = htonl(0xefff0000 | universe);
-  mreq.imr_interface.s_addr = htonl(0x0a0a64fe);
+  //mreq.imr_interface.s_addr = htonl(0x0a0a64fe);
+  mreq.imr_interface.s_addr = ipAddress[0] | (ipAddress[1] << 8) | (ipAddress[2] << 16) | (ipAddress[3] << 24);
   return setsockopt(sockfd, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof mreq);
 }
 
@@ -358,7 +361,7 @@ void sACN_main(void *arg)
 
   //ratpac_get_str( CFG_str2id("AKS_SECOND_CHANNEL"), temp_buf);
   init_artpollreply_msg();
-  temp_buf[0] = '2';
+  temp_buf[0] = '1';
   
   // create a socket for E1.31
   if ((sockfd = e131_socket()) < 0)
@@ -378,7 +381,14 @@ void sACN_main(void *arg)
   if (temp_buf[0] == '1')
   {
 	ratpac_get_str(CFG_SACN_UNIV, sacn_univ_buff);
-	sacn_univ = (uint16_t)atoi(sacn_univ_buff);	  
+	sacn_univ = (uint16_t)atoi(sacn_univ_buff);	
+
+	while ((ipAddress[0] == 0) && (ipAddress[1] == 0))
+	{
+		hf_thread_delay(500);
+		continue;
+	}
+	
 	if ((rc = e131_multicast_join(sockfd, sacn_univ)) < 0)
 	{
 		aks_printf("rc = %d, e131_multicast_join", rc);
