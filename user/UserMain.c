@@ -96,7 +96,7 @@ char at_rsp[96] = {0};
 char samd_ver[4] = {'1', '.', 'x', 0};
 char timo_ver[4] = {'1', '.', 'y', 0};
 char battery_info[32] = {0};
-char ipAddress[4]={};
+volatile char ipAddress[4]={};
 
 extern cyg_netdevtab_entry_t devive_wireless_netdev0;
 cyg_netdevtab_entry_t *pWIFIDev;
