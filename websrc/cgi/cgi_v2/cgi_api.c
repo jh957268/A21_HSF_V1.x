@@ -614,6 +614,12 @@ void CGI_var_map(http_req *req, char *name, int id)
 			sc_convert(val);
 			WEB_printf(req, "'%s'+",val);
 			
+			sprintf(cmd_buff, "<button type=\"button\" onclick=\"popupCenter('http://%s/EN/id.html', 'myPop1',400,300);\">ID</button>", ip_addr_save);
+			link_len = strlen(cmd_buff);
+			fill_space(cmd_buff, link_len+5);
+			sc_convert(cmd_buff);
+			WEB_printf(req, "'%s'+",cmd_buff);			
+			
 			get_eCos_ver(val);
 			strcat(val, " ");
 			sprintf(cmd_buff, "<button type=\"button\" onclick=\"updateFirmware(document.Upgrade_eCos, 'http://%s/EN/update_firmware.html');\">Update</button>", ip_addr_save);
