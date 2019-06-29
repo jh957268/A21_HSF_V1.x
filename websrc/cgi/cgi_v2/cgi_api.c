@@ -616,7 +616,7 @@ void CGI_var_map(http_req *req, char *name, int id)
 			
 			sprintf(cmd_buff, "<button type=\"button\" onclick=\"popupCenter('http://%s/EN/id.html', 'myPop1',400,300);\">ID</button>", ip_addr_save);
 			link_len = strlen(cmd_buff);
-			fill_space(cmd_buff, link_len+5);
+			fill_space(cmd_buff, link_len+3);
 			sc_convert(cmd_buff);
 			WEB_printf(req, "'%s'+",cmd_buff);			
 			
@@ -624,7 +624,7 @@ void CGI_var_map(http_req *req, char *name, int id)
 			strcat(val, " ");
 			sprintf(cmd_buff, "<button type=\"button\" onclick=\"updateFirmware(document.Upgrade_eCos, 'http://%s/EN/update_firmware.html');\">Update</button>", ip_addr_save);
 			link_len = strlen(cmd_buff);
-			fill_space(cmd_buff, link_len+5);
+			fill_space(cmd_buff, link_len+3);
 			strcat(val, cmd_buff);
 			sc_convert(val);
 			WEB_printf(req, "'%s'+",val);
@@ -633,7 +633,7 @@ void CGI_var_map(http_req *req, char *name, int id)
 			strcat(val, " ");			
 			sprintf(cmd_buff, "<button type=\"button\" onclick=\"updateFirmware(document.Upgrade_SAMD, 'http://%s/EN/update_firmware.html');\">Update</button>", ip_addr_save);
 			link_len = strlen(cmd_buff);
-			fill_space(cmd_buff, link_len+5);
+			fill_space(cmd_buff, link_len+3);
 			strcat(val, cmd_buff);
 			sc_convert(val);
 			WEB_printf(req, "'%s'+",val);
@@ -642,7 +642,7 @@ void CGI_var_map(http_req *req, char *name, int id)
 			strcat(val, " ");			
 			sprintf(cmd_buff, "<button type=\"button\" onclick=\"updateFirmware(document.Upgrade_TIMO, 'http://%s/EN/update_firmware.html');\">Update</button>", ip_addr_save);
 			link_len = strlen(cmd_buff);
-			fill_space(cmd_buff, link_len+2);
+			fill_space(cmd_buff, link_len+0);
 			strcat(val, cmd_buff);
 			sc_convert(val);			
 			WEB_printf(req, "'%s'",val);			// last one
