@@ -352,16 +352,19 @@ void sACN_main(void *arg)
   int sockfd, rcv_len;
   e131_error_t error;
   uint8_t last_seq = 0x00;
-  char temp_buf[8];
+  char temp_buf[4];
   char sacn_univ_buff[8];
   uint16_t udp_port;
   uint16_t sacn_univ;
   struct sockaddr_in cli_addr;
   int rc;
 
-  //ratpac_get_str( CFG_str2id("AKS_SECOND_CHANNEL"), temp_buf);
+  ratpac_get_str( CFG_PROTNAME, temp_buf);
   init_artpollreply_msg();
-  temp_buf[0] = '2';
+  //temp_buf[0] = '2';
+  temp_buf[1] = 0;
+  
+  //aks_printf("The protocol is %s\n", temp_buf);
   
   // create a socket for E1.31
   if ((sockfd = e131_socket()) < 0)
@@ -401,7 +404,7 @@ void sACN_main(void *arg)
     if ((rcv_len = e131_recv(sockfd, &packet, &cli_addr)) <= 0)
 		continue;
 
-	if (temp_buf[0] == '2')
+	if (temp_buf[0] == '0')
 	{
 		process_artnet_msg(sockfd, packet.raw, rcv_len, cli_addr);
 		continue;
@@ -426,7 +429,7 @@ void sACN_main(void *arg)
     last_seq = packet.frame.seq_number;
 	send_artnet_header(last_seq);
 	//send the E131 DMX data
-	hfuart_send(HFUART0, (char *)&packet.dmp.prop_val[1], 512,1000);
+	hfuart_send(HFUART0, (char *)&packet.dmp.prop_val[1], packet.dmp.prop_val_cnt - 1,1000);
   }
 }
 #endif
