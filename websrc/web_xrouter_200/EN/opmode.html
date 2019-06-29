@@ -15,6 +15,7 @@ addCfg("Data_Transfor_Mode",212,"2");
 addCfg("GAFFER_ENABLE",212,"1");
 addCfg("AKS_NAME",212,"Ratpac AKS");
 addCfg("LED_COLOR",212,"6");
+addCfg("PROTNAME",212,"0");
 /*END_DEMO*/
 
 /*REAL
@@ -40,6 +41,8 @@ CGI_MAP(GAFFER_UNIVERSE, CFG_GAFFER_UNIVERSE);
 CGI_MAP(GAFFER_SUBNET, CFG_GAFFER_SUBNET);
 CGI_MAP(GAFFER_LOWER, CFG_GAFFER_LOWER);
 CGI_MAP(GAFFER_UPPER, CFG_GAFFER_UPPER);
+
+CGI_MAP(PROTNAME, CFG_PROTNAME);
 
 %>
 
@@ -149,6 +152,11 @@ function init_1()
 	var f=document.HFA21TEST;
 	cfg2Form(f);
 	//initvalue_4();
+	var Vapable=getCfg("PROTNAME") ;
+	if(Vapable=="0")
+		document.HFA21TEST.PROTNAME[0].checked=true ;
+	else 
+		document.HFA21TEST.PROTNAME[1].checked=true ;		
 }
 function Cancel_1() {
 	init_1();
@@ -363,9 +371,17 @@ function Apply_2() {
 				</td>
 			</tr>			
 			<tr > 
-				<td class="head" id="para_net_port_id">Port: (Default 6454)</td>
+				<td class="head" id="para_net_port_id">ArtNet Port: (Default 6454)</td>
 				<td><input name="net_port" maxlength=32 size=32 value="8899"></td>
 			</tr > 
+			<tr> 
+				<td class="head">
+					<font id="protid">Protocol</font><br>	
+				</td>
+				<td>
+					<input type="radio" value="0" name="PROTNAME"><b>ArtNet</b>&emsp;&emsp;<input type="radio" value="1" name="PROTNAME"><b>sACN</b>
+				</td>
+			</tr>					
 		</table> 
 		<p/>
 		<center>
