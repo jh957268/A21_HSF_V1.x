@@ -200,6 +200,7 @@ typedef struct _web_data
 	unsigned char gaffer_upper[4];
 	unsigned char sacn_enb[2];
 	unsigned char sacn_universe[8];
+	unsigned char protname[2];
 }WEB_DATA_T;
 
 WEB_DATA_T g_web_config = {0};
@@ -216,6 +217,8 @@ void write_data_to_flash(void)
 	fls_data = (unsigned char *)&g_web_config;
 	for (i = 1; i < sizeof(WEB_DATA_T); i++)
 	{
+		if (0xff ==  fls_data[i])
+			continue;
 		ck_sum ^= fls_data[i];
 	}
 	g_web_config.initFlag = ck_sum;
@@ -757,6 +760,11 @@ void web_flash_data_init(void)
 	fls_data = (unsigned char *)&g_web_config;
 	for (i = 1; i < sizeof(WEB_DATA_T); i++)
 	{
+		if (0xff == fls_data[i])
+		{
+			ck_sum = 0;		// no valid
+			break;
+		}
 		ck_sum ^= fls_data[i];
 	}
 	if(g_web_config.initFlag != ck_sum)
@@ -767,6 +775,7 @@ void web_flash_data_init(void)
 		sprintf(g_web_config.universe,"0");
 		sprintf(g_web_config.subnet,"0");
 		sprintf(g_web_config.gaffer_enb,"1");		// disable
+		sprintf(g_web_config.protname,"0");			// ArtNet
 		sprintf(g_web_config.gaffer_sub,"0");
 		sprintf(g_web_config.gaffer_univ,"0");
 		sprintf(g_web_config.gaffer_lower,"1");
@@ -1803,7 +1812,7 @@ int ratpac_get_str(int id, char *val)
 			sprintf(val, "%s", g_web_config.subnet);
 			break;		
 		case CFG_GAFFER_ENABLE:
-			sprintf(val, "%s", g_web_config.gaffer_enb);
+			snprintf(val, 2, "%s", g_web_config.gaffer_enb);
 			break;		
 		case CFG_GAFFER_UNIVERSE:
 			sprintf(val, "%s", g_web_config.gaffer_univ);
@@ -1831,7 +1840,10 @@ int ratpac_get_str(int id, char *val)
 			break;
 		case CFG_SACN_UNIV:
 			sprintf(val,"%s", g_web_config.sacn_universe);
-			break;			
+			break;	
+		case CFG_PROTNAME:
+			snprintf(val, 2, "%s", g_web_config.protname);
+			break;				
 		default:
 			return -1;
 	}
@@ -1883,6 +1895,9 @@ int ratpac_set_str(int id, char *val)
 		case CFG_SACN_UNIV:
 			sprintf(g_web_config.sacn_universe,"%s", val);
 			break;
+		case CFG_PROTNAME:
+			sprintf(g_web_config.protname, "%s", val);
+			break;					
 		default:
 			return -1;
 	}
