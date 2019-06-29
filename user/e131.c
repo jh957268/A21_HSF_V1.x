@@ -361,7 +361,7 @@ void sACN_main(void *arg)
 
   //ratpac_get_str( CFG_str2id("AKS_SECOND_CHANNEL"), temp_buf);
   init_artpollreply_msg();
-  temp_buf[0] = '1';
+  temp_buf[0] = '2';
   
   // create a socket for E1.31
   if ((sockfd = e131_socket()) < 0)
