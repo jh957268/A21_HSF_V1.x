@@ -8,13 +8,13 @@
 <SCRIPT language=JavaScript src=spec.js></SCRIPT>
 <SCRIPT language=JavaScript>
 /*DEMO*/
-addCfg("SACN_OUTPUT",212,"1");
+/* addCfg("SACN_OUTPUT",212,"1"); */
 addCfg("SACN_UNIV",212,"200");
 /*END_DEMO*/
 
 /*REAL
 <%
-CGI_MAP(SACN_OUTPUT, CFG_SACN_OUTPUT);
+/* CGI_MAP(SACN_OUTPUT, CFG_SACN_OUTPUT); */
 CGI_MAP(SACN_UNIV, CFG_SACN_UNIV);
 %>
 
@@ -82,17 +82,6 @@ function sacn_Cancel() {
 			</tr>
 			<tr> 
 				<td class="head">
-					<font id="sacn_output_id">sACN Output</font><br>	
-				</td>
-				<td>
-					<select name="SACN_OUTPUT" size="1">
-						<option value="0">Enabled</option>
-						<option value="1">Disabled</option>
-					</select>						
-				</td>
-			</tr>
-			<tr> 
-				<td class="head">
 					<font id="sacn_univ_id">Universe</font><br>	
 				</td>
 				<td>
@@ -104,12 +93,12 @@ function sacn_Cancel() {
 					<font id="sacn_prio_id">Priority:(Default 100)</font><br>	
 				</td>
 				<td>
-					<input name="SACN_PRIO" maxlength=32 size=20 value="100" readonly>
+					<input name="SACN_PRIO" STYLE="background-color:#D3D3D3;" maxlength=32 size=20 value="100" readonly>
 				</td>
 			</tr>					
 			<tr > 
 				<td class="head" id="sacn_port_id">Port:(Default 5568)</td>
-				<td><input name="sacn_port" maxlength=32 size=20 value="5568" readonly></td>
+				<td><input name="sacn_port" STYLE="background-color:#D3D3D3;" maxlength=32 size=20 value="5568" readonly></td>
 			</tr > 
 		</table> 
 		<p/>
