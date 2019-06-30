@@ -183,7 +183,6 @@ function Apply_1() {
 		f.net_port.select();
 		return false;
     }
-
 	form2Cfg(f);
 	subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
 }
@@ -272,6 +271,13 @@ function Cancel_2() {
 }
 function Apply_2() {
 	var f=document.CRMXSettings;
+	
+	var level=document.CRMXSettings.LED_COLOR.value;
+
+	if(isNaN(level)){
+		alert(level + " is not a number");
+		return;
+	}
 	form2Cfg(f);
 	subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
 }
@@ -456,25 +462,8 @@ function Apply_2() {
 					<font id="led_color_level">LED Color Level</font><br>	
 				</td>
 				<td>
-					<select name="LED_COLOR" size="1">
-						<option value="0">0</option>
-						<option value="1">1</option>
-						<option value="2">2</option>
-						<option value="3">3</option>
-						<option value="4">4</option>
-						<option value="5">5</option>
-						<option value="6">6</option>
-						<option value="7">7</option>
-						<option value="8">8</option>
-						<option value="9">9</option>
-						<option value="10">10</option>
-						<option value="11">11</option>
-						<option value="12">12</option>
-						<option value="13">13</option>
-						<option value="14">14</option>
-						<option value="15">15</option>						
-					</select>
-				</td>
+					<input name="LED_COLOR" maxlength=32 size=20>
+				</td>				
 			</tr>			
 			<tr> 
 				<td class="head">
