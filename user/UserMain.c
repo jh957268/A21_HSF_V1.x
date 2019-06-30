@@ -201,7 +201,7 @@ typedef struct _web_data
 	unsigned char sacn_enb[2];
 	unsigned char sacn_universe[8];
 	unsigned char protname[2];
-	unsigned char led_color[8];
+	unsigned char led_color[16];
 }WEB_DATA_T;
 
 WEB_DATA_T g_web_config = {0};
@@ -789,7 +789,7 @@ void web_flash_data_init(void)
 		sprintf(g_web_config.channelWidth,"16");
 		sprintf(g_web_config.secondChannel,"0");
 		sprintf(g_web_config.bitSetting,"0");
-		sprintf(g_web_config.led_color,"1");
+		sprintf(g_web_config.led_color,"255,102,102");
 		
 		write_data_to_flash();
 		//m2m_do_reload();
@@ -951,6 +951,9 @@ static int USER_FUNC socketb_recv_callback(uint32_t event,char *data,uint32_t le
 }
 #endif
 
+
+char rgb0, rgb1, rgb2;
+char rgb_led_color[16];
 
 void UserMain(void *arg)
 {
@@ -1305,6 +1308,7 @@ void UserMain(void *arg)
 			
 			char gaf_enb, gaf_low_lsb, gaf_low_msb, gaf_high_lsb, gaf_high_msb;
 			int gaf_chn;
+			
 			gaf_enb = atoi(g_web_config.gaffer_enb);
 			gaf_chn = atoi(g_web_config.gaffer_lower);
 			gaf_low_lsb = (char)(gaf_chn & 0xff);
@@ -1312,8 +1316,16 @@ void UserMain(void *arg)
 			gaf_chn = atoi(g_web_config.gaffer_upper);
 			gaf_high_lsb = (char)(gaf_chn & 0xff);
 			gaf_high_msb = (char)((gaf_chn >> 8) & 0xff);
-			gaf_chn = atoi(g_web_config.led_color); 
-			char Settings6[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 6, gaf_enb, gaf_low_lsb, gaf_low_msb, gaf_high_lsb, gaf_high_msb, (char)(gaf_chn & 0xff),(char)((gaf_chn >> 8) & 0xff), (char)((gaf_chn >> 16) & 0xff) };
+			
+			strcpy(rgb_led_color, g_web_config.led_color);
+			rgb_led_color[3] = 0;
+			rgb_led_color[7] = 0;
+			rgb_led_color[11] = 0;
+			rgb0 = (char)atoi(&rgb_led_color[0]);
+			rgb1 = (char)atoi(&rgb_led_color[4]);
+			rgb2 = (char)atoi(&rgb_led_color[8]);
+	
+			char Settings6[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 6, gaf_enb, gaf_low_lsb, gaf_low_msb, gaf_high_lsb, gaf_high_msb, rgb0, rgb1, rgb2 };
 			hfuart_send(HFUART0, Settings6,sizeof(Settings6),100);
 
 			hf_thread_delay(2000);
@@ -1849,7 +1861,7 @@ int ratpac_get_str(int id, char *val)
 			snprintf(val, 2, "%s", g_web_config.protname);
 			break;
 		case CFG_LED_COLOR:
-			snprintf(val, 8, "%s", g_web_config.led_color);
+			snprintf(val, 16, "%s", g_web_config.led_color);
 			break;				
 		default:
 			return -1;
