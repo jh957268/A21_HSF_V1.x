@@ -201,6 +201,7 @@ typedef struct _web_data
 	unsigned char sacn_enb[2];
 	unsigned char sacn_universe[8];
 	unsigned char protname[2];
+	unsigned char led_color[8];
 }WEB_DATA_T;
 
 WEB_DATA_T g_web_config = {0};
@@ -787,7 +788,9 @@ void web_flash_data_init(void)
 		sprintf(g_web_config.timopower,"3");
 		sprintf(g_web_config.channelWidth,"16");
 		sprintf(g_web_config.secondChannel,"0");
-		sprintf(g_web_config.bitSetting,"0");		
+		sprintf(g_web_config.bitSetting,"0");
+		sprintf(g_web_config.led_color,"1");
+		
 		write_data_to_flash();
 		//m2m_do_reload();
 	}
@@ -1308,8 +1311,9 @@ void UserMain(void *arg)
 			gaf_low_msb = (char)((gaf_chn >> 8) & 0xff);
 			gaf_chn = atoi(g_web_config.gaffer_upper);
 			gaf_high_lsb = (char)(gaf_chn & 0xff);
-			gaf_high_msb = (char)((gaf_chn >> 8) & 0xff);			
-			char Settings6[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 6, gaf_enb, gaf_low_lsb, gaf_low_msb, gaf_high_lsb, gaf_high_msb};
+			gaf_high_msb = (char)((gaf_chn >> 8) & 0xff);
+			gaf_chn = atoi(g_web_config.led_color); 
+			char Settings6[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 6, gaf_enb, gaf_low_lsb, gaf_low_msb, gaf_high_lsb, gaf_high_msb, (char)(gaf_chn & 0xff),(char)((gaf_chn >> 8) & 0xff), (char)((gaf_chn >> 16) & 0xff) };
 			hfuart_send(HFUART0, Settings6,sizeof(Settings6),100);
 
 			hf_thread_delay(2000);
@@ -1843,6 +1847,9 @@ int ratpac_get_str(int id, char *val)
 			break;	
 		case CFG_PROTNAME:
 			snprintf(val, 2, "%s", g_web_config.protname);
+			break;
+		case CFG_LED_COLOR:
+			snprintf(val, 8, "%s", g_web_config.led_color);
 			break;				
 		default:
 			return -1;
@@ -1897,7 +1904,10 @@ int ratpac_set_str(int id, char *val)
 			break;
 		case CFG_PROTNAME:
 			sprintf(g_web_config.protname, "%s", val);
-			break;					
+			break;
+		case CFG_LED_COLOR:
+			sprintf(g_web_config.led_color, "%s", val);
+			break;				
 		default:
 			return -1;
 	}
