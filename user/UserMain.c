@@ -65,6 +65,7 @@ struct eth_drv_sc	*dev;
 
 #define AP_MODE 		1
 #define STA_ETH_MODE	2
+#define STA_WIFI_MODE	3
 
 #define AKS_PRIORITIES	8			// since the web server uses 8, the UserMain thread need to change 8 too
 
@@ -2200,6 +2201,29 @@ void get_battery_info(char *buffer)
 	//strcpy(buffer, battery_info);
 	sprintf(buffer,"%s", battery_info);
 	//eprintf("**Battery : %s\n", buffer);
+}
+
+void get_module_ipaddress_mode(char *ip, char *mode)
+{
+	struct in_addr   sin_addr;     // see struct in_addr, below
+	char *tmp;
+	
+	sin_addr.s_addr = (ipAddress[3] << 24) | (ipAddress[2] << 16) | (ipAddress[1] << 8) | ipAddress[0];
+	tmp = inet_ntoa(sin_addr);
+	snprintf(ip, 20, "%s", tmp);
+	
+	if (AP_MODE == operation_mode)
+	{
+		sprintf(mode, "WiFi Server");
+	}
+	else if (STA_ETH_MODE == operation_mode)
+	{
+		sprintf(mode, "Eth Client");
+	}
+	else
+	{
+		sprintf(mode, "WiFi Client");
+	}	
 }
 
 int Send_Link_Command(void)
