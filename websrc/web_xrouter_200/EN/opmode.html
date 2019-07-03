@@ -43,6 +43,7 @@ CGI_MAP(GAFFER_LOWER, CFG_GAFFER_LOWER);
 CGI_MAP(GAFFER_UPPER, CFG_GAFFER_UPPER);
 
 CGI_MAP(PROTNAME, CFG_PROTNAME);
+CGI_MAP(SACN_UNIV, CFG_SACN_UNIV);
 
 %>
 
@@ -50,13 +51,14 @@ REAL*/
 
 function initvalue()
  {
+/*
 	var Vapable=getCfg("apcli_enable") ;
 	//var VTmode=getCfg("Data_Transfor_Mode") ;
 	if(Vapable=="0")
 	document.opmode.apcli_enable[0].checked=true ;
 	else 
 	document.opmode.apcli_enable[1].checked=true ;
- /*
+ 
 	if((VTmode>=0)&&(VTmode<=3))
 		document.opmode.Data_Transfor_Mode.options.selectedIndex=VTmode;
 	else
@@ -129,10 +131,11 @@ function Reset() {
 function checkbox_clicked()
 {
 	//alert(document.AP_W_Network.Hidden_ssid_Chk.checked);
-	if(document.CRMXSettings.AKS_BIT_SETTINGS.checked)
-		document.CRMXSettings.AKS_Bit_Settings.value="1;0;0;0";
-	else
-		document.CRMXSettings.AKS_Bit_Settings.value="0;0;0;0";
+	alert("checkbox");
+	//if(document.CRMXSettings.AKS_BIT_SETTINGS.checked)
+	//	document.CRMXSettings.AKS_Bit_Settings.value="1;0;0;0";
+	//else
+	//	document.CRMXSettings.AKS_Bit_Settings.value="0;0;0;0";
 
 	//alert(document.HFA21TEST.AKS_Settings.value);
 }
@@ -165,8 +168,8 @@ function Cancel_1() {
 
 function Apply_1() {
 	var f=document.HFA21TEST;
+/*	
 	var p= f.net_port.value;
-
 	if (p== "")
 	{
 		alert('Please input the port value!');
@@ -182,7 +185,8 @@ function Apply_1() {
 		f.net_port.focus();
 		f.net_port.select();
 		return false;
-    }
+    }	
+*/
 	form2Cfg(f);
 	subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
 }
@@ -285,43 +289,20 @@ function Apply_2() {
 <BODY leftmargin=0 topmargin=0 onload=init()>
 <script>pageHead();</script>
 
-<h1 id="opmodeconfigTitle">Main Settings</h1>
+<center><h1 id="opmodeconfigTitle">Main Settings</h1></center>
 <h3 id="BATTERY_ID"></h3>
 <hr>
-<form method=post name="opmode">
-<input type="hidden" name="country_code">
-	<dl>
-		<dd></dd>
-		<dt><input type="radio" name="apcli_enable" value="0"  ><b id="apmode_lan_id">Access Point (AP):</b>&emsp;&emsp;&emsp;&emsp;
-		    <input type="radio" name="apcli_enable" value="1" ><b id="opmode_STAMode_lan_id">Station Mode (STA):</b></dt>
-		<dt >&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp <a id="Access_Point_lan_id">Access Point</a>
-		     &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; <a id="opmode_StationMode_lan_id"> Station Mode</a></dt>
- 
-		<dd></dd> 
-		<!--
-		<p/>  
-		<dt > &nbsp <a id="opmode_DTMode_lan_id">Data Transfor Mode</a> &nbsp&nbsp
-			<select size="1" name="Data_Transfor_Mode" >
-				<option value="0" id="opmode_TransparentMode_lan_id">Transparent Mode</option>
-				<option value="2" id="opmode_GPIO1_lan_id">GPIO1 Mode</option>
-				<option value="3" id="opmode_GPIO2_lan_id">GPIO2 Mode</option>
-			</select>
-		</dt>
-		-->
-	</dl>
-
-	<p/>
-	<center>
-		<input type=button style="{width:120px;}" value="Apply" onClick="Apply()" id="opmode_Apply_lan_id">&nbsp;&nbsp;
-		<input type=button style="{width:120px;}" value="Cancel" onClick="Reset()" id="opmode_Reset_lan_id">
-	</center>
-</form>
-
-
+<form method="post" name="opmode">
+<center>
+					<input type=button style="{width:120px;}" value="ID" onClick="Apply_ID()" id="crmx_Apply_id">&nbsp;&nbsp;
+					<input type=button style="{width:120px;}" value="LINK" onClick="Apply_Link()" id="crmx_Apply_link">&nbsp;&nbsp;
+					<input type=button style="{width:120px;}" value="UNLINK" onClick="Apply_UnLink()" id="crmx_Apply_unlink"	
+</center></form>
+<br><br>
 <form method=post name=HFA21TEST>
 		<table width="540" border="1" cellspacing="1" cellpadding="3"   bordercolor="#9BABBD">
 			<tr>
-				<td class="title" colspan="2" id="Wireless_Network_lan_id">Art-Net Settings</td>
+				<td class="title" colspan="2" id="Wireless_Network_lan_id">Art-Net/sACN Settings</td>
 			</tr>
 			<tr> 
 				<td class="head">
@@ -333,7 +314,7 @@ function Apply_2() {
 			</tr>
 			<tr> 
 				<td class="head">
-					<font id="aks_subnet">Artnet Subnet/Universe ID</font><br>	
+					<font id="aks_subnet">Art-Net Subnet and Universe</font><br>	
 				</td>
 				<td>
 					<select name="AKS_SUBNET" size="1">
@@ -373,17 +354,17 @@ function Apply_2() {
 						<option value="15">15</option>
 					</select>					
 				</td>
-			</tr>			
+			</tr>
 			<tr > 
-				<td class="head" id="para_net_port_id">ArtNet Port: (Default 6454)</td>
-				<td><input name="net_port" maxlength=32 size=32 value="8899"></td>
+				<td class="head" id="sacn_univ_id">sACN Universe</td>
+				<td><input name="SACN_UNIV" maxlength=32 size=32 </td>
 			</tr > 
 			<tr> 
 				<td class="head">
 					<font id="protid">Protocol</font><br>	
 				</td>
 				<td>
-					<input type="radio" value="0" name="PROTNAME"><b>ArtNet</b>&emsp;&emsp;<input type="radio" value="1" name="PROTNAME"><b>sACN</b>
+					<input type="radio" value="0" name="PROTNAME"><b>Art-Net</b>&emsp;&emsp;<input type="radio" value="1" name="PROTNAME"><b>sACN</b>
 				</td>
 			</tr>					
 		</table> 
@@ -398,7 +379,7 @@ function Apply_2() {
 		<input type="hidden" name="AKS_Bit_Settings">	
 		<table width="540" border="1" cellspacing="1" cellpadding="3"   bordercolor="#9BABBD">
 			<tr>
-				<td class="title" colspan="2" id="Wireless_CRMX_lan_id">LumenRadio CRMX Settings</td>
+				<td class="title" colspan="2" id="Wireless_CRMX_lan_id">Output Power and Color ID</td>
 			</tr>
 			<tr> 
 				<td class="head">
@@ -415,6 +396,7 @@ function Apply_2() {
 					</select>
 				</td>
 			</tr>
+			<!--
 			<tr> 
 				<td class="head">
 					<font id="aks_timo_Width">CRMX Channel Block Width</font><br>	
@@ -433,7 +415,7 @@ function Apply_2() {
 						<option value="18">36 Mhz</option>
 					</select>
 				</td>
-			</tr>
+			</tr>			
 			<tr> 
 				<td class="head">
 					<font id="aks_timo_channel">CRMX Second Channel Block</font><br>	
@@ -455,14 +437,16 @@ function Apply_2() {
 					</select>
 				</td>
 			</tr>
+			-->
 			<tr> 
 				<td class="head">
-					<font id="led_color_level">RGB LED Color</font><br>	
+					<font id="led_color_level">Color ID</font><br>	
 				</td>
 				<td>
 					<input name="LED_COLOR" maxlength=32 size=20>
 				</td>				
-			</tr>			
+			</tr>
+			<!--
 			<tr> 
 				<td class="head">
 					<font id="crmx_link">CRMX Wireless Link</font><br>	
@@ -473,7 +457,6 @@ function Apply_2() {
 					<input type=button style="{width:120px;}" value="UNLINK" onClick="Apply_UnLink()" id="crmx_Apply_unlink"					
 				</td>
 			</tr>			
-			<!--
 			<tr> 
 				<td class="head">
 					<font id="aks_settings">Send on ArtPoll</font><br>	
@@ -498,15 +481,17 @@ function Apply_2() {
 			</tr>
 			<tr> 
 				<td class="head">
-					<font id="gaffer_stat">GAFFER State</font><br>	
+					<font id="gaffer_stat">Second Source</font><br>	
 				</td>
 				<td>
-					<input type="radio" value="0" name="GAFFER_ENABLE"><b>Enable</b>&emsp;&emsp;<input type="radio" value="1" name="GAFFER_ENABLE"><b>Disable</b>
+					<input type="radio" value="0" name="GAFFER_ENABLE"><b>Enable</b>&nbsp;&nbsp;<input type="radio" value="1" name="GAFFER_ENABLE"><b>Disable</b>
+					&nbsp;&nbsp;<input name="USE_XLR" type="checkbox" onClick="checkbox_clicked()"><b>Use XLR</b>
+					&nbsp;&nbsp;<input name="MAIN_XLR" type="checkbox" onClick="checkbox_clicked()"><b>XLR As Main</b>
 				</td>
 			</tr>
 			<tr> 
 				<td class="head">
-					<font id="gaffer_subnet">Artnet Subnet/Universe ID</font><br>	
+					<font id="gaffer_subnet">Second Source Art-Net ID</font><br>	
 				</td>
 				<td>
 					<select name="GAFFER_SUBNET" size="1">
