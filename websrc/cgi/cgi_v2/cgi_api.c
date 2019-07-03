@@ -191,6 +191,7 @@ void get_eCos_rel_build(char *buff);
 void get_SAMD_ver(char *buffer);
 void get_TIMO_ver(char *buffer);
 void get_battery_info(char *buffer);
+void get_module_ipaddress_mode(char *ip, char *mode);
 
 int Send_Link_Command(void);
 int Send_UnLink_Command(void);
@@ -833,11 +834,17 @@ void CGI_var_map(http_req *req, char *name, int id)
 			
 		case CFG_BATTERY_ID:
 			get_battery_info(cmd_buff);
+			get_module_ipaddress_mode(ip_addr, ip_addr_save);
+
 			//Joo_uart_send(cmd_buff);
 			//sprintf(cmd_buff,"USB 88");
-			sprintf(val, "Battery: %s", cmd_buff);
+			//sprintf(val, "Battery: %s", cmd_buff);
+			//sprintf(val, "<center><font color=\"black\" size=\"2\">Mode:");
+			sprintf(val, "<center><font color=\"black\" size=\"2\">Mode: </font><font color=\"orange\" size=\"3\"><b>%s</b> &nbsp;&nbsp;&nbsp;</font><font color=\"black\" size=\"2\">IP: </font><font color=\"blue\" size=\"3\"><b>%s</b> &nbsp;&nbsp;</font><font color=\"black\" size=\"2\">Battery: </font><font color=\"green\" size=\"3\"><b>%s\%</b> &nbsp;&nbsp;</font></center>",ip_addr_save, ip_addr, cmd_buff);
+
 			//Joo_uart_send(val);
 			WEB_printf(req, "displayMsg('%s',",name);
+			sc_convert(val);
 			WEB_printf(req, "'%s'",val);			// last one
 			WEB_printf(req, ");\n");				// close quote	
 			return;
