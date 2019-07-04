@@ -203,6 +203,8 @@ typedef struct _web_data
 	unsigned char sacn_universe[8];
 	unsigned char protname[2];
 	unsigned char led_color[16];
+	unsigned char use_xlr[2];
+	unsigned char main_xlr[2];
 }WEB_DATA_T;
 
 WEB_DATA_T g_web_config = {0};
@@ -791,6 +793,8 @@ void web_flash_data_init(void)
 		sprintf(g_web_config.secondChannel,"0");
 		sprintf(g_web_config.bitSetting,"0");
 		sprintf(g_web_config.led_color,"255,102,102");
+		sprintf(g_web_config.use_xlr,"0");
+		sprintf(g_web_config.main_xlr,"0");	
 		
 		write_data_to_flash();
 		//m2m_do_reload();
@@ -953,8 +957,9 @@ static int USER_FUNC socketb_recv_callback(uint32_t event,char *data,uint32_t le
 #endif
 
 
-char rgb0, rgb1, rgb2;
-char rgb_led_color[16];
+static char rgb0, rgb1, rgb2;
+static char rgb_led_color[16];
+static char use_xlr, main_xlr;
 
 void UserMain(void *arg)
 {
@@ -1325,8 +1330,9 @@ void UserMain(void *arg)
 			rgb0 = (char)atoi(&rgb_led_color[0]);
 			rgb1 = (char)atoi(&rgb_led_color[4]);
 			rgb2 = (char)atoi(&rgb_led_color[8]);
-	
-			char Settings6[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 6, gaf_enb, gaf_low_lsb, gaf_low_msb, gaf_high_lsb, gaf_high_msb, rgb0, rgb1, rgb2 };
+			use_xlr = g_web_config.use_xlr[0] - '0';
+			main_xlr = g_web_config.main_xlr[0] - '0';
+			char Settings6[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 6, gaf_enb, gaf_low_lsb, gaf_low_msb, gaf_high_lsb, gaf_high_msb, rgb0, rgb1, rgb2, use_xlr, main_xlr };
 			hfuart_send(HFUART0, Settings6,sizeof(Settings6),100);
 
 			hf_thread_delay(2000);
@@ -1863,6 +1869,12 @@ int ratpac_get_str(int id, char *val)
 			break;
 		case CFG_LED_COLOR:
 			snprintf(val, 16, "%s", g_web_config.led_color);
+			break;
+		case CFG_AKS_USE_XLR:
+			snprintf(val, 2, "%s", g_web_config.use_xlr);			
+			break;
+		case CFG_AKS_MAIN_XLR:
+			snprintf(val, 2, "%s", g_web_config.main_xlr);			
 			break;				
 		default:
 			return -1;
@@ -1920,6 +1932,12 @@ int ratpac_set_str(int id, char *val)
 			break;
 		case CFG_LED_COLOR:
 			sprintf(g_web_config.led_color, "%s", val);
+			break;
+		case CFG_AKS_USE_XLR:
+			snprintf(g_web_config.use_xlr, 2, "%s",val);			
+			break;
+		case CFG_AKS_MAIN_XLR:
+			snprintf(g_web_config.main_xlr, 2, "%s", val);			
 			break;				
 		default:
 			return -1;
