@@ -840,7 +840,7 @@ void CGI_var_map(http_req *req, char *name, int id)
 			//sprintf(cmd_buff,"USB 88");
 			//sprintf(val, "Battery: %s", cmd_buff);
 			//sprintf(val, "<center><font color=\"black\" size=\"2\">Mode:");
-			sprintf(val, "<center><font color=\"black\" size=\"2\">Mode: </font><font color=\"orange\" size=\"3\"><b>%s</b> &nbsp;&nbsp;&nbsp;</font><font color=\"black\" size=\"2\">IP: </font><font color=\"blue\" size=\"3\"><b>%s</b> &nbsp;&nbsp;</font><font color=\"black\" size=\"2\">Battery: </font><font color=\"green\" size=\"3\"><b>%s\%</b> &nbsp;&nbsp;</font></center>",ip_addr_save, ip_addr, cmd_buff);
+			sprintf(val, "<center><font color=\"black\" size=\"2\">Mode: </font><font color=\"orange\" size=\"3\"><b>%s</b> &nbsp;&nbsp;&nbsp;</font><font color=\"black\" size=\"2\">IP: </font><font color=\"blue\" size=\"3\"><b>%s</b> &nbsp;&nbsp;</font><font color=\"black\" size=\"2\">Battery: </font><font color=\"green\" size=\"3\"><b>%s%%</b> &nbsp;&nbsp;</font></center>",ip_addr_save, ip_addr, cmd_buff);
 
 			//Joo_uart_send(val);
 			WEB_printf(req, "displayMsg('%s',",name);
