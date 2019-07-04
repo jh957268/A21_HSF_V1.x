@@ -171,6 +171,8 @@
 #define CFG_BATTERY_ID					CFG_USER_(68,CFG_TYPE_STR)
 
 #define CFG_PROTNAME			        CFG_USER_(69,CFG_TYPE_INT)
+#define CFG_AKS_USE_XLR					CFG_USER_(70,CFG_TYPE_STR)
+#define CFG_AKS_MAIN_XLR				CFG_USER_(71,CFG_TYPE_STR)
 
 // M2M: gohuy
 #define CFG_M2M_(idx,type) 			CFG_ID_(CFG_ID_M2M,idx,type,0)
