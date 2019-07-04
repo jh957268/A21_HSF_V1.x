@@ -16,6 +16,8 @@ addCfg("GAFFER_ENABLE",212,"1");
 addCfg("AKS_NAME",212,"Ratpac AKS");
 addCfg("LED_COLOR",212,"6");
 addCfg("PROTNAME",212,"0");
+addCfg("AKS_USE_XLR", 214,"1");
+addCfg("AKS_MAIN_XLR", 215,"0");
 /*END_DEMO*/
 
 /*REAL
@@ -44,7 +46,8 @@ CGI_MAP(GAFFER_UPPER, CFG_GAFFER_UPPER);
 
 CGI_MAP(PROTNAME, CFG_PROTNAME);
 CGI_MAP(SACN_UNIV, CFG_SACN_UNIV);
-
+CGI_MAP(AKS_USE_XLR, CFG_AKS_USE_XLR);
+CGI_MAP(AKS_MAIN_XLR, CFG_AKS_MAIN_XLR);
 %>
 
 REAL*/
@@ -128,17 +131,36 @@ function init(){
 function Reset() {
 	init();
 }
-function checkbox_clicked()
+function checkbox_use_xlr()
 {
 	//alert(document.AP_W_Network.Hidden_ssid_Chk.checked);
-	alert("checkbox");
-	//if(document.CRMXSettings.AKS_BIT_SETTINGS.checked)
-	//	document.CRMXSettings.AKS_Bit_Settings.value="1;0;0;0";
-	//else
-	//	document.CRMXSettings.AKS_Bit_Settings.value="0;0;0;0";
-
-	//alert(document.HFA21TEST.AKS_Settings.value);
+	if(document.GAFFER.USE_XLR.checked)
+	{
+		//alert("checked");
+		document.GAFFER.AKS_USE_XLR.value="1";
+	}
+	else
+	{
+		document.GAFFER.AKS_USE_XLR.value="0";
+		//alert("unchecked");
+	}	
 }
+
+function checkbox_main_xlr()
+{
+	//alert(document.AP_W_Network.Hidden_ssid_Chk.checked);
+	if(document.GAFFER.MAIN_XLR.checked)
+	{
+		//alert("checked");
+		document.GAFFER.AKS_MAIN_XLR.value="1";		
+	}
+	else
+	{
+		document.GAFFER.AKS_MAIN_XLR.value="0";		
+		//alert("unchecked");
+	}
+}
+
 function Apply() {
 	var f=document.opmode;
 
@@ -200,6 +222,27 @@ function init_gaffer()
 		document.GAFFER.GAFFER_ENABLE[0].checked=true ;
 	else 
 		document.GAFFER.GAFFER_ENABLE[1].checked=true ;
+	
+	Vapable=getCfg("AKS_USE_XLR") ;
+	if (Vapable=="0")
+	{
+		document.GAFFER.USE_XLR.checked = false;
+	}
+	else
+	{
+		document.GAFFER.USE_XLR.checked = true;
+	}
+	Vapable=getCfg("AKS_MAIN_XLR") ;
+	//if (Vapable=="0")
+	if (document.GAFFER.AKS_MAIN_XLR.value == "0")
+	{
+		document.GAFFER.MAIN_XLR.checked = false;
+	}
+	else
+	{
+		document.GAFFER.MAIN_XLR.checked = true;
+	}		
+		
 }
 
 function Cancel_gaffer() {
@@ -361,7 +404,7 @@ function Apply_2() {
 			</tr > 
 			<tr> 
 				<td class="head">
-					<font id="protid">Protocol</font><br>	
+					<font id="protid">Protocol (Requires Restart)</font><br>	
 				</td>
 				<td>
 					<input type="radio" value="0" name="PROTNAME"><b>Art-Net</b>&emsp;&emsp;<input type="radio" value="1" name="PROTNAME"><b>sACN</b>
@@ -475,6 +518,8 @@ function Apply_2() {
 	</form>
 	
 	<form method=post name=GAFFER>
+		<input type="hidden" name="AKS_USE_XLR">
+		<input type="hidden" name="AKS_MAIN_XLR">
 		<table width="540" border="1" cellspacing="1" cellpadding="3"   bordercolor="#9BABBD">
 			<tr>
 				<td class="title" colspan="2" id="gaffer_window_id">GAFFER's Window</td>
@@ -485,8 +530,8 @@ function Apply_2() {
 				</td>
 				<td>
 					<input type="radio" value="0" name="GAFFER_ENABLE"><b>Enable</b>&nbsp;&nbsp;<input type="radio" value="1" name="GAFFER_ENABLE"><b>Disable</b>
-					&nbsp;&nbsp;<input name="USE_XLR" type="checkbox" onClick="checkbox_clicked()"><b>Use XLR</b>
-					&nbsp;&nbsp;<input name="MAIN_XLR" type="checkbox" onClick="checkbox_clicked()"><b>XLR As Main</b>
+					&nbsp;&nbsp;<input name="USE_XLR" type="checkbox" onClick="checkbox_use_xlr()"><b>Use XLR</b>
+					&nbsp;&nbsp;<input name="MAIN_XLR" type="checkbox" onClick="checkbox_main_xlr()"><b>XLR As Main</b>
 				</td>
 			</tr>
 			<tr> 
