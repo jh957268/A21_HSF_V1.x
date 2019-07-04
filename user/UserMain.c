@@ -1076,7 +1076,8 @@ void UserMain(void *arg)
 			at_rsp[0] = 0;
 			eprintf("MSLP=OFF fails\n");
 		}
-#endif		
+#endif	
+		operation_mode = STA_ETH_MODE;
 		ret1 = hfthread_create(client_thread_main,"udp_client_main",1024,(void*)1,AKS_PRIORITIES,NULL,NULL);
 
 		if (HF_SUCCESS != ret1)
@@ -1099,6 +1100,7 @@ void UserMain(void *arg)
 		}
 		if (strstr(at_rsp, "+ok=STA"))
 		{
+			operation_mode = STA_WIFI_MODE;
 			ret1 = hfthread_create(client_thread_main,"udp_client_main",1024,(void*)1,AKS_PRIORITIES,NULL,NULL);
 
 			if (HF_SUCCESS != ret1)
@@ -1596,7 +1598,7 @@ USER_FUNC static void client_thread_main(void* arg)
 	artnet_enable = 0;
 #endif
 
-	operation_mode = STA_ETH_MODE;
+	// operation_mode = STA_ETH_MODE;
 	hf_thread_delay(100);
 	
 #if 0	
