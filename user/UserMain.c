@@ -2028,6 +2028,9 @@ unsigned char samd_pkt_buff[PKT_SIZE+16];
 unsigned char align_buff[PKT_SIZE+16];
 static unsigned char expect_buff[8] = {'o', 'k', ':', 0, 0};
 static char ret_buff[32];
+static char firmware_pad[32 * 1024];
+static int pad_len;
+
 #define NUM_TRY 2
 
 int SAMD_firmware_download(unsigned char *firmware, int len, int which)
@@ -2061,6 +2064,18 @@ int SAMD_firmware_download(unsigned char *firmware, int len, int which)
 	}
 #endif
 
+	pad_len = ((len + PKT_SIZE - 1) & 0xfe00);
+	remain_len = pad_len;
+	
+	for (i = 0; i < len; i++)
+	{
+		firmware_pad[i] = firmware[i];
+	}
+	for (i = len; i < pad_len; i++)
+	{
+		firmware_pad[i] = 0;
+	}
+	
 	if (0 == which)
 	{
 		Settings[12] = 7;
@@ -2147,7 +2162,7 @@ int SAMD_firmware_download(unsigned char *firmware, int len, int which)
 			//cksum ^= pSrc[i];
 			//*pDst++ = *pSrc++;
 			//pDst[i] = pSrc[i];
-			align_buff[i] = firmware[total_len + i];
+			align_buff[i] = firmware_pad[total_len + i];
 		}
 		for (i = 0; (i < PKT_SIZE >> 2); i++)
 		{
