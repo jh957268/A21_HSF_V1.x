@@ -1998,7 +1998,7 @@ int Send_SAMD_CMD(char *cmd, int len, char *expect_resp, cyg_tick_count_t timeou
 	//set_artnet_enable(0);
 	//webHandle = cyg_thread_self();
 	//cyg_thread_set_priority(webHandle, 14 );
-	for (try_snd = 0; try_snd < 1; try_snd++)
+	for (try_snd = 0; try_snd < 2; try_snd++)
 	{
 		clear_uart_recv();
 		hfuart_send(HFUART0, cmd, len, 100);
@@ -2106,9 +2106,10 @@ int SAMD_firmware_download(unsigned char *firmware, int len, int which)
 		ret = Send_SAMD_CMD(Settings, sizeof(Settings), ret_buff, 200);
 		if (ret != 0)
 		{
-			cyg_mutex_unlock(&samd_mutex);
-			set_artnet_enable(1);
-			return (ret);
+			//cyg_mutex_unlock(&samd_mutex);
+			//set_artnet_enable(1);
+			//return (ret);
+			continue;
 		}
 		if (!strstr(ret_buff,"update"))
 		{
@@ -2124,6 +2125,12 @@ int SAMD_firmware_download(unsigned char *firmware, int len, int which)
 		{
 			break;
 		}
+	}
+	if (ret != 0)
+	{
+		cyg_mutex_unlock(&samd_mutex);
+		set_artnet_enable(1);
+		return (ret);
 	}	
 	ret = Send_SAMD_CMD("yes", strlen("yes"), ret_buff, 100);
 	if (ret != 0)
