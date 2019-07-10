@@ -959,7 +959,7 @@ static int USER_FUNC socketb_recv_callback(uint32_t event,char *data,uint32_t le
 
 static char rgb0, rgb1, rgb2;
 static char rgb_led_color[16];
-static char use_xlr, main_xlr;
+static char use_xlr, main_xlr, ip_code;
 
 void UserMain(void *arg)
 {
@@ -1304,10 +1304,20 @@ void UserMain(void *arg)
 			ipAddress[2] = (char)atoi(token);
 			token = strtok(NULL, s);
 			ipAddress[3] = (char)atoi(token);
-#endif
+
 			char name[18]={' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',0};
 			ratpac_get_str(CFG_str2id("AKS_NAME"),name);
 			char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 1,name[0],name[1],name[2],name[3],name[4],name[5],name[6],name[7],name[8],name[9],name[10],name[11],name[12],name[13],name[14],name[15],name[16],name[17],ipAddress[0],ipAddress[1],ipAddress[2],ipAddress[3]};
+#endif
+			if (0 != ipAddress[0])
+			{
+				ip_code = 1;
+			}
+			else
+			{
+				ip_code = 0;
+			}
+			char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 1, ip_code};
 			hfuart_send(HFUART0, Settings,sizeof(Settings),100);
 
 			//char Settings2[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 2, 1, 0};
@@ -1368,7 +1378,7 @@ struct client_ent
 	char ip_addr[20];
 	char universe[4];
 	char subnet[4];
-	char baterry[4];
+	char baterry[8];
 	int	 age_cnt;
 };
 
@@ -1702,6 +1712,7 @@ USER_FUNC static void client_thread_main(void* arg)
 			ratpac_get_str( CFG_str2id("AKS_NAME"), &cli_recv[0]);
 			ratpac_get_str( CFG_str2id("AKS_UNIVERSE"), &cli_recv[20]);
 			ratpac_get_str( CFG_str2id("AKS_SUBNET"), &cli_recv[24]);
+			sprintf(&cli_recv[30], "%s", battery_info);
 			//sprintf(&cli_recv[0], "AKS" );
 			//sprintf(&cli_recv[20], "10");
 #if 0
@@ -1741,7 +1752,8 @@ int get_client_entry(int idx, char *node_name, char *ip_addr, char *universe, ch
 	sprintf(universe, "%s", client_valid_list[idx].universe);
 	sprintf(art_sub, "%s", client_valid_list[idx].subnet);	
 
-	sprintf(battery, "%s", battery_info);
+	//sprintf(battery, "%s", battery_info);
+	snprintf(battery, 8, "%s%%", client_valid_list[idx].baterry);	
 	return 0;
 }
 
@@ -2386,6 +2398,7 @@ void age_client_list(void)
 	int i;
 
 	client_valid_list[0] = client_list[0];
+	snprintf(client_valid_list[0].baterry, 7, "%s", battery_info);
 	client_valid_num = 1;
 	
 	for (i = 1; i < MAX_NUM_ENTRY; i++)
@@ -2414,6 +2427,7 @@ void populate_new_client(char *ip_ad, char *rcv_msg)
 			//sprintf(client_list[i].ip_addr, "%s", inet_ntoa(cliAddr.sin_addr));
 			sprintf(client_list[i].universe, &rcv_msg[20]);
 			sprintf(client_list[i].subnet, &rcv_msg[24]);
+			sprintf(client_list[i].baterry, &rcv_msg[30]);
 			client_list[i].age_cnt = AGE_COUNT;	
 			return;
 		}
@@ -2428,6 +2442,7 @@ void populate_new_client(char *ip_ad, char *rcv_msg)
 			sprintf(client_list[i].ip_addr, "%s", ip_ad);
 			sprintf(client_list[i].universe, &rcv_msg[20]);
 			sprintf(client_list[i].subnet, &rcv_msg[24]);
+			sprintf(client_list[i].baterry, &rcv_msg[30]);
 			client_list[i].age_cnt = AGE_COUNT;	
 			return;
 		}
