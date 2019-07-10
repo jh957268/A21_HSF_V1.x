@@ -202,7 +202,9 @@ typedef struct _web_data
 	unsigned char sacn_enb[2];
 	unsigned char sacn_universe[8];
 	unsigned char protname[2];
-	unsigned char led_color[16];
+	unsigned char led_color[4];
+	unsigned char led_g[4];
+	unsigned char led_b[4];	
 	unsigned char use_xlr[2];
 	unsigned char main_xlr[2];
 }WEB_DATA_T;
@@ -792,7 +794,9 @@ void web_flash_data_init(void)
 		sprintf(g_web_config.channelWidth,"16");
 		sprintf(g_web_config.secondChannel,"0");
 		sprintf(g_web_config.bitSetting,"0");
-		sprintf(g_web_config.led_color,"255,102,102");
+		sprintf(g_web_config.led_color,"255");
+		sprintf(g_web_config.led_g,"112");
+		sprintf(g_web_config.led_b,"102");		
 		sprintf(g_web_config.use_xlr,"0");
 		sprintf(g_web_config.main_xlr,"0");	
 		
@@ -1335,13 +1339,13 @@ void UserMain(void *arg)
 			gaf_high_lsb = (char)(gaf_chn & 0xff);
 			gaf_high_msb = (char)((gaf_chn >> 8) & 0xff);
 			
-			strcpy(rgb_led_color, g_web_config.led_color);
-			rgb_led_color[3] = 0;
-			rgb_led_color[7] = 0;
-			rgb_led_color[11] = 0;
-			rgb0 = (char)atoi(&rgb_led_color[0]);
-			rgb1 = (char)atoi(&rgb_led_color[4]);
-			rgb2 = (char)atoi(&rgb_led_color[8]);
+			//strcpy(rgb_led_color, g_web_config.led_color);
+			//rgb_led_color[3] = 0;
+			//rgb_led_color[7] = 0;
+			//rgb_led_color[11] = 0;
+			rgb0 = (char)atoi(g_web_config.led_color);
+			rgb1 = (char)atoi(g_web_config.led_g);
+			rgb2 = (char)atoi(g_web_config.led_b);
 			use_xlr = g_web_config.use_xlr[0] - '0';
 			main_xlr = g_web_config.main_xlr[0] - '0';
 			char Settings6[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 6, gaf_enb, gaf_low_lsb, gaf_low_msb, gaf_high_lsb, gaf_high_msb, rgb0, rgb1, rgb2, use_xlr, main_xlr };
@@ -1884,6 +1888,12 @@ int ratpac_get_str(int id, char *val)
 		case CFG_LED_COLOR:
 			snprintf(val, 16, "%s", g_web_config.led_color);
 			break;
+		case CFG_LED_G:
+			snprintf(val, 16, "%s", g_web_config.led_g);
+			break;
+		case CFG_LED_B:
+			snprintf(val, 16, "%s", g_web_config.led_b);
+			break;					
 		case CFG_AKS_USE_XLR:
 			snprintf(val, 2, "%s", g_web_config.use_xlr);			
 			break;
@@ -1947,6 +1957,12 @@ int ratpac_set_str(int id, char *val)
 		case CFG_LED_COLOR:
 			sprintf(g_web_config.led_color, "%s", val);
 			break;
+		case CFG_LED_G:
+			sprintf(g_web_config.led_g, "%s", val);
+			break;
+		case CFG_LED_B:
+			sprintf(g_web_config.led_b, "%s", val);
+			break;			
 		case CFG_AKS_USE_XLR:
 			snprintf(g_web_config.use_xlr, 2, "%s",val);			
 			break;
