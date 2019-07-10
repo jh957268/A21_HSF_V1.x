@@ -37,6 +37,8 @@ CGI_MAP(net_ip,CFG_M2M_NET_SERADD);
 CGI_MAP(net_port,CFG_M2M_NET_PORT);
 CGI_MAP(AKS_Bit_Settings, CFG_AKS_SETTINGS);
 CGI_MAP(LED_COLOR, CFG_LED_COLOR);
+CGI_MAP(LED_G, CFG_LED_G);
+CGI_MAP(LED_B, CFG_LED_B);
 
 CGI_MAP(GAFFER_ENABLE, CFG_GAFFER_ENABLE);
 CGI_MAP(GAFFER_UNIVERSE, CFG_GAFFER_UNIVERSE);
@@ -319,10 +321,20 @@ function Cancel_2() {
 function Apply_2() {
 	var f=document.CRMXSettings;
 	var rgb=document.CRMXSettings.LED_COLOR.value;
-	if (rgb.length != 11) {
-		alert("LED Color Invalid Value!");
+	if (rgb.length != 3) {
+		alert("R Color Invalid Value!");
 		return false; // keep form from submitting
 	}
+	rgb=document.CRMXSettings.LED_G.value;
+	if (rgb.length != 3) {
+		alert("G Color Invalid Value!");
+		return false; // keep form from submitting
+	}
+	rgb=document.CRMXSettings.LED_B.value;
+	if (rgb.length != 3) {
+		alert("B Color Invalid Value!");
+		return false; // keep form from submitting
+	}		
 	form2Cfg(f);
 	subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
 }
@@ -486,7 +498,7 @@ function Apply_2() {
 					<font id="led_color_level">Color ID</font><br>	
 				</td>
 				<td>
-					<input name="LED_COLOR" maxlength=32 size=20>
+					&nbsp;<b>R:&nbsp;</b><input name="LED_COLOR" maxlength=4 size=4>&nbsp;&nbsp;&nbsp;<b>G:&nbsp;</b><input name="LED_G" maxlength=4 size=4>&nbsp;&nbsp;&nbsp;<b>B:&nbsp;</b><input name="LED_B" maxlength=4 size=4>
 				</td>				
 			</tr>
 			<!--
