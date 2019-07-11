@@ -2034,7 +2034,7 @@ int Send_SAMD_CMD(char *cmd, int len, char *expect_resp, cyg_tick_count_t timeou
 		}
 		if (0 == uart_rvc_done)
 		{
-			Joo_uart_send("SAMD no response\n");
+			//Joo_uart_send("SAMD no response\n");
 			continue;
 		}
 		uart_rvc_done = 1;		// no longer need data for now
