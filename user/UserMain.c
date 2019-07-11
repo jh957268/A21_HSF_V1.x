@@ -202,9 +202,9 @@ typedef struct _web_data
 	unsigned char sacn_enb[2];
 	unsigned char sacn_universe[8];
 	unsigned char protname[2];
-	unsigned char led_color[4];
-	unsigned char led_g[4];
-	unsigned char led_b[4];	
+	unsigned char led_color[8];
+	unsigned char led_g[8];
+	unsigned char led_b[8];	
 	unsigned char use_xlr[2];
 	unsigned char main_xlr[2];
 }WEB_DATA_T;
@@ -1546,6 +1546,7 @@ static void server_thread_main(void* arg)
 			msg[19] = 0;
 			msg[22] = 0;
 			msg[26] = 0;
+			msg[36] = 0;
 				
 			char ip_addr[20];
 			sprintf(ip_addr, "%s", inet_ntoa(cliAddr.sin_addr));
@@ -1717,6 +1718,7 @@ USER_FUNC static void client_thread_main(void* arg)
 			ratpac_get_str( CFG_str2id("AKS_UNIVERSE"), &cli_recv[20]);
 			ratpac_get_str( CFG_str2id("AKS_SUBNET"), &cli_recv[24]);
 			sprintf(&cli_recv[30], "%s", battery_info);
+			cli_recv[36] = 0;
 			//sprintf(&cli_recv[0], "AKS" );
 			//sprintf(&cli_recv[20], "10");
 #if 0
@@ -1726,7 +1728,7 @@ USER_FUNC static void client_thread_main(void* arg)
 			}
 			eprintf("\r\n");
 #endif		
-			rc = sendto(sd, cli_recv, 32, 0, 
+			rc = sendto(sd, cli_recv, 40, 0, 
 				(struct sockaddr *) &serv, 
 				sizeof(serv));
 			if ( rc < 0)
