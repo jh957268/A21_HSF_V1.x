@@ -321,19 +321,38 @@ function Cancel_2() {
 function Apply_2() {
 	var f=document.CRMXSettings;
 	var rgb=document.CRMXSettings.LED_COLOR.value;
-	if (rgb.length != 3) {
-		alert("R Color Invalid Value!");
-		return false; // keep form from submitting
+
+	if(isNaN(rgb)){
+		alert(rgb + " is not a number");
+		return;
+	}	
+	rgb=1*rgb;
+	if (rgb > 255)
+	{
+		alert("R Color value is out of range");
+		return;
 	}
 	rgb=document.CRMXSettings.LED_G.value;
-	if (rgb.length != 3) {
-		alert("G Color Invalid Value!");
-		return false; // keep form from submitting
-	}
+	if(isNaN(rgb)){
+		alert(rgb + " is not a number");
+		return;
+	}	
+	rgb=1*rgb;
+	if (rgb > 255)
+	{
+		alert("G Color value is out of range");
+		return;
+	}	
 	rgb=document.CRMXSettings.LED_B.value;
-	if (rgb.length != 3) {
-		alert("B Color Invalid Value!");
-		return false; // keep form from submitting
+	if(isNaN(rgb)){
+		alert(rgb + " is not a number");
+		return;
+	}	
+	rgb=1*rgb;
+	if (rgb > 255)
+	{
+		alert("B Color value is out of range");
+		return;
 	}		
 	form2Cfg(f);
 	subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
