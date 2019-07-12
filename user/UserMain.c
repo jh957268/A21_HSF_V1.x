@@ -2379,6 +2379,7 @@ int Send_ID_Command(void)
 int Send_Battery_Command(void)
 {
 	int ret;
+	//char *sp;
 
 	char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 5};
 	
@@ -2396,7 +2397,12 @@ int Send_Battery_Command(void)
 	//hfuart_send(HFUART0, ret_buff,6,100);  //for debug
 	sprintf(battery_info, "%s", (char *)&ret_buff[3]);
 	//hfuart_send(HFUART0, battery_info,6,100);  //for debug
-	battery_info[6] = 0;     // remove LF and CR sent by SAMD, or the web displayMsg cannot display
+	//sp = strchr(battery_info, ' ');
+	//if (sp)
+	//{
+	//	*sp = 0;
+	//}
+	battery_info[6] = 0;     // remove LF and CR sent by SAMD, or the web displayMsg cannot display	
 	cyg_mutex_unlock(&samd_mutex);
 	//set_artnet_enable(1);
 	return (0);
