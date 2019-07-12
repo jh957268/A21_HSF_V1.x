@@ -2379,7 +2379,8 @@ int Send_ID_Command(void)
 int Send_Battery_Command(void)
 {
 	int ret;
-	//char *sp;
+	const char s[] = "\n\r";
+	char *token;
 
 	char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 5};
 	
@@ -2402,6 +2403,7 @@ int Send_Battery_Command(void)
 	//{
 	//	*sp = 0;
 	//}
+	token = strtok((char *)battery_info, s);
 	battery_info[6] = 0;     // remove LF and CR sent by SAMD, or the web displayMsg cannot display	
 	cyg_mutex_unlock(&samd_mutex);
 	//set_artnet_enable(1);
