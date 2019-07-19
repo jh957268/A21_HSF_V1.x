@@ -99,6 +99,8 @@ char timo_ver[4] = {'1', '.', 'y', 0};
 char battery_info[32] = {0};
 volatile char ipAddress[4]={};
 
+static char ap_wln_channel = 0;
+
 extern cyg_netdevtab_entry_t devive_wireless_netdev0;
 cyg_netdevtab_entry_t *pWIFIDev;
 
@@ -1153,15 +1155,23 @@ void UserMain(void *arg)
 			char TimoPower[1] = {};
 			char timo_Blocked_Channel[11] = {0,0,0,0,0,0,0,0,0,0,0};
 
-			char channel[2]={};
-			CFG_get_str(CFG_str2id("WLN_Channel"),channel);
-			channel[0] = (char)atoi(channel);
+			char channel[4]={};
+			
+			if (AP_MODE == operation_mode)
+			{
+				CFG_get_str(CFG_str2id("WLN_Channel"),channel);
+				channel[0] = (char)atoi(channel);
+			}
+			else
+			{
+				channel[0] = ap_wln_channel;
+			}
 
-			char width[2]={};
+			char width[4]={};
 			ratpac_get_str(CFG_str2id("AKS_CHANNEL_WIDTH"),width);
 			width[0] = (char)atoi(width);
 
-			char channelTwo[2]={};
+			char channelTwo[4]={};
 			ratpac_get_str(CFG_str2id("AKS_SECOND_CHANNEL"),channelTwo);
 			channelTwo[0] = (char)atoi(channelTwo);
 
@@ -1494,7 +1504,11 @@ static void server_thread_main(void* arg)
 	eprintf("Registering UDP broadcast message.\n");
 	// continue;
 	
-	rc = sendto(sd, msg, strlen(msg), 0, 
+	CFG_get_str(CFG_str2id("WLN_Channel"),tmp_buff);
+	ap_wln_channel = (char)atoi(tmp_buff);
+	msg[38] = ap_wln_channel; 
+	
+	rc = sendto(sd, msg, 40, 0, 
 		  (struct sockaddr *) &remoteServAddr, 
   			sizeof(remoteServAddr));
 	if ( rc < 0)
@@ -1709,6 +1723,8 @@ USER_FUNC static void client_thread_main(void* arg)
 			{
 				continue;
 			}
+			
+			ap_wln_channel = cli_recv[38];
 			cli_recv[recv_num] = 0;
 			eprintf("thread %d, msg=%s, IP=%s\n",id, cli_recv, inet_ntoa(addr.sin_addr));
 			//g_web_config.name[19] = 0;
