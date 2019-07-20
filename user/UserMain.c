@@ -249,7 +249,8 @@ static int USER_FUNC cmd_web_para_node_name(pat_session_t s,int argc,char *argv[
 	else
 	{
 		ratpac_set_str( CFG_str2id("AKS_NAME"), argv[0]);
-		CFG_save(0);
+		write_data_to_flash();
+		//CFG_save(0);
 	}
 	return 0;
 }
@@ -337,7 +338,8 @@ static int USER_FUNC cmd_web_para_universe(pat_session_t s,int argc,char *argv[]
 		if((temp_value>=0)&&(temp_value<=9))
 		{
 			ratpac_set_str( CFG_str2id("AKS_UNIVERSE"), argv[0]);
-			CFG_save(0);
+			write_data_to_flash();
+			//CFG_save(0);
 		}
 		else
 		{
@@ -368,7 +370,8 @@ static int USER_FUNC cmd_web_para_timopower(pat_session_t s,int argc,char *argv[
 		if((temp_value>=0)&&(temp_value<=5))
 		{
 			ratpac_set_str( CFG_str2id("TIMO_POWER"), argv[0]);
-			CFG_save(0);
+			write_data_to_flash();
+			//CFG_save(0);
 		}
 		else
 		{
@@ -400,7 +403,8 @@ static int USER_FUNC cmd_web_para_channelwidth(pat_session_t s,int argc,char *ar
 		if((temp_value>=9)&&(temp_value<=18))
 		{
 			ratpac_set_str( CFG_str2id("AKS_CHANNEL_WIDTH"), argv[0]);
-			CFG_save(0);
+			write_data_to_flash();
+			//CFG_save(0);
 		}
 		else
 		{
@@ -433,7 +437,8 @@ static int USER_FUNC cmd_web_para_secondchannel(pat_session_t s,int argc,char *a
 		if((temp_value>=0)&&(temp_value<=11))
 		{
 			ratpac_set_str( CFG_str2id("AKS_SECOND_CHANNEL"), argv[0]);
-			CFG_save(0);
+			write_data_to_flash();
+			//CFG_save(0);
 		}
 		else
 		{
@@ -466,7 +471,8 @@ static int USER_FUNC cmd_web_para_bitsetting(pat_session_t s,int argc,char *argv
 		if((temp_value>=0)&&(temp_value<=1))
 		{
 			ratpac_set_str( CFG_str2id("AKS_BIT_SETTINGS"), argv[0]);
-			CFG_save(0);
+			write_data_to_flash();
+			//CFG_save(0);
 		}
 		else
 		{
@@ -1332,6 +1338,7 @@ void UserMain(void *arg)
 				ip_code = 0;
 			}
 			char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 1, ip_code};
+			//char Settings[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 1, ipAddress[0], ipAddress[1], ipAddress[2],ipAddress[3] };
 			hfuart_send(HFUART0, Settings,sizeof(Settings),100);
 
 			//char Settings2[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 2, 1, 0};
@@ -1931,7 +1938,7 @@ int ratpac_set_str(int id, char *val)
 	switch (id)
 	{
 		case CFG_AKS_NAME:
-			sprintf(g_web_config.name, "%s", val);
+			snprintf(g_web_config.name, 16, "%s", val);
 			break;
 		case CFG_AKS_UNIVERSE:
 			sprintf(g_web_config.universe, "%s", val);
@@ -1990,7 +1997,7 @@ int ratpac_set_str(int id, char *val)
 		default:
 			return -1;
 	}
-	write_data_to_flash();
+	//write_data_to_flash();
 	return 0;
 }
 
@@ -2291,12 +2298,15 @@ void get_battery_info(char *buffer)
 	//eprintf("**Battery : %s\n", buffer);
 }
 
+//char add_print[32];
 void get_module_ipaddress_mode(char *ip, char *mode)
 {
 	struct in_addr   sin_addr;     // see struct in_addr, below
 	char *tmp;
 	
-	sin_addr.s_addr = (ipAddress[3] << 24) | (ipAddress[2] << 16) | (ipAddress[1] << 8) | ipAddress[0];
+	sin_addr.s_addr = ((uint8_t)ipAddress[3] << 24) | ((uint8_t)ipAddress[2] << 16) | ((uint8_t)ipAddress[1] << 8) | (uint8_t)ipAddress[0];
+	//sprintf(add_print, "%02x %02x %02x %02x\n", (uint8_t)ipAddress[0], (uint8_t)ipAddress[1], (uint8_t)ipAddress[2], (uint8_t)ipAddress[3]);
+	//hfuart_send(HFUART0, add_print,strlen(add_print),100);
 	tmp = inet_ntoa(sin_addr);
 	snprintf(ip, 20, "%s", tmp);
 	
