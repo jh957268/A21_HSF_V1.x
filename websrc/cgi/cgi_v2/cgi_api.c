@@ -196,6 +196,7 @@ void get_module_ipaddress_mode(char *ip, char *mode);
 int Send_Link_Command(void);
 int Send_UnLink_Command(void);
 int Send_ID_Command(void);
+void write_data_to_flash(void);
 
 cgi_cmd ps_cgi_cmds[]=
 {
@@ -410,9 +411,10 @@ int CGI_do_cmd(http_req *req)
 		
 		sprintf(art_subnet, "%s", tmp1);
 		sprintf(uniNo, "%s", tmp2);			
-		CFG_set_str(CFG_AKS_UNIVERSE,uniNo);
-		CFG_set_str(CFG_AKS_SUBNET,art_subnet);
-		CFG_save(0);
+		ratpac_set_str(CFG_AKS_UNIVERSE,uniNo);
+		ratpac_set_str(CFG_AKS_SUBNET,art_subnet);
+		//CFG_save(0);
+		write_data_to_flash();					// write ratpac data to flash
 		return CGI_RC_OK;
 	}
 
@@ -422,6 +424,7 @@ ReadyToOut:
 	{
 		//update_cnt = CFG_commit(CFG_DELAY_EVENT);
 		CFG_save(0);
+		write_data_to_flash();
 	}
 	else
 	if (rc<0)
