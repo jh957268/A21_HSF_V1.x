@@ -1090,12 +1090,13 @@ void UserMain(void *arg)
 		}
 #endif	
 		operation_mode = STA_ETH_MODE;
-		ret1 = hfthread_create(client_thread_main,"udp_client_main",1024,(void*)1,AKS_PRIORITIES,NULL,NULL);
+		
+		//ret1 = hfthread_create(client_thread_main,"udp_client_main",1024,(void*)1,AKS_PRIORITIES,NULL,NULL);
 
-		if (HF_SUCCESS != ret1)
-		{
-			eprintf("Create UDP client fails, %d\n", ret1);
-		}		
+		//if (HF_SUCCESS != ret1)
+		//{
+		//	eprintf("Create UDP client fails, %d\n", ret1);
+		//}		
 	}
 	else
 	{
@@ -1113,23 +1114,46 @@ void UserMain(void *arg)
 		if (strstr(at_rsp, "+ok=STA"))
 		{
 			operation_mode = STA_WIFI_MODE;
-			ret1 = hfthread_create(client_thread_main,"udp_client_main",1024,(void*)1,AKS_PRIORITIES,NULL,NULL);
+			//ret1 = hfthread_create(client_thread_main,"udp_client_main",1024,(void*)1,AKS_PRIORITIES,NULL,NULL);
 
-			if (HF_SUCCESS != ret1)
-			{
-				eprintf("Create UDP client fails, %d\n", ret1);
-			}
+			//if (HF_SUCCESS != ret1)
+			//{
+			//	eprintf("Create UDP client fails, %d\n", ret1);
+			//}
 		}
 		else
 		{
-			ret1 = hfthread_create(server_thread_main,"udp_server_main",1024,(void*)1,AKS_PRIORITIES,NULL,NULL);
+			operation_mode = AP_MODE;
+			//ret1 = hfthread_create(server_thread_main,"udp_server_main",1024,(void*)1,AKS_PRIORITIES,NULL,NULL);
 
-			if (HF_SUCCESS != ret1)
-			{
-				eprintf("Create UDP server fails, %d\n", ret1);
-			}
+			//if (HF_SUCCESS != ret1)
+			//{
+			//	eprintf("Create UDP server fails, %d\n", ret1);
+			//}
 		}
 	}
+
+	ret1 = hfthread_create(client_thread_main,"udp_client_main",1024,(void*)1,AKS_PRIORITIES,NULL,NULL);
+
+	if (HF_SUCCESS != ret1)
+	{
+		eprintf("Create UDP client fails, %d\n", ret1);
+		while (1)
+		{
+			hf_thread_delay(5000);
+		}
+	}	
+	
+	ret1 = hfthread_create(server_thread_main,"udp_server_main",1024,(void*)1,AKS_PRIORITIES,NULL,NULL);
+
+	if (HF_SUCCESS != ret1)
+	{
+		eprintf("Create UDP server fails, %d\n", ret1);
+		while (1)
+		{
+			hf_thread_delay(5000);
+		}		
+	}	
 	// int i=0;
 	
 
@@ -1421,7 +1445,7 @@ static void server_thread_main(void* arg)
   refresh_clients = 0;
 
   eprintf("server_thread_main started\n");
-  operation_mode = AP_MODE;
+  // operation_mode = AP_MODE;
   artnet_enable = 1;  
   
   for (i = 0; i < MAX_NUM_ENTRY; i++)
@@ -1503,6 +1527,15 @@ static void server_thread_main(void* arg)
 	}
 #endif
 	hf_thread_delay(2000);
+	
+	((uint8_t)ipAddress[3] << 24) | ((uint8_t)ipAddress[2] << 16) | ((uint8_t)ipAddress[1] << 8) | (uint8_t)ipAddress[0];
+	
+	if ((uint8_t)ipAddress[0] == 0)
+	{
+		continue;
+	}
+	
+	remoteServAddr.sin_addr.s_addr = 0xff000000 | ((uint8_t)ipAddress[2] << 16) | ((uint8_t)ipAddress[1] << 8) | (uint8_t)ipAddress[0];
 	
     /* init buffer */
 	// refresh_clients = 0;
@@ -1750,7 +1783,8 @@ USER_FUNC static void client_thread_main(void* arg)
 				eprintf("%02x ", recv[i]);
 			}
 			eprintf("\r\n");
-#endif		
+#endif
+			serv.sin_addr.s_addr = addr.sin_addr.s_addr;
 			rc = sendto(sd, cli_recv, 40, 0, 
 				(struct sockaddr *) &serv, 
 				sizeof(serv));
@@ -2455,9 +2489,16 @@ void save_valid_client_entry(int i)
 void age_client_list(void)
 {
 	int i;
-
+	struct in_addr   sin_addr;     // see struct in_addr, below
+	char *tmp;
+	
 	client_valid_list[0] = client_list[0];
 	snprintf(client_valid_list[0].baterry, 7, "%s", battery_info);
+	
+	sin_addr.s_addr = ((uint8_t)ipAddress[3] << 24) | ((uint8_t)ipAddress[2] << 16) | ((uint8_t)ipAddress[1] << 8) | (uint8_t)ipAddress[0];
+	tmp = inet_ntoa(sin_addr);
+	snprintf(client_valid_list[0].ip_addr, 20, "%s", tmp);	
+
 	client_valid_num = 1;
 	
 	for (i = 1; i < MAX_NUM_ENTRY; i++)
@@ -2477,6 +2518,11 @@ void age_client_list(void)
 void populate_new_client(char *ip_ad, char *rcv_msg)
 {
 	int i;
+	
+	if (!strcmp(client_valid_list[0].ip_addr, ip_ad))
+	{
+		return;
+	}
 	
 	for (i = 1; i < MAX_NUM_ENTRY; i++)
 	{
