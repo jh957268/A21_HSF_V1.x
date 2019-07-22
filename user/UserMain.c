@@ -31,6 +31,7 @@
 #include "e131.h"
 #include "aks_debug_printf.h"
 
+#define SSID_STR 	"MySpectrumWiFi60-2G"
 
 void Joo_uart_send(char *data);
 
@@ -98,6 +99,7 @@ char samd_ver[4] = {'1', '.', 'x', 0};
 char timo_ver[4] = {'1', '.', 'y', 0};
 char battery_info[32] = {0};
 volatile char ipAddress[4]={};
+static char at_scan_rsp[1024];
 
 static char ap_wln_channel = 0;
 
@@ -1192,9 +1194,37 @@ void UserMain(void *arg)
 				CFG_get_str(CFG_str2id("WLN_Channel"),channel);
 				channel[0] = (char)atoi(channel);
 			}
+			else if (STA_WIFI_MODE == operation_mode)
+			{	
+				static int get_ap_wln_channel = 0;
+				static char *ptr_ssid_str;
+				
+				if ((uint8_t)ipAddress[0] == 0)
+				{
+					ap_wln_channel = 0;
+					channel[0] = 0;
+					get_ap_wln_channel = 0;
+				}
+				else if (0 == get_ap_wln_channel) 
+				{
+					ret1 = hfat_send_cmd("AT+WSCAN\r\n", strlen("AT+WSCAN\r\n"), at_scan_rsp, sizeof(at_scan_rsp));
+					if (HF_SUCCESS == ret1)
+					{
+						at_scan_rsp[512] = 0;
+						ptr_ssid_str = strstr(at_scan_rsp, SSID_STR);
+						if (ptr_ssid_str)
+						{
+							ptr_ssid_str -= 2;
+							ap_wln_channel = *ptr_ssid_str - '0';
+							get_ap_wln_channel = 1;
+						}	
+					}					
+				}
+				channel[0] = ap_wln_channel;
+			}
 			else
 			{
-				channel[0] = ap_wln_channel;
+				channel[0] = 0;
 			}
 
 			char width[4]={};
@@ -1528,8 +1558,6 @@ static void server_thread_main(void* arg)
 #endif
 	hf_thread_delay(2000);
 	
-	((uint8_t)ipAddress[3] << 24) | ((uint8_t)ipAddress[2] << 16) | ((uint8_t)ipAddress[1] << 8) | (uint8_t)ipAddress[0];
-	
 	if ((uint8_t)ipAddress[0] == 0)
 	{
 		continue;
@@ -1544,8 +1572,8 @@ static void server_thread_main(void* arg)
 	eprintf("Registering UDP broadcast message.\n");
 	// continue;
 	
-	CFG_get_str(CFG_str2id("WLN_Channel"),tmp_buff);
-	ap_wln_channel = (char)atoi(tmp_buff);
+	//CFG_get_str(CFG_str2id("WLN_Channel"),tmp_buff);
+	//ap_wln_channel = (char)atoi(tmp_buff);
 	msg[38] = ap_wln_channel; 
 	
 	rc = sendto(sd, msg, 40, 0, 
@@ -1764,7 +1792,7 @@ USER_FUNC static void client_thread_main(void* arg)
 				continue;
 			}
 			
-			ap_wln_channel = cli_recv[38];
+			//ap_wln_channel = cli_recv[38];
 			cli_recv[recv_num] = 0;
 			eprintf("thread %d, msg=%s, IP=%s\n",id, cli_recv, inet_ntoa(addr.sin_addr));
 			//g_web_config.name[19] = 0;
@@ -2428,7 +2456,7 @@ int Send_ID_Command(void)
 	if (strstr(ret_buff,"ok"))
 	{
 		//set_artnet_enable(1);
-		cyg_mutex_unlock(&samd_mutex);
+		cyg_mutex_unlock(&samd_mutex);	
 		return (0);
 	}
 	//set_artnet_enable(1);
