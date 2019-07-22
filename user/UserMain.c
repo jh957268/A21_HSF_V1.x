@@ -1136,7 +1136,7 @@ void UserMain(void *arg)
 		}
 	}
 
-	ret1 = hfthread_create(client_thread_main,"udp_client_main",1024,(void*)1,AKS_PRIORITIES,NULL,NULL);
+	ret1 = hfthread_create(client_thread_main,"udp_client_main",1536,(void*)1,AKS_PRIORITIES,NULL,NULL);
 
 	if (HF_SUCCESS != ret1)
 	{
@@ -1147,7 +1147,7 @@ void UserMain(void *arg)
 		}
 	}	
 	
-	ret1 = hfthread_create(server_thread_main,"udp_server_main",1024,(void*)1,AKS_PRIORITIES,NULL,NULL);
+	ret1 = hfthread_create(server_thread_main,"udp_server_main",1536,(void*)1,AKS_PRIORITIES,NULL,NULL);
 
 	if (HF_SUCCESS != ret1)
 	{
