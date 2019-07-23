@@ -126,12 +126,14 @@ function Apply_back() {
 }
 
 function Apply_refresh() {
-	var f=document.HFA21TEST;
 
-	form2Cfg(f);
-	subForm(f,'do_constellation.html','CONSTELLATION_REFRESH',cPage);
-	setTimeout(function(){ reload_advance(); }, 5000);
+	//var f=document.HFA21TEST;
+	//form2Cfg(f);
+	//subForm(f,'do_constellation.html','CONSTELLATION_REFRESH',cPage);
+	//setTimeout(function(){ reload_advance(); }, 5000);
 	// cannot reload constellation here, it will be excuted before refresh is done
+	var URL = '/EN/advance.html';
+    document.location.href = URL;
 }
 
 </SCRIPT>
@@ -346,7 +348,7 @@ function updateFirmware(fwform, whichunit)
 		ifrm.width = "540";
 		ifrm.frameborder="0"
 		f.parentNode.appendChild(ifrm);
-		var html = '<body>Upgrade SAMD Firmware, Please Wait...</body>';
+		var html = '<body>Upgrade Firmware, Please Wait...</body>';
 		ifrm.contentWindow.document.open();
 		//alert("Alert2!");		
 		ifrm.contentWindow.document.write(html);
