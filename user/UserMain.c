@@ -98,7 +98,7 @@ char ebuffer[128];
 char at_rsp[96] = {0};
 char samd_ver[4] = {'1', '.', 'x', 0};
 char timo_ver[4] = {'1', '.', 'y', 0};
-char battery_info[32] = {0};
+char battery_info[32] = {0x31, 0};
 volatile char ipAddress[4]={};
 static char at_scan_rsp[1024];
 
@@ -1539,7 +1539,7 @@ static void server_thread_main(void* arg)
    /* server infinite loop */
   while(1) 
   {
-
+	hf_thread_delay(2000);
 	ratpac_get_str( CFG_str2id("AKS_NAME"), tmp_buff);
 	sprintf(client_list[0].node_name, "%s", tmp_buff);
 	ratpac_get_str( CFG_str2id("AKS_UNIVERSE"), tmp_buff);
@@ -1557,7 +1557,7 @@ static void server_thread_main(void* arg)
 		continue;
 	}
 #endif
-	hf_thread_delay(2000);
+	//hf_thread_delay(2000);
 	
 	if ((uint8_t)ipAddress[0] == 0)
 	{
