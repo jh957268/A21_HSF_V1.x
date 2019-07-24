@@ -326,6 +326,7 @@ function updateFirmware(fwform, whichunit)
 		m='Are you sure you want to upgrade?';
 	else
 	    m='CH????????';
+	event.srcElement.style.background='#ADECEA';	
 	if(confirm(m))
 	{	
 		var elemiFrm = document.getElementById('subIframeId');
@@ -348,7 +349,8 @@ function updateFirmware(fwform, whichunit)
 		ifrm.width = "540";
 		ifrm.frameborder="0"
 		f.parentNode.appendChild(ifrm);
-		var html = '<body>Upgrade Firmware, Please Wait...</body>';
+		//var html = '<body>Upgrade Firmware, Please Wait...</body>';
+		var html = '<body>' + 'Upgrade Firmware, Please Wait...' +  f.name + '</body>';
 		ifrm.contentWindow.document.open();
 		//alert("Alert2!");		
 		ifrm.contentWindow.document.write(html);
@@ -372,6 +374,10 @@ function updateFirmware(fwform, whichunit)
 		//subForm(f,'update_firmware.html','SAMD_UPG',cPage);
 		f.submit();
     }
+	else
+	{
+		event.srcElement.style.background='';
+	}
 }
 
 
