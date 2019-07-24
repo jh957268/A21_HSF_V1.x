@@ -98,6 +98,7 @@ function Apply_2()
 		m='Are you sure you want to upgrade?';
 	else
 	    m='你确定要升级吗?';
+	event.srcElement.style.background='#ADECEA';		
 	 if(confirm(m))
 	{
 	//document.getElementById("progressbar_id").style.visibility = "visible";
@@ -105,6 +106,10 @@ function Apply_2()
 	//initbar();
 	f.submit();
     }
+	else
+	{
+		event.srcElement.style.background='';
+	}		
 }
 
 function Apply_3(whichf)
@@ -118,7 +123,11 @@ function Apply_3(whichf)
 		else
 		alert("请选择文件!");
 		return ;
-	}  
+	}
+	//alert(event.srcElement.id);
+	event.srcElement.style.background='#ADECEA';
+	//document.getElementById("uploadSAMDApply").style.background='#993399';	
+	//this.style.background = #993399;
 	if(slanV=="en")
 		m='Are you sure you want to upgrade?';
 	else
@@ -145,7 +154,7 @@ function Apply_3(whichf)
 		ifrm.width = "540";
 		ifrm.frameborder="0"
 		f.parentNode.appendChild(ifrm);
-		var html = '<body>Upgrade Firmware, Please Wait...</body>';
+		var html = '<body>' + 'Upgrade Firmware, Please Wait...' +  f.name + '</body>';
 		ifrm.contentWindow.document.open();
 		ifrm.contentWindow.document.write(html);
 		ifrm.contentWindow.document.close();
@@ -166,6 +175,10 @@ function Apply_3(whichf)
 		//subForm(f,'update_firmware.html','SAMD_UPG',cPage);
 		f.submit();
     }
+	else
+	{
+		event.srcElement.style.background='';
+	}	
 }
 
 function init_adv()
