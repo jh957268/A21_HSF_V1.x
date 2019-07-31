@@ -47,7 +47,7 @@ int check_duplicate_ip(char *ip_addr);
 int ratpac_get_str(int id, char *val);
 int ratpac_set_str(int id, char *val);
 int Send_Battery_Command(void);
-void age_client_list(void);
+void age_client_list(int new);
 void populate_new_client(char *ip_ad, char *rcv_msg);
 void save_valid_client_entry(int i);
 
@@ -1470,6 +1470,7 @@ static void server_thread_main(void* arg)
   fd_set rset;
   struct timeval timeout;
   int i;
+  cyg_tick_count_t cur_tick;
 
   int broadcast = 1;
 
@@ -1537,6 +1538,76 @@ static void server_thread_main(void* arg)
   sprintf(client_list[0].ip_addr, "10.10.100.254");
   client_valid_num = 0;
    /* server infinite loop */
+ 
+	age_client_list(1);
+
+	cur_tick = cyg_current_time();
+	while (1)
+	{
+		FD_ZERO(&rset);
+		FD_SET(sd,&rset);
+		timeout.tv_sec= 2;
+		timeout.tv_usec= 0;
+		rc = select(sd+1, &rset, NULL, NULL, &timeout);
+		if ((cyg_current_time() - cur_tick) >= 200)   // every tick is 10ms, age every 2 seconds	
+		{
+			age_client_list(0);
+			cur_tick = cyg_current_time();
+		}
+
+		if (rc <= 0)
+		{
+			eprintf("No data within 3 seconds.\n");
+			refresh_clients = 0;
+			cur_tick = cyg_current_time();
+			continue;
+		}
+		if (FD_ISSET(sd, &rset))
+		{
+    		/* receive message */
+			memset(msg,0x0,MAX_MSG);
+    		cliLen = sizeof(cliAddr);
+    		n = recvfrom(sd, msg, MAX_MSG, 0, 
+		 		(struct sockaddr *) &cliAddr, &cliLen);
+
+    		if(n<0) {
+      			eprintf("cannot receive data \n");
+      			continue;
+    		}
+  
+    		/* print received message */
+    		eprintf("from %s:UDP%u : len=%d \n", 
+	   			inet_ntoa(cliAddr.sin_addr),
+	   			ntohs(cliAddr.sin_port), n);
+			for (i = 0; i < n; i++)
+			{
+				eprintf("%02x ", msg[i]);
+			}
+			eprintf("\r\n");
+			msg[19] = 0;
+			msg[22] = 0;
+			msg[26] = 0;
+			msg[36] = 0;
+				
+			char ip_addr[20];
+			sprintf(ip_addr, "%s", inet_ntoa(cliAddr.sin_addr));
+			populate_new_client(ip_addr, msg);
+#if 0			
+			if (0 == check_duplicate_ip(ip_addr))
+			{	
+				sprintf(client_list[client_valid_num].node_name, "%s", &msg[0]);
+				sprintf(client_list[client_valid_num].ip_addr, "%s", inet_ntoa(cliAddr.sin_addr));
+				sprintf(client_list[client_valid_num].universe, &msg[20]);
+				sprintf(client_list[client_valid_num].subnet, &msg[24]);
+				client_valid_num++;
+			}
+#endif			
+		}
+	}
+ 
+
+#if 0
+ 
   while(1) 
   {
 	hf_thread_delay(2000);
@@ -1548,7 +1619,7 @@ static void server_thread_main(void* arg)
 	sprintf(client_list[0].subnet, tmp_buff);
 	client_list[0].age_cnt = 3;
 	
-	age_client_list();
+	age_client_list(1);
 
 #if 0	
    	if (0 == refresh_clients)
@@ -1648,6 +1719,8 @@ static void server_thread_main(void* arg)
 	}
 
   }/* end of server infinite loop */
+  
+#endif 
 
 }
 
@@ -1781,10 +1854,17 @@ USER_FUNC static void client_thread_main(void* arg)
 			continue;
 		}			
 #endif
+		hf_thread_delay(2000);
+		
+		if ((uint8_t)ipAddress[0] == 0)
+		{
+			continue;
+		}
+		
 		if ( 1 /* FD_ISSET(sd, &rset) */)
 		{
     		/* receive message */
-		
+#if 0		
 			tmp = sizeof(addr);
 			recv_num = recvfrom(sd, cli_recv, 96, 0, (struct sockaddr *)&addr, (socklen_t*)&tmp);
 		
@@ -1796,6 +1876,8 @@ USER_FUNC static void client_thread_main(void* arg)
 			//ap_wln_channel = cli_recv[38];
 			cli_recv[recv_num] = 0;
 			eprintf("thread %d, msg=%s, IP=%s\n",id, cli_recv, inet_ntoa(addr.sin_addr));
+#endif
+			
 			//g_web_config.name[19] = 0;
 			//g_web_config.universe[2] = 0;
 			//eprintf("Node name = %s, Uni = %s\n", g_web_config.name, g_web_config.universe);
@@ -1813,7 +1895,8 @@ USER_FUNC static void client_thread_main(void* arg)
 			}
 			eprintf("\r\n");
 #endif
-			serv.sin_addr.s_addr = addr.sin_addr.s_addr;
+			// serv.sin_addr.s_addr = addr.sin_addr.s_addr;
+			serv.sin_addr.s_addr = 0xff000000 | ((uint8_t)ipAddress[2] << 16) | ((uint8_t)ipAddress[1] << 8) | (uint8_t)ipAddress[0];			
 			rc = sendto(sd, cli_recv, 40, 0, 
 				(struct sockaddr *) &serv, 
 				sizeof(serv));
@@ -2515,11 +2598,19 @@ void save_valid_client_entry(int i)
 }
 
 
-void age_client_list(void)
+void age_client_list(int new)
 {
 	int i;
 	struct in_addr   sin_addr;     // see struct in_addr, below
 	char *tmp;
+	
+	ratpac_get_str( CFG_str2id("AKS_NAME"), tmp_buff);
+	sprintf(client_list[0].node_name, "%s", tmp_buff);
+	ratpac_get_str( CFG_str2id("AKS_UNIVERSE"), tmp_buff);
+	sprintf(client_list[0].universe, tmp_buff);	
+	ratpac_get_str( CFG_str2id("AKS_SUBNET"), tmp_buff);
+	sprintf(client_list[0].subnet, tmp_buff);
+	client_list[0].age_cnt = 3;
 	
 	client_valid_list[0] = client_list[0];
 	snprintf(client_valid_list[0].baterry, 7, "%s", battery_info);
@@ -2531,11 +2622,14 @@ void age_client_list(void)
 	client_valid_num = 1;
 	
 	for (i = 1; i < MAX_NUM_ENTRY; i++)
-	{
-		
+	{	
 		if (client_list[i].age_cnt > 0)
 		{
-			if (--client_list[i].age_cnt > 0)
+			if (new)
+			{
+				save_valid_client_entry(i);
+			}
+			else if (--client_list[i].age_cnt > 0)
 			{
 				save_valid_client_entry(i);
 			}
@@ -2543,11 +2637,23 @@ void age_client_list(void)
 	}
 }
 
+
+void my_ip_address(void)
+{
+	char *tmp;
+	struct in_addr sin_addr;     // see struct in_addr, below
+	sin_addr.s_addr = ((uint8_t)ipAddress[3] << 24) | ((uint8_t)ipAddress[2] << 16) | ((uint8_t)ipAddress[1] << 8) | (uint8_t)ipAddress[0];
+	tmp = inet_ntoa(sin_addr);
+	snprintf(client_valid_list[0].ip_addr, 20, "%s", tmp);	
+}
+
 #define AGE_COUNT	3
 void populate_new_client(char *ip_ad, char *rcv_msg)
 {
 	int i;
 	
+	// set my ipaddress in case at start up, it is zero, since this value is get from the main loop
+	my_ip_address();
 	if (!strcmp(client_valid_list[0].ip_addr, ip_ad))
 	{
 		return;
@@ -2563,6 +2669,7 @@ void populate_new_client(char *ip_ad, char *rcv_msg)
 			sprintf(client_list[i].subnet, &rcv_msg[24]);
 			sprintf(client_list[i].baterry, &rcv_msg[30]);
 			client_list[i].age_cnt = AGE_COUNT;	
+			age_client_list(1);
 			return;
 		}
 	}
@@ -2577,7 +2684,8 @@ void populate_new_client(char *ip_ad, char *rcv_msg)
 			sprintf(client_list[i].universe, &rcv_msg[20]);
 			sprintf(client_list[i].subnet, &rcv_msg[24]);
 			sprintf(client_list[i].baterry, &rcv_msg[30]);
-			client_list[i].age_cnt = AGE_COUNT;	
+			client_list[i].age_cnt = AGE_COUNT;
+			age_client_list(1);
 			return;
 		}
 	}	
