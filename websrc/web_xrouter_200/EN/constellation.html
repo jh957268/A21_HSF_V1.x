@@ -336,7 +336,7 @@ function Apply_2() {
 		-->			
 		</table> 
 		<center>
-			<input type=button style="{width:120px;}" value="Refresh" onClick="Apply_refresh()" id="ap_Apply1_refresh_id">
+			<br><input type=button style="{width:120px;}" value="Refresh" onClick="Apply_refresh()" id="ap_Apply1_refresh_id">
 			<br><br><br><input type=button style="{width:120px;}" value="Firmware Update Mode" onClick="Apply_advance()" id="ap_Apply1_advance_id">
 		<!--  /*
 			<button type="button" onclick="window.location.href='/EN/constellation.html'">Refresh</button>
@@ -423,28 +423,16 @@ function setUniverse(url, eleID)
 	do_SetUniverse(url, subnet + '-' + strUser);
 }
 
-alert("consAdd");
-
-/*REAL
-<%
-CGI_MAP(AKS_CONS_NUM, CFG_AKS_CONS_NUM);
-%>
-REAL*/
-
-function consAddRow()
+function consAddRow(aks_num)
 {
 	var i;
 	var para;
 	var para1;
 	var element;
 	var para2;
-	alert("consAdd1");
-	var f=document.CONSTELLATION;
-	//var num= f.AKS_CONS_NUM.value;
 	var num;
-	alert("consAdd2" + aks_num);
 	num=1*aks_num;
-	alert("consAdd2");
+
 	for (i = 1; i < 1 + num; i++) 
 	{
 		para = document.createElement("tr");
@@ -460,13 +448,10 @@ function consAddRow()
 		element.appendChild(para);
 	}
 }
-alert("consAdd-1");
-//addCfg("AKS_CONS_NUM",212,"6");
-alert("consAdd-2");
-consAddRow();
-alert("consAdd-3");
+
 /*REAL
 <%
+CGI_MAP(AKS_CONS_NUM, CFG_AKS_CONS_NUM);
 CGI_MAP(AKS_CONS1, CFG_AKS_CONS1);
 CGI_MAP(AKS_CONS2, CFG_AKS_CONS2);
 CGI_MAP(AKS_CONS3, CFG_AKS_CONS3);
