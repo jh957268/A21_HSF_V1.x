@@ -425,7 +425,11 @@ function setUniverse(url, eleID)
 
 alert("consAdd");
 
-var aks_num = '6';
+/*REAL
+<%
+CGI_MAP(AKS_CONS_NUM, CFG_AKS_CONS_NUM);
+%>
+REAL*/
 
 function consAddRow()
 {
@@ -457,7 +461,7 @@ function consAddRow()
 	}
 }
 alert("consAdd-1");
-addCfg("AKS_CONS_NUM",212,"6");
+//addCfg("AKS_CONS_NUM",212,"6");
 alert("consAdd-2");
 consAddRow();
 alert("consAdd-3");
