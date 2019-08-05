@@ -874,7 +874,10 @@ void CGI_var_map(http_req *req, char *name, int id)
 			CFG_set_str(CFG_AKS_UNIVERSE,val);
 			CFG_save(0);
 			return;
-
+		case CFG_AKS_CONS_NUM:
+			ratpac_get_str(id, val);
+			WEB_printf(req, "%s", val);
+			break;
 		default:
 			idx = ratpac_get_str(id, val);
 			if (-1 == idx)
