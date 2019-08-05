@@ -17,6 +17,7 @@ addCfg("save_lan",120,"1");
 addCfg("AKS_CONS1",212,"Constellation test1           10.10.100.20");
 //addCfg("AKS_CONS2",212,"Constellation test2");
 //addCfg("AKS_NAME3",212,"JOO Test");
+//addCfg("AKS_CONS_NUM",212,"6");
 /*END_DEMO*/
 
 /*REAL
@@ -38,7 +39,7 @@ addCfg("AKS_CONS1",212,"Constellation test1           10.10.100.20");
 //CGI_MAP(AKS_CONS14, CFG_AKS_CONS14);
 //CGI_MAP(AKS_CONS15, CFG_AKS_CONS15);
 //CGI_MAP(AKS_CONS16, CFG_AKS_CONS16);
-
+//CGI_MAP(AKS_CONS_NUM, CFG_AKS_CONS_NUM);
 %>
 
 REAL*/
@@ -245,12 +246,13 @@ function Apply_2() {
 	
 
 	<form method=post name=CONSTELLATION>
-		<table width="540" border="1" cellspacing="1" cellpadding="3"   bordercolor="#9BABBD">
+		<table id="CONS_TBL" width="540" border="1" cellspacing="1" cellpadding="3"   bordercolor="#9BABBD">
 			<tr>
 				<td height="20">
 					<pre>Node Name       IP Address      Battery Identify   Wireless CRMX      Art-Sub/Universe</pre>
 				</td>
 			</tr>
+		<!--  /*			
 			<tr>
 				<td height="20">
 					<pre id="AKS_CONS1"></pre>
@@ -330,7 +332,8 @@ function Apply_2() {
 				<td height="20">
 					<pre id="AKS_CONS16"></pre>
 				</td>
-			</tr>				
+			</tr>
+		-->			
 		</table> 
 		<center>
 			<input type=button style="{width:120px;}" value="Refresh" onClick="Apply_refresh()" id="ap_Apply1_refresh_id">
@@ -420,6 +423,44 @@ function setUniverse(url, eleID)
 	do_SetUniverse(url, subnet + '-' + strUser);
 }
 
+alert("consAdd");
+
+var aks_num = '6';
+
+function consAddRow()
+{
+	var i;
+	var para;
+	var para1;
+	var element;
+	var para2;
+	alert("consAdd1");
+	var f=document.CONSTELLATION;
+	//var num= f.AKS_CONS_NUM.value;
+	var num;
+	alert("consAdd2" + aks_num);
+	num=1*aks_num;
+	alert("consAdd2");
+	for (i = 1; i < 1 + num; i++) 
+	{
+		para = document.createElement("tr");
+		para1 = document.createElement("td");
+		para1.setAttribute("height", "20");
+		para2 = document.createElement("pre");
+		para2.setAttribute("id", "AKS_CONS" + i);
+		para1.appendChild(para2);
+		//var node = document.createTextNode("This is new.");
+		para.appendChild(para1);
+
+		element = document.getElementById("CONS_TBL");
+		element.appendChild(para);
+	}
+}
+alert("consAdd-1");
+addCfg("AKS_CONS_NUM",212,"6");
+alert("consAdd-2");
+consAddRow();
+alert("consAdd-3");
 /*REAL
 <%
 CGI_MAP(AKS_CONS1, CFG_AKS_CONS1);
@@ -442,6 +483,8 @@ CGI_MAP(AKS_CONS16, CFG_AKS_CONS16);
 
 REAL*/
 
+//displayMsg('AKS_CONS1', 'This is a test <IMG SRC=\"../images/battery.png\">  \nThis is anothre test');
+//displayMsg('AKS_CONS2', 'This is added New row');
 </script>
 </BODY>
 </HTML>
