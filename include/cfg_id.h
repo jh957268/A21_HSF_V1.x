@@ -175,6 +175,8 @@
 #define CFG_AKS_MAIN_XLR				CFG_USER_(71,CFG_TYPE_STR)
 #define CFG_LED_G						CFG_USER_(72,CFG_TYPE_STR)
 #define CFG_LED_B						CFG_USER_(73,CFG_TYPE_STR)
+#define CFG_AKS_CONS_NUM				CFG_USER_(74,CFG_TYPE_STR)
+
 
 // M2M: gohuy
 #define CFG_M2M_(idx,type) 			CFG_ID_(CFG_ID_M2M,idx,type,0)
