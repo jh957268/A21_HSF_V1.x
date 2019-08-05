@@ -2068,9 +2068,12 @@ int ratpac_get_str(int id, char *val)
 		case CFG_AKS_USE_XLR:
 			snprintf(val, 2, "%s", g_web_config.use_xlr);			
 			break;
-		case CFG_AKS_MAIN_XLR:
+		case CFG_AKS_MAIN_XLR:	
 			snprintf(val, 2, "%s", g_web_config.main_xlr);			
-			break;				
+			break;	
+		case CFG_AKS_CONS_NUM:
+			snprintf(val, 2, "%d", client_valid_num);
+			break;
 		default:
 			return -1;
 	}
