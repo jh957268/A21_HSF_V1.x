@@ -876,7 +876,8 @@ void CGI_var_map(http_req *req, char *name, int id)
 			return;
 		case CFG_AKS_CONS_NUM:
 			ratpac_get_str(id, val);
-			WEB_printf(req, "var aks_num = '%s'",val);			// last one
+			WEB_printf(req, "consAddRow('%s');\n",val);			
+
 			break;
 		default:
 			idx = ratpac_get_str(id, val);
