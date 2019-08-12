@@ -16,13 +16,13 @@ BUILD_DATE := $(shell date +%F%H%M)
 ifeq ($(VER),)
 VER = 0.00
 endif
-IMAGE_NAME = eCos
+#IMAGE_NAME = eCos
 
 PATH :=$(ECOS_TOOL_PATH):$(ECOS_MIPSTOOL_PATH):$(PATH)
 export PATH ECOS_REPOSITORY BRANCH BOOT_CODE PRJ_NAME CHIPSET WIFI_MODE TARGET TFTP_DIR IMAGE_NAME CONFIG_CROSS_COMPILER_PATH WEB_LANG
 
 ifeq ($(IMAGE_NAME),)
-IMAGE_NAME = eCos
+IMAGE_NAME = AKS
 endif
 HF_SDK_VERSION=4.02.10.08
 
@@ -42,7 +42,7 @@ TOPDIR=$(shell pwd)
 
 export TOPDIR ENDIAN CROSS_PREFIX
 
-CFLAGS        = -I$(shell pwd)/include -I$(shell pwd)/include/tcpip/include -DBUILD_VER=$(VER)
+CFLAGS        = -I$(shell pwd)/include -I$(shell pwd)/include/tcpip/include -DBUILD_VER=$(VER) -DBUILD_IMG=$(IMAGE_NAME)
 CXXFLAGS      = $(CFLAGS)
 LDFLAGS       = -nostartfiles -Ttarget.ld -L./lib
 LDMAP          = -Wl,--cref -Wl,-Map,xrouterLink.map -Wl,-O2
