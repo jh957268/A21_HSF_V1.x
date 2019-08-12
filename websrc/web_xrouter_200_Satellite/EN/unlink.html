@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<body>
+<link rel="stylesheet" href="../style/normal_ws.css" type="text/css">
+<SCRIPT language=JavaScript src="../utils.js"></SCRIPT>
+<SCRIPT language=JavaScript src=spec.js></SCRIPT>
+
+<h1>UNLINK Command</h1>
+
+<p>UNLINK command sent.</p>
+
+<hl><pre id="SET_UNLINK"></pre></hl>
+
+<script language=JavaScript>
+
+function displayMsg(eleID, strMsg)
+{
+	var strMessage1 = document.getElementById(eleID) ;
+	if (strMessage1)
+	{
+		strMessage1.innerHTML = strMsg;
+	}
+}
+
+/*REAL
+<%
+CGI_MAP(SET_UNLINK, CFG_SET_UNLINK);
+%>
+
+REAL*/
+
+</script>
+</body>
+</html>
