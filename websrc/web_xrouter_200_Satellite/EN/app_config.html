@@ -1,0 +1,300 @@
+<HTML>
+<HEAD>
+<META http-equiv="Pragma" content="no-cache">
+<META http-equiv=Content-Type 	content="text/html" charset="unicode">
+<TITLE>Satellite Configuration</TITLE>
+<SCRIPT language=JavaScript src="../utils.js"></SCRIPT>
+<SCRIPT language=JavaScript src=spec.js></SCRIPT>
+<link rel="stylesheet" href="../style/normal_ws.css" type="text/css">
+<SCRIPT language=JavaScript>
+/*DEMO*/
+
+
+addCfg("uart_baudrate",511,"15");
+addCfg("uart_bits",512,"2");
+addCfg("uart_parity",513,"2");
+addCfg("uart_stop",514,"1");
+addCfg("uart_fc",515,"1");
+
+addCfg("RMIP",521,"10.10.10.200");
+addCfg("RMPORT",522,"80");
+addCfg("autoframe_mode",523,"enable");
+addCfg("AutoFrame_Time",524,"250");
+addCfg("AutoFrame_Length",525,"250");
+
+
+addCfg("net_mode",535,"client");
+addCfg("net_protocol",536,"TCP");
+addCfg("net_port",537,"8899");
+addCfg("net_ip",538,"10.10.10.100");
+addCfg("tcp_ms",539,"32");
+addCfg("tcp_to",540,"300");
+
+/*END_DEMO*/
+/*REAL
+<%
+CGI_MAP(uart_baudrate,CFG_M2M_UART_BAUD);
+CGI_MAP(uart_bits,CFG_M2M_UART_BITS);
+CGI_MAP(uart_parity,CFG_M2M_UART_PARITY);
+CGI_MAP(uart_stop,CFG_M2M_UART_STOP);
+CGI_MAP(uart_fc,CFG_M2M_UART_FC);
+
+CGI_MAP(RMIP, CFG_SYS_RM_IP);
+CGI_MAP(RMPORT,CFG_SYS_RM_PORT);
+CGI_MAP(autoframe_mode,CFG_M2M_UART_AF);
+CGI_MAP(AutoFrame_Time,CFG_M2M_UART_AFT);
+CGI_MAP(AutoFrame_Length,CFG_M2M_UART_AFL);
+CGI_MAP(net_mode,CFG_M2M_NET_MODE);
+CGI_MAP(net_protocol,CFG_M2M_NET_PROC);
+CGI_MAP(net_port,CFG_M2M_NET_PORT);
+CGI_MAP(net_ip,CFG_M2M_NET_SERADD);
+CGI_MAP(tcp_ms,CFG_M2M_NET_MAXSK);
+CGI_MAP(tcp_to,CFG_M2M_NET_TCPTO);
+%>
+
+REAL*/
+
+
+</SCRIPT>
+</HEAD>
+<BODY leftmargin=0 topmargin=0><a name="Back"><p>
+<h1 id="apconfigTitle">AKS Plus/Satellite Instructions</h1>
+<p><strong>---Index---</strong></p>
+<p><strong></a><a href="#Intro">Intro and Tips</strong><strong><br /></strong></p>
+<p><strong></a><a href="#Buttons">Buttons and LEDs</strong></p>
+<p><strong></a><a href="#Blink">Blink Codes</strong></p>
+<p><strong></a><a href="#Web">Web Interface</strong></p>
+<p><strong></a><a href="#Main">Main Settings</strong></p>
+<p><strong></a><a href="#Gaffers">Gaffer&rsquo;s Window</strong></p>
+<p><strong></a><a href="#AP">AP (Host) Settings</strong></p>
+<p><strong></a><a href="#STA">STA (WiFi Client) Settings</strong></p>
+<p><strong></a><a href="#Device">Device Management</strong></p>
+<p><strong></a><a href="#Constellation">Constellation</strong></p>
+<p><strong></a><a href="#Firmware">Firmware Update Mode</strong></p>
+<p><strong></a><a href="#Factory">Factory Reset</strong></p>
+<p><strong></a><a href="#Legal">Legal Info</strong></p></a>
+<p><strong>----------</strong><strong><br /><br /></strong></p>
+<p><a href="#Back">Back to Top</a><br><a name="Intro"><span style="font-weight: 400;"><br /></span><strong>Intro</strong></p>
+<p><span style="font-weight: 400;">Hello and welcome to the new generation of wireless lighting control! This page will help you get the most out of your AKS, AKS Plus, or Satellite device. To start off, here are some quick tips:</span><span style="font-weight: 400;"><br /><br /></span></p>
+<p><span style="font-weight: 400;">-To start transmitting to unlinked Cintennas or CRMX fixtures, click the LINK button on your device or on the web interface.</span></p>
+<p><span style="font-weight: 400;">-To unlink all linked Cintennas or CRMX fixtures in range, hold RF LINK for 5 seconds or click &ldquo;Unlink&rdquo; on the web interface.</span></p>
+<p><span style="font-weight: 400;">-The DMX light will blink with every DMX frame received. Use it to indicate signal health!</span></p>
+<p><span style="font-weight: 400;">-If Art-Net or sACN&nbsp; is being sent, but no DMX signal appears, check your settings to ensure correct protocol and universe. Some consoles report Art-Net universe numbers differently!&nbsp;</span></p>
+<p><span style="font-weight: 400;">-There are three modes. To switch, simply click power 2x for WiFi Client, 3x for WiFi Host, and 5x for Ethernet Client. </span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;">-All settings can be reverted by powering on while holding RF LINK. DMX will blink when done.</span><span style="font-weight: 400;"><br /><br /></span></p>
+<p><a href="#Back">Back to Top</a><br><a name="Buttons"><span style="font-weight: 400;"><br /></span><strong>BUTTONS and LEDS</strong></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: 400;"><B>RF LINK Button</B></span></p>
+<p><span style="font-weight: 400;">-The RF LINK Button is used to Link and Unlink the CRMX transmitter to its receivers. It is found in the upper right-hand corner of the Satellite.</span></p>
+<p><span style="font-weight: 400;">To Link: When unit is on, click the RF Link button to start the automatic linking process. Any unlinked crmx device in range will connect.</span></p>
+<p><span style="font-weight: 400;">To Unlink: Press and hold RF Link button. All linked units in range will receive the Unlink signal and disconnect. </span><BR></p>
+<p><span style="font-weight: 400;"><B>CRMX Status Indicator</B><br /></span></p>
+<p><span style="font-weight: 400;">This LED indicates CRMX Transmitter operation. It is solid when in transmit mode, and blinks when linking.<br><br></span></p>
+<p><span style="font-weight: 400;"><B>DMX Indicator</B></span></p>
+<p><span style="font-weight: 400;">-The DMX LED indicates that DMX data is being received by the unit and transmitted via CRMX.</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: 400;"><B>WIFI/Network Status Indicator</B></span></p>
+<p><span style="font-weight: 400;">-The WiFi LED indicates the mode and operational status of the network portion of the device. It will be solid in AP mode, blink when in WiFi Client mode, and &ldquo;Anti-Blink&rdquo; when in Ethernet Client mode. The blink will become a double-blink when the unit is linked to a host.</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: 400;"><B>BATT STAT/Charging Indicator</B></span></p>
+<p><span style="font-weight: 400;">This LED indicates that the unit is plugged in and charging. It can also indicate a possible battery error. </span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;"><br /></span></p>
+<p><span style="font-weight: 400;"><b>LO BATT LED</b></span></p>
+<p><span style="font-weight: 400;">-This LED indicates that the battery level is low. It blinks quicker as battery level drops.</span></p>
+<p><span style="font-weight: 400;"><B>POWER Button</B></span></p>
+<p><span style="font-weight: 400;">-The POWER Button is used to power on the unit as well as change its mode. It is found in on the center face of the Satellite.</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: 400;"><B>Power On/Off -&nbsp;</B></span></p>
+<p><span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Power on the device by holding Power button for a few seconds when off.</span></p>
+<p><span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Power off AKS by holding power button for a few seconds when on.</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: 400;"><b>Enable Access Point (AP) mode:</b></span></p>
+<p><span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Triple-click the Power button. WiFi light is solid on this mode. Other devices including iPads, WiFi enabled fixtures, and other AKS or Satellite units can connect to an AKS in this mode. Devices connected via Ethernet will share the network with WiFi. DHCP is enabled in AP mode by default. </span><span style="font-weight: 400;"><br /><br /></span></p>
+<p><span style="font-weight: 400;"><b>Enable WiFi Client (STA) mode:</b></span></p>
+<p><span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Double-click the Power button. Power Indicator will Blink to indicate serial command (AT) activity. When process is complete, WiFi light will begin blinking as described below. Device will seek out host Access Point with Ratpac AKS SSID. The Ethernet port exists behind a gateway in this mode, and the unit can be accessed at 10.10.99.254</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: 400;"><b>Enable Ethernet Client mode:</b></span></p>
+<p><span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Five-click the Power button. Power light will Blink as configuration occurs, which may take a minute. WiFi light will illuminate with occasional &ldquo;anti-blink&rdquo; when ready. WiFi will be disabled in this mode, and device will connect via Ethernet port to suitable hosts such as an AKS or router with DHCP server capability.&nbsp;</span></p>
+<p>&nbsp;</p>
+<p><a href="#Back">Back to Top</a><br><a name="Blink">
+<p>&nbsp;</p>
+<p><strong>Understanding the LED Blink Codes</strong></p>
+<p><strong>○</strong><span style="font-weight: 400;"> = &ldquo;On&rdquo;</span> <span style="font-weight: 400;">_ = &ldquo;Off&rdquo;</span></p>
+<p><span style="font-weight: 400;"><br /></span><strong>CRMX Status Indicator:</strong></p>
+<p><strong>Normal Transmit Mode</strong></p>
+<p><span style="font-weight: 400;">○○○○○○○○○○○○○○○○○○○○</span> <span style="font-weight: 400;">(Always On)</span></p>
+<p>&nbsp;</p>
+<p><strong>Linking (RF Link pressed)</strong></p>
+<p><span style="font-weight: 400;">○○__○○__○○__○○__○○__</span> <span style="font-weight: 400;">Fast Blinking</span></p>
+<p>&nbsp;</p>
+<p><strong>FW Update Mode (Triggered from PCB, AKS Only)</strong></p>
+<p><span style="font-weight: 400;">○○○○____○○○○____○○○○</span> <span style="font-weight: 400;">Slow Blinking</span></p>
+<p>&nbsp;</p>
+<p><strong>DMX Indicator:</strong></p>
+<p><strong>DMX Packet Acknowledgement</strong></p>
+<p><span style="font-weight: 400;">○_○_○_○_○_○_○_○_○_○_</span> <span style="font-weight: 400;">Fast Blinking</span></p>
+<p><span style="font-weight: 400;"><br /></span> <strong>Local DMX from XLR Package</strong></p>
+<p><span style="font-weight: 400;">○○○○○○○○○○○○○○○○○○○</span> <span style="font-weight: 400;">Always On</span></p>
+<p><span style="font-weight: 400;"><br /></span><strong>WIFI/Network Status Indicator</strong></p>
+<p><strong>AP Mode</strong></p>
+<p><span style="font-weight: 400;">○○○○○○○○○○○○○○○○○○○</span> <span style="font-weight: 400;">Always On</span></p>
+<p>&nbsp;</p>
+<p><strong>STA (WiFi Client) Mode (Disconnected from Host)</strong></p>
+<p><span style="font-weight: 400;">___○___○___○___○___○</span> <span style="font-weight: 400;">Blink</span></p>
+<p>&nbsp;</p>
+<p><strong>STA Mode (Connected to Host, accessible by Constellation)</strong></p>
+<p><span style="font-weight: 400;">○_○___○_○___○_○___○_○</span> <span style="font-weight: 400;">Double Blink</span></p>
+<p>&nbsp;</p>
+<p><strong>ETH Client Mode (Disconnected)</strong><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;">○○○○_○○○○_○○○○_○○○○_</span> <span style="font-weight: 400;">Anti-Blink</span></p>
+<p><span style="font-weight: 400;"><br /></span><strong>ETH Client Mode (Connected to Host, accessible by Constellation)</strong></p>
+<p><span style="font-weight: 400;">○○○○_○_○○○○_○_○○○○_○_</span> <span style="font-weight: 400;">Double Anti-Blink</span></p>
+<p><span style="font-weight: 400;"><br /></span><strong>Err/WiFi No Response command</strong></p>
+<p><span style="font-weight: 400;">○○__○○__○○__○○__○○__</span> <span style="font-weight: 400;">Cycle On/Off</span><span style="font-weight: 400;"><br /><br /></span></p>
+<p><strong>POWER</strong><span style="font-weight: 400;"><br /></span> <strong>Unit is Powered On</strong></p>
+<p><span style="font-weight: 400;">○○○○○○○○○○○○○○○○○○○○</span> <span style="font-weight: 400;">Always On</span></p>
+<p><span style="font-weight: 400;"><br /></span> <strong>Mode Change Acknowledgement</strong></p>
+<p><span style="font-weight: 400;">○○__○○__○○___________</span> <span style="font-weight: 400;">Triple Blink</span></p>
+<p><span style="font-weight: 400;"><br /></span> <strong>Unit is Configuring (Up to 1 minute)</strong></p>
+<p><span style="font-weight: 400;">_○_○○_○__○○_○___○○___</span> <span style="font-weight: 400;">Random Blink</span></p>
+<p><br /><br /></p>
+<p><strong>Battery Status</strong></p>
+<p><strong>Unit is Charging (or topped-off)</strong></p>
+<p><span style="font-weight: 400;">○○○○○○○○○○○○○○○○○○○○</span> <span style="font-weight: 400;">Always On</span></p>
+<p>&nbsp;</p>
+<p><strong>Battery is disconnected/Battery Error</strong></p>
+<p><span style="font-weight: 400;">○_○_○_○_○_○_○_○_○_○_</span> <span style="font-weight: 400;">Fast Blinking</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: 400;">LO BATT (Values and blinks are approximate)</span><span style="font-weight: 400;"><br /></span> <strong>Battery under ~50</strong><span style="font-weight: 400;"><br /></span> <span style="font-weight: 400;">○______○______○______</span> <span style="font-weight: 400;">Slow Blink</span></p>
+<p><span style="font-weight: 400;"><br /></span> <strong>Battery under ~40</strong></p>
+<p><span style="font-weight: 400;">○___○___○___○___○___○</span> <span style="font-weight: 400;">Medium Blink</span></p>
+<p>&nbsp;</p>
+<p><strong>Battery under ~20</strong><strong><br /></strong> <span style="font-weight: 400;">○__○__○__○__○__○__○__</span> <span style="font-weight: 400;">Quicker Blink</span></p>
+<p>&nbsp;</p>
+<p><strong>Battery Almost Depleted</strong><span style="font-weight: 400;"><br /></span> <span style="font-weight: 400;">○○○○○○○○○○○○○○○○○○○○○</span> <span style="font-weight: 400;">Always On</span></p>
+
+
+
+
+
+
+<p><strong>Web Interface</strong></p>
+<p><span style="font-weight: 400;">The Web interface can be accessed by entering the device&rsquo;s IP address into a browser. In Host/AP mode, the default IP address is 10.10.100.254. In WiFi Client and Eth Client mode, the unit is dynamically assigned an IP address. When accessing a unit in WiFi Client mode directly via the local Ethernet port, the unit can be accessed at 10.10.99.254.&nbsp;</span></p>
+<p>&nbsp;</p>
+<p><strong>Main Settings</strong></p>
+<p><span style="font-weight: 400;">The Main Settings Window will give you everything you need to configure a single AKS or Satellite unit.&nbsp;</span></p>
+<p><br /><br /></p>
+<p><span style="font-weight: 400;">Mode - This is network mode the unit is currently in. It can be Host, WiFi Client, or Eth Client.</span></p>
+<p><span style="font-weight: 400;">IP - This is the IP of the unit on its main network.&nbsp;</span></p>
+<p><span style="font-weight: 400;">Battery Level - This shows the battery level of the unit.</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: 400;">ID - This button causes the unit to blink its LEDs and identify itself.&nbsp;</span></p>
+<p><span style="font-weight: 400;">Link/Unlink - These buttons will Link or Unlink the CRMX transmitter remotely.</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: 400;">Art-Net/sACN Settings</span></p>
+<p><span style="font-weight: 400;">The AKS and Satellite now support sACN as well as Art-Net. </span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;">Node Name: this name will be displayed in Art Poll Replies as well as Constellation.</span></p>
+<p><span style="font-weight: 400;">Art-Net Subnet and Universe: Sets Art-Net Universe. Must be Net 0.</span></p>
+<p><span style="font-weight: 400;">sACN Universe: Sets sACN Universe and Multicast Subscription address. Requires Restart.&nbsp;</span></p>
+<p><span style="font-weight: 400;">Protocol: Choose between Art-Net and sACN. Note: Changing requires Restart.&nbsp;</span></p>
+<p><span style="font-weight: 400;">Press &ldquo;Apply&rdquo; to save settings before moving on.</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: 400;">Output Power and Color ID</span></p>
+<p><span style="font-weight: 400;">CRMX Power Level - Sets the output power of the CRMX Transmitter.&nbsp;</span></p>
+<p><span style="font-weight: 400;">Color ID: On Satellite, this will set the LED Color. All compatible receivers will reflect this value.</span></p>
+<p><a href="#Back">Back to Top</a><br><a name="Gaffers"><span style="font-weight: 400;"><br /></span><strong>Gaffer&rsquo;s Window</strong><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;">The Gaffer&rsquo;s Window allows a second input source to control a range of channels on a single universe. To use, click &ldquo;Enable&rdquo;, and select the range of channels to be affected as well as the universe assignment of the second input source (must be different from main Art Net input universe). The signals will automatically be mixed.&nbsp; On the AKS, the ability to optionally use the XLR input as either the primary or windowed universe can be enabled through the checkboxes. </span></p>
+<p><br /><br /></p>
+<p><a href="#Back">Back to Top</a<br><br><a name="AP"><strong>AP (Host) Interface Settings</strong><strong><br /></strong><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;">Network Mode - allows 802.11b/g/n or combinations of these standards to be selected. This setting can be used to increase compatibility with older tablets.&nbsp;</span></p>
+<p><span style="font-weight: 400;">Default: &ldquo;11b/g/n mixed mode&rdquo;</span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;">Network Name (SSID) - the WiFi Network name. It can be optionally hidden.</span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;">Default &ldquo;Ratpac AKS&rdquo;</span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;">Frequency (Channel) - the WiFi Access Point channel. To reduce interference, it is recommended that only 1, 6, or 11 are chosen. </span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;">Default: &ldquo;1&rdquo;</span><span style="font-weight: 400;"><br /></span><strong>Caution: &ldquo;AutoSelect&rdquo; disables the CRMX Keep-Out Window!</strong> <span style="font-weight: 400;"><br /></span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;">Wireless Distribution System (WDS) - an optional feature set for infrastructural networks. This feature is not officially supported in the AKS, though it has been left functional for those who need it.</span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;">&nbsp;</span></p>
+<p><span style="font-weight: 400;">Security Mode - selects the WiFi encryption method. It is recommended to use the highest one supported by connecting devices. </span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;">Default: &ldquo;WPA2-PSK&rdquo;</span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;">WPA Algorithms - set which encryption algorithm shall be used. AES is recommended, but TKIPAES will allow devices to choose whichever they are compatible with.</span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;">Default: &ldquo;TKIPAES&rdquo;</span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;">Pass Phrase - the WiFi Password.&nbsp;</span></p>
+<p><span style="font-weight: 400;">Default: &ldquo;quietonset&rdquo;</span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;">IP Address - refers to the address in Host mode as well as Art-Net Node address.</span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;">Default: &ldquo;10.10.100.254&rdquo;</span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;">Subnet Mask - allows or filters ranges of IP addresses for the sake of network efficiency. </span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;">Default: &ldquo;255.255.255.0&rdquo; or &ldquo;255.0.0.0&rdquo;</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: 400;">Server address - should be the first three entries of the IP address with the fourth as &ldquo;255&rdquo; </span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;">This allows Art-Poll replies to be sent to all devices on the network in range.</span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;">Default: &ldquo;10.10.100.255&rdquo;</span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;"><br /></span>
+<a href="#Back">Back to Top</a><br><br><a name="STA"><strong>STA (WiFi Client) Interface Setting</strong><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;">To enable Station Mode, double-click the Power Button. Unit will automatically link to the nearest WiFi router with the name &ldquo;Ratpac AKS&rdquo; and password &ldquo;quietonset&rdquo;</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: 400;">AP&rsquo;s SSID, which represents the host network, can be configured by pressing the &ldquo;Search&rdquo; button. A list of nearby networks will appear. If the desired network does not show up, click &ldquo;Refresh.&rdquo; This process may need to be repeated. When the desired network is found, select it and hit &ldquo;Apply.&rdquo; &nbsp; </span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;">Enter the Passphrase, and press &ldquo;Apply.&rdquo; </span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;">Default SSID: &ldquo;Ratpac AKS&rdquo;</span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;">Default Pass: &ldquo;quietonset&rdquo;</span><span style="font-weight: 400;"><br /><br /></span></p>
+<p><a href="#Back">Back to Top</a><br><br><a name="Device"><strong>Device Management</strong></p>
+
+<p><span style="font-weight: 400;">Administrator Settings - Sets a username and password for the web interface (Optional)</span></p>
+
+<p><span style="font-weight: 400;">Restart Module - Restarts the network portion of the unit</span></p>
+
+<p><span style="font-weight: 400;">Update Module Firmware - Updates firmware for Network module</span></p>
+
+<p><span style="font-weight: 400;">Update SAMD Firmware - Updates Main Processor Firmware</span></p>
+
+<p><span style="font-weight: 400;">Advanced Settings</span></p>
+<p><span style="font-weight: 400;">Art Net and sACN port: Device listens on these ports. Default port 6454, port 5568</span><span style="font-weight: 400;"><br /></span>
+<span style="font-weight: 400;">CRMX Channel Block Width - Size of CRMX Keepout Window</span></p>
+<p><span style="font-weight: 400;">CRMX Second Channel Block - Opens a second Keepout Window</span></p>
+<p><br /></p>
+<p><a href="#Back">Back to Top</a><br><br><a name="Constellation"><strong>Constellation</strong><strong><br /><br /></strong></p>
+<p><span style="font-weight: 400;">Constellation is the new, easy method to connect many AKS or Satellite units to a single network and configure multiple units at once. After connecting all clients to a host via WiFi or Ethernet switch, the list will automatically populate showing each unit. </span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;">Node Name - Art Poll Name of the client unit, also a link to its main page</span></p>
+<p><span style="font-weight: 400;">IP Address - Address of the client unit</span></p>
+<p><span style="font-weight: 400;">Battery - Battery level of the client unit</span></p>
+<p><span style="font-weight: 400;">Identify - Causes client unit to blink for identification purposes</span></p>
+<p><span style="font-weight: 400;">Link - Links Wireless CRMX Receivers to client unit</span></p>
+<p><span style="font-weight: 400;">Unlink - Sends Unlink Command - linked receivers must be in range to be unlinked</span></p>
+<p><span style="font-weight: 400;">Art-Net Sub/Universe - Client unit&rsquo;s Art-net Universe. Click &ldquo;Set&rdquo; to change.</span></p>
+<p><span style="font-weight: 400;">&ldquo;Refresh - Refreshes the list of clients</span></p>
+<p><a href="#Back">Back to Top</a><br><a name="Firmware"><span style="font-weight: 400;"><br /></span><strong>Firmware Update Mode</strong></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: 400;">In addition to updating firmware via the Device Manager page, firmware can also be updated for several units at once using the Firmware Update Mode. This mode shows all units that are present in constellation and options to update each of their firmwares. </span><span style="font-weight: 400;"><br /><br /></span></p>
+<p><span style="font-weight: 400;">Node Name - Art Poll Name of the unit, also a link to its main page</span></p>
+<p><span style="font-weight: 400;">IP Address - Address of the unit</span></p>
+<p><span style="font-weight: 400;">Battery - Battery level of the unit. Ensure this is at least 50% before updating!</span></p>
+<p><span style="font-weight: 400;">Identify - Causes unit to blink for identification purposes</span></p>
+<p><span style="font-weight: 400;">eCos Ver. - Current WiFi firmware version. &ldquo;Update&rdquo; loads file below.</span></p>
+<p><span style="font-weight: 400;">SAMD Ver. -Current Processor firmware version. &ldquo;Update&rdquo; loads file below.</span></p>
+<p><span style="font-weight: 400;">Refresh - Refreshes the list of clients</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: 400;">eCos Firmware Location: Choose the WiFi Firmware File to upload.</span></p>
+<p><span style="font-weight: 400;">SAMD Firmware Location: Choose the Processor Firmware File to upload.&nbsp;</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: 400;">Devices in list can be updated by clicking &ldquo;Update&rdquo; after choosing the file. A status message will appear below the list.&nbsp;</span></p>
+<p>&nbsp;</p>
+<p><a href="#Back">Back to Top</a><br><br><a name="Factory"><strong>Factory Reset:</strong></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: 400;">To reset all settings to factory default and revert to AP mode, press and hold both Power and RF Link buttons when unit is off. The device will power on and automatically reconfigure itself. The DMX light will Blink when done.&nbsp;</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;"><br /></span>
+<a href="#Back">Back to Top</a><br><br><a name="Legal"><strong>Legal Info:</strong><span style="font-weight: 400;"><br /><br /></span></p>
+<p><span style="font-weight: 400;">FCC Declaration of Conformity</span></p>
+<p><span style="font-weight: 400;">We LumenRadio AB Svangatan 2B, 41668 Gothenburg, Sweden, declare under our sole responsibility that 800-8105, TiMo RX RDM and 800-8106, TiMo FX RDM, comply with Part 15 of FCC Rules. Operation is subject to the following two conditions:</span></p>
+<ul>
+<li><span style="font-weight: 400;"> This device may not cause harmful interference.</span></li>
+<li><span style="font-weight: 400;"> This device must accept any interference received, including interference that may cause undesired operation.</span></p></ul>
+<p>&nbsp;</p>
+<p><span style="font-weight: 400;">FCC Radio Frequency Interference Warnings &amp; Instructions</span></p>
+<p><span style="font-weight: 400;">This equipment has been tested and found to comply with the limits for a Class B digital device, pursuant to Part 15 of the FCC Rules. These limits are designed to provide reasonable protection against harmful interference in a residential installation. This equipment uses and can radiate radio frequency energy and, if not installed and used in accordance with the instructions, may cause harmful interference to radio communications. However, there is no guarantee that interference will not occur in a particular installation. If this equipment does cause harmful interference to radio or television reception, which can be determined by turning the equipment off and on, the user is encouraged to try to correct the interference by one or more of the following methods:</span></p>
+<ul>
+<li><span style="font-weight: 400;"> Reorient or relocate the receiving antenna.</span></li>
+<li><span style="font-weight: 400;"> Increase the separation between the equipment and the receiver.</span></li>
+<li><span style="font-weight: 400;"> Connect the equipment into an electrical outlet on a circuit different from that which the radio receiver is connected.</span></p></ul>
+<ul>
+<li><span style="font-weight: 400;"> Consult the dealer or an experienced radio/TV technician for help.</span></li>
+</ul>
+<p>&nbsp;</p>
+<p><span style="font-weight: 400;">Modifications made to the product, unless expressly approved by LumenRadio AB and Innovative Dimmers LLC., could void the user&rsquo;s right to operate the equipment.</span></p>
+<p><br /><br /><br /></p>
+<p><span style="font-weight: 400;">Recycling and Disposal: Device contains Li-ion battery, do not discard in trash.&nbsp;</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: 400;">For disposal, please deposit at an appropriate recycling facility or simply send to:</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: 400;">Ratpac Dimmers</span></p>
+<p><span style="font-weight: 400;">7508 Tyrone Ave</span></p>
+<p><span style="font-weight: 400;">Van Nuys, CA 91401</span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;">United States of America</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: 400;">Industry Canada statement</span></p>
+<p><span style="font-weight: 400;">This digital apparatus does not exceed the Class B limits for radio noise emissions from</span></p>
+<p><span style="font-weight: 400;">&nbsp;digital apparatus set out in the Radio Interference Regulations of the Canadian&nbsp;</span></p>
+<p><span style="font-weight: 400;">Department of Communications.</span></p>
+<p><span style="font-weight: 400;">Le resent appareil numerique n&eacute;met pas de bruits radio&eacute;lectriques d&eacute;passant les limites applicables aux appareils num&eacute;riques de la classe B prescrites dans le R&eacute;glement sur le broullage radio&eacute;lectrique &eacute;dict&eacute; par le minist&eacute;re des Communications du Canada.&nbsp;</span></p>
+<p><span style="font-weight: 400;">CE</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: 400;">Innovative Dimmers declares that the Cintenna product family (AKS, TX, RX, and RX Battery) complies with the essential requirements and other relevant provisions of CE standards for safety and RF exposure. LumenRadio declares that 800-8105 TiMo RX RDM and 800-8106 TiMo FX RDM comply with the Essential Requirements of RED (Radio Equipment Directive) of the European Union (2014/53/EU). TiMo RX RDM and TiMO FX RDM meet the ETSI EN 300 328 V1.8.1 and ETSI EN 300 328 V1.9.1 conformance standards for radio performance.</span></p>
+<p><span style="font-weight: 400;">CONTAINS:</span></p>
+<p><span style="font-weight: 400;">FCC ID: XRSCRMXTIMO101 or FCC ID:</span><span style="font-weight: 400;">XRSTIMOMWAN201</span></p>
+<p><span style="font-weight: 400;">FCC ID: 2ACSV-HF-A21-SMT</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: 400;">No User Serviceable parts inside.</span></p>
+<p><span style="font-weight: 400;">AKS Contains IEC62133 and UN DOT 38.3 Compliant Li-Ion Battery (10400mAh).</span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;">Cintenna RX Contains IEC62133 and UN DOT 38.3 Compliant Li-Ion Battery (1700mAh).</span></p>
+<p><span style="font-weight: 400;">Please follow proper disposal and recycling procedures. Do not incinerate.</span></p>
+<p><span style="font-weight: 400;">For Indoor Use Only.</span></p>
+<p><br /><br /><a href="#Back">Back to Top</a></p></body>
