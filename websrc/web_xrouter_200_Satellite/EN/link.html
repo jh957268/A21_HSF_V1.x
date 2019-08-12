@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<body>
+<link rel="stylesheet" href="../style/normal_ws.css" type="text/css">
+<SCRIPT language=JavaScript src="../utils.js"></SCRIPT>
+<SCRIPT language=JavaScript src=spec.js></SCRIPT>
+
+<h1>LINK Command</h1>
+
+<p>LINK command sent.</p>
+
+<hl><pre id="SET_LINK"></pre></hl>
+
+<script language=JavaScript>
+
+function displayMsg(eleID, strMsg)
+{
+	var strMessage1 = document.getElementById(eleID) ;
+	if (strMessage1)
+	{
+		strMessage1.innerHTML = strMsg;
+	}
+}
+
+/*REAL
+<%
+CGI_MAP(SET_LINK, CFG_SET_LINK);
+%>
+
+REAL*/
+
+//displayMsg('SET_ID', 'Command Status : Success');
+</script>
+</body>
+</html>
