@@ -1,0 +1,666 @@
+<HTML>
+<HEAD>
+<META http-equiv="Pragma" content="no-cache">
+<META http-equiv=Content-Type 	content="text/html" charset="gb2312">
+<link rel="stylesheet" href="../style/normal_ws.css" type="text/css">
+<TITLE>Satellite Configuration</TITLE>
+<SCRIPT language=JavaScript src="../utils.js"></SCRIPT>
+<SCRIPT language=JavaScript src=spec.js></SCRIPT>
+<SCRIPT language=JavaScript>
+/*DEMO*/
+addCfg("save_lan",120,"1");
+
+addCfg("apcli_enable",212,"1");
+addCfg("Data_Transfor_Mode",212,"2");
+addCfg("GAFFER_ENABLE",212,"1");
+addCfg("AKS_NAME",212,"Ratpac AKS");
+addCfg("LED_COLOR",212,"6");
+addCfg("PROTNAME",212,"0");
+addCfg("AKS_USE_XLR", 214,"1");
+addCfg("AKS_MAIN_XLR", 215,"0");
+/*END_DEMO*/
+
+/*REAL
+<%
+CGI_MAP(country_code, CFG_WLN_CountryRegion);
+CGI_MAP(apcli_enable, CFG_WLN_ApCliEnable);
+CGI_MAP(Data_Transfor_Mode,CFG_M2M_RUN_MODE);
+
+CGI_MAP(AKS_NAME, CFG_AKS_NAME);
+CGI_MAP(AKS_UNIVERSE, CFG_AKS_UNIVERSE);
+CGI_MAP(AKS_SUBNET, CFG_AKS_SUBNET);
+CGI_MAP(TIMO_POWER, CFG_TIMO_POWER);
+//CGI_MAP(AKS_CHANNEL_WIDTH, CFG_AKS_CHANNEL_WIDTH);
+//CGI_MAP(AKS_SECOND_CHANNEL, CFG_AKS_SECOND_CHANNEL);
+
+CGI_MAP(net_ip,CFG_M2M_NET_SERADD);
+CGI_MAP(net_port,CFG_M2M_NET_PORT);
+CGI_MAP(AKS_Bit_Settings, CFG_AKS_SETTINGS);
+CGI_MAP(LED_COLOR, CFG_LED_COLOR);
+CGI_MAP(LED_G, CFG_LED_G);
+CGI_MAP(LED_B, CFG_LED_B);
+
+CGI_MAP(GAFFER_ENABLE, CFG_GAFFER_ENABLE);
+CGI_MAP(GAFFER_UNIVERSE, CFG_GAFFER_UNIVERSE);
+CGI_MAP(GAFFER_SUBNET, CFG_GAFFER_SUBNET);
+CGI_MAP(GAFFER_LOWER, CFG_GAFFER_LOWER);
+CGI_MAP(GAFFER_UPPER, CFG_GAFFER_UPPER);
+
+CGI_MAP(PROTNAME, CFG_PROTNAME);
+CGI_MAP(SACN_UNIV, CFG_SACN_UNIV);
+CGI_MAP(AKS_USE_XLR, CFG_AKS_USE_XLR);
+CGI_MAP(AKS_MAIN_XLR, CFG_AKS_MAIN_XLR);
+%>
+
+REAL*/
+
+function initvalue()
+ {
+/*
+	var Vapable=getCfg("apcli_enable") ;
+	//var VTmode=getCfg("Data_Transfor_Mode") ;
+	if(Vapable=="0")
+	document.opmode.apcli_enable[0].checked=true ;
+	else 
+	document.opmode.apcli_enable[1].checked=true ;
+ 
+	if((VTmode>=0)&&(VTmode<=3))
+		document.opmode.Data_Transfor_Mode.options.selectedIndex=VTmode;
+	else
+		document.opmode.Data_Transfor_Mode.options.selectedIndex=0;
+	if(VTmode>=1)
+		document.opmode.Data_Transfor_Mode.options.selectedIndex=VTmode-1;
+*/
+	init_1();
+	init_2();
+	init_gaffer();
+ }
+
+ 
+
+
+function init(){
+	var f=document.opmode;
+	var slanV="<%CGI_GET_FLANG() ;%>";
+	var logoV="<%CGI_GET_FLOGO();%>";	
+	
+	if(logoV=="HF")
+		{
+			document.getElementById("HF_LOGO_ID").style.visibility = "visible";
+			document.getElementById("HF_LOGO_ID").style.display = "";
+			document.getElementById("YR_LOGO_ID").style.visibility = "hidden";
+			document.getElementById("YR_LOGO_ID").style.display = "none";
+			
+		}
+	else if (logoV=="YRKJ")
+		{
+			document.getElementById("YR_LOGO_ID").style.visibility = "visible";
+			document.getElementById("YR_LOGO_ID").style.display = "";
+			document.getElementById("HF_LOGO_ID").style.visibility = "hidden";
+			document.getElementById("HF_LOGO_ID").style.display = "none";
+		
+		}
+	else
+		{
+			document.getElementById("YR_LOGO_ID").style.visibility = "hidden";
+			document.getElementById("YR_LOGO_ID").style.display = "none";
+			document.getElementById("HF_LOGO_ID").style.visibility = "hidden";
+			document.getElementById("HF_LOGO_ID").style.display = "none";
+			document.getElementById("HF_hr_id").style.visibility = "hidden";
+			document.getElementById("HF_hr_id").style.display = "none";
+		
+		}
+		
+	/*if(slanV=="zhcn")
+		setLanguageCN_2();
+	else if (slanV=="en")
+		setLanguageEN_2();
+	else
+		setLanguageCN_2();	*/
+	cfg2Form(f);
+	initvalue();
+	var broadcastssidEnableArray2 = document.CRMXSettings.AKS_Bit_Settings.value.split("");
+ 	if(broadcastssidEnableArray2[0]==1)
+ 	{
+		document.CRMXSettings.AKS_BIT_SETTINGS.checked=1;
+	}
+	else
+	{
+		document.CRMXSettings.AKS_BIT_SETTINGS.checked=0;	
+	}
+}
+
+function Reset() {
+	init();
+}
+function checkbox_use_xlr()
+{
+	//alert(document.AP_W_Network.Hidden_ssid_Chk.checked);
+	if(document.GAFFER.USE_XLR.checked)
+	{
+		//alert("checked");
+		document.GAFFER.AKS_USE_XLR.value="1";
+	}
+	else
+	{
+		document.GAFFER.AKS_USE_XLR.value="0";
+		//alert("unchecked");
+	}	
+}
+
+function checkbox_main_xlr()
+{
+	//alert(document.AP_W_Network.Hidden_ssid_Chk.checked);
+	if(document.GAFFER.MAIN_XLR.checked)
+	{
+		//alert("checked");
+		document.GAFFER.AKS_MAIN_XLR.value="1";		
+	}
+	else
+	{
+		document.GAFFER.AKS_MAIN_XLR.value="0";		
+		//alert("unchecked");
+	}
+}
+
+function Apply() {
+	var f=document.opmode;
+
+	if (document.opmode.apcli_enable[0].checked==true)		// ap
+		document.opmode.country_code.value= 0;
+	else
+		document.opmode.country_code.value= 5;
+	form2Cfg(f);
+	subForm(f,'do_cmd.html','WIRELESS_APCLI_SETUP',cPage);
+}
+
+function init_1()
+{
+	var f=document.HFA21TEST;
+	cfg2Form(f);
+	//initvalue_4();
+	var Vapable=getCfg("PROTNAME") ;
+	if(Vapable=="0")
+		document.HFA21TEST.PROTNAME[0].checked=true ;
+	else 
+		document.HFA21TEST.PROTNAME[1].checked=true ;		
+}
+function Cancel_1() {
+	init_1();
+}
+
+
+function Apply_1() {
+	var f=document.HFA21TEST;
+/*	
+	var p= f.net_port.value;
+	if (p== "")
+	{
+		alert('Please input the port value!');
+		f.net_port.focus();
+		f.net_port.select();
+		return false;	
+	}
+		
+	p= 1*p;
+	if (!((p>0)&&(p<=65535)))
+    {
+		alert('The port value shall be: > 0 and <= 65535');
+		f.net_port.focus();
+		f.net_port.select();
+		return false;
+    }	
+*/
+	form2Cfg(f);
+	subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
+}
+
+function init_gaffer()
+{
+	var f=document.GAFFER;
+	cfg2Form(f);
+	var Vapable=getCfg("GAFFER_ENABLE") ;
+	if(Vapable=="0")
+		document.GAFFER.GAFFER_ENABLE[0].checked=true ;
+	else 
+		document.GAFFER.GAFFER_ENABLE[1].checked=true ;
+	
+	Vapable=getCfg("AKS_USE_XLR") ;
+	if (Vapable=="0")
+	{
+		document.GAFFER.USE_XLR.checked = false;
+	}
+	else
+	{
+		document.GAFFER.USE_XLR.checked = true;
+	}
+	Vapable=getCfg("AKS_MAIN_XLR") ;
+	//if (Vapable=="0")
+	if (document.GAFFER.AKS_MAIN_XLR.value == "0")
+	{
+		document.GAFFER.MAIN_XLR.checked = false;
+	}
+	else
+	{
+		document.GAFFER.MAIN_XLR.checked = true;
+	}		
+		
+}
+
+function Cancel_gaffer() {
+	init_gaffer();
+}
+
+function Apply_gaffer() {
+	var f=document.GAFFER;
+	var low=document.GAFFER.GAFFER_LOWER.value;
+	var upper=document.GAFFER.GAFFER_UPPER.value;
+
+	if(isNaN(low)){
+		alert(low + " is not a number");
+		return;
+	}
+	if(isNaN(upper)){
+		alert(upper + " is not a number");
+		return;
+	}
+	low=1*low;
+	upper=1*upper;
+	if (low < 1)
+	{
+		alert("lower starts from 1");
+		return;
+	}	
+	if ((low > 512) || (upper > 512))
+	{
+		alert("Number is out of range");
+		return;
+	}
+	if (low > upper)
+	{
+		alert("lower > upper");
+		return;
+	}	
+	
+	form2Cfg(f);
+	subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
+}
+
+function popupCenter(url, title, w, h) 
+{
+  var left = (screen.width/2)-(w/2);
+  var top = (screen.height/2)-(h/2);
+  var newwin = window.open(url, title, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width='+w+', height='+h+', top='+top+', left='+left);
+  setTimeout(function(){ newwin.close(); }, 3000);
+}
+
+function Apply_ID() {
+	//var f=document.CRMXSettings;
+	//form2Cfg(f);
+	//subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
+	popupCenter('/EN/id.html', 'myPop1',400,300);
+}
+
+function Apply_Link() {
+	popupCenter('/EN/link.html', 'myPop1',400,300);
+}
+
+function Apply_UnLink() {
+	popupCenter('/EN/unlink.html', 'myPop1',400,300);
+}
+
+function init_2()
+{
+	var f=document.CRMXSettings;
+	cfg2Form(f);
+	//initvalue_4();
+}
+function Cancel_2() {
+	init_2();
+}
+function Apply_2() {
+	var f=document.CRMXSettings;
+	var rgb=document.CRMXSettings.LED_COLOR.value;
+
+	if(isNaN(rgb)){
+		alert(rgb + " is not a number");
+		return;
+	}	
+	rgb=1*rgb;
+	if (rgb > 255)
+	{
+		alert("R Color value is out of range");
+		return;
+	}
+	rgb=document.CRMXSettings.LED_G.value;
+	if(isNaN(rgb)){
+		alert(rgb + " is not a number");
+		return;
+	}	
+	rgb=1*rgb;
+	if (rgb > 255)
+	{
+		alert("G Color value is out of range");
+		return;
+	}	
+	rgb=document.CRMXSettings.LED_B.value;
+	if(isNaN(rgb)){
+		alert(rgb + " is not a number");
+		return;
+	}	
+	rgb=1*rgb;
+	if (rgb > 255)
+	{
+		alert("B Color value is out of range");
+		return;
+	}		
+	form2Cfg(f);
+	subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
+}
+
+</SCRIPT>
+</HEAD>
+<BODY leftmargin=0 topmargin=0 onload=init()>
+<script>pageHead();</script>
+
+<center><h1 id="opmodeconfigTitle">Main Settings</h1></center>
+<h3 id="BATTERY_ID"></h3>
+<hr>
+<form method="post" name="opmode">
+<center>
+					<input type=button style="{width:120px;}" value="ID" onClick="Apply_ID()" id="crmx_Apply_id">&nbsp;&nbsp;
+					<input type=button style="{width:120px;}" value="LINK" onClick="Apply_Link()" id="crmx_Apply_link">&nbsp;&nbsp;
+					<input type=button style="{width:120px;}" value="UNLINK" onClick="Apply_UnLink()" id="crmx_Apply_unlink"	
+</center></form>
+<br><br>
+<form method=post name=HFA21TEST>
+		<table width="540" border="1" cellspacing="1" cellpadding="3"   bordercolor="#9BABBD">
+			<tr>
+				<td class="title" colspan="2" id="Wireless_Network_lan_id">Art-Net/sACN Settings</td>
+			</tr>
+			<tr> 
+				<td class="head">
+					<font id="aks_name">Node Name</font><br>	
+				</td>
+				<td>
+					<input name="AKS_NAME" maxlength=32 size=20>
+				</td>
+			</tr>
+			<tr> 
+				<td class="head">
+					<font id="aks_subnet">Art-Net Subnet and Universe</font><br>	
+				</td>
+				<td>
+					<select name="AKS_SUBNET" size="1">
+						<option value="0">0</option>
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+						<option value="4">4</option>
+						<option value="5">5</option>
+						<option value="6">6</option>
+						<option value="7">7</option>
+						<option value="8">8</option>
+						<option value="9">9</option>
+						<option value="10">10</option>
+						<option value="11">11</option>
+						<option value="12">12</option>
+						<option value="13">13</option>
+						<option value="14">14</option>
+						<option value="15">15</option>
+					</select>&nbsp;&nbsp;
+					<select name="AKS_UNIVERSE" size="1">
+						<option value="0">0</option>
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+						<option value="4">4</option>
+						<option value="5">5</option>
+						<option value="6">6</option>
+						<option value="7">7</option>
+						<option value="8">8</option>
+						<option value="9">9</option>
+						<option value="10">10</option>
+						<option value="11">11</option>
+						<option value="12">12</option>
+						<option value="13">13</option>
+						<option value="14">14</option>
+						<option value="15">15</option>
+					</select>					
+				</td>
+			</tr>
+			<tr > 
+				<td class="head" id="sacn_univ_id">sACN Universe (Requires Restart)</td>
+				<td><input name="SACN_UNIV" maxlength=32 size=32 </td>
+			</tr > 
+			<tr> 
+				<td class="head">
+					<font id="protid">Protocol (Requires Restart)</font><br>	
+				</td>
+				<td>
+					<input type="radio" value="0" name="PROTNAME"><b>Art-Net</b>&emsp;&emsp;<input type="radio" value="1" name="PROTNAME"><b>sACN</b>
+				</td>
+			</tr>					
+		</table> 
+		<p/>
+		<center>
+			<input type=button style="{width:120px;}" value="Apply" onClick="Apply_1()" id="ap_Apply1_lan_id">&nbsp;&nbsp;
+			<input type=button style="{width:120px;}" value="Cancel" onClick="Cancel_1()" id="ap_Cancel1_lan_id">
+		</center>
+	</form>
+
+	<form method=post name=CRMXSettings>
+		<input type="hidden" name="AKS_Bit_Settings">	
+		<table width="540" border="1" cellspacing="1" cellpadding="3"   bordercolor="#9BABBD">
+			<tr>
+				<td class="title" colspan="2" id="Wireless_CRMX_lan_id">Output Power and Color ID</td>
+			</tr>
+			<tr> 
+				<td class="head">
+					<font id="timo_power">CRMX Power level</font><br>	
+				</td>
+				<td>
+					<select name="TIMO_POWER" size="1">
+						<option value="2">20dBm/100mW</option>
+						<option value="3">16dBm/40mW</option>
+						<option value="4">11dBm/13mW</option>
+						<option value="5">5dBm/3mW  </option>
+					</select>
+				</td>
+			</tr>
+			<!--
+			<tr> 
+				<td class="head">
+					<font id="aks_timo_Width">CRMX Channel Block Width</font><br>	
+				</td>
+				<td>
+					<select name="AKS_CHANNEL_WIDTH" size="1">
+						<option value="9">18 Mhz</option>
+						<option value="10">20 Mhz</option>
+						<option value="11">22 Mhz</option>
+						<option value="12">24 Mhz</option>
+						<option value="13">26 Mhz</option>
+						<option value="14">28 Mhz</option>
+						<option value="15">30 Mhz</option>
+						<option value="16">32 Mhz</option>
+						<option value="17">34 Mhz</option>
+						<option value="18">36 Mhz</option>
+					</select>
+				</td>
+			</tr>			
+			<tr> 
+				<td class="head">
+					<font id="aks_timo_channel">CRMX Second Channel Block</font><br>	
+				</td>
+				<td>
+					<select name="AKS_SECOND_CHANNEL" size="1">
+						<option value="0">Off</option>
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+						<option value="4">4</option>
+						<option value="5">5</option>
+						<option value="6">6</option>
+						<option value="7">7</option>
+						<option value="8">8</option>
+						<option value="9">9</option>
+						<option value="10">10</option>
+						<option value="11">11</option>
+					</select>
+				</td>
+			</tr>
+			-->
+			<tr> 
+				<td class="head">
+					<font id="led_color_level">Color ID</font><br>	
+				</td>
+				<td>
+					&nbsp;<b>R:&nbsp;</b><input name="LED_COLOR" maxlength=4 size=4>&nbsp;&nbsp;&nbsp;<b>G:&nbsp;</b><input name="LED_G" maxlength=4 size=4>&nbsp;&nbsp;&nbsp;<b>B:&nbsp;</b><input name="LED_B" maxlength=4 size=4>
+				</td>				
+			</tr>
+			<!--
+			<tr> 
+				<td class="head">
+					<font id="crmx_link">CRMX Wireless Link</font><br>	
+				</td>
+				<td>
+					<input type=button style="{width:120px;}" value="ID" onClick="Apply_ID()" id="crmx_Apply_id">&nbsp;&nbsp;
+					<input type=button style="{width:120px;}" value="LINK" onClick="Apply_Link()" id="crmx_Apply_link">&nbsp;&nbsp;
+					<input type=button style="{width:120px;}" value="UNLINK" onClick="Apply_UnLink()" id="crmx_Apply_unlink"					
+				</td>
+			</tr>			
+			<tr> 
+				<td class="head">
+					<font id="aks_settings">Send on ArtPoll</font><br>	
+				</td>
+				<td>
+					<input name="AKS_BIT_SETTINGS" type="checkbox" onClick="checkbox_clicked()">
+				</td>
+			</tr> 
+			-->
+		</table> 
+		<p/>
+		<center>
+			<input type=button style="{width:120px;}" value="Apply" onClick="Apply_2()" id="ap_Apply2_lan_id">&nbsp;&nbsp;
+			<input type=button style="{width:120px;}" value="Cancel" onClick="Cancel_2()" id="ap_Cancel2_lan_id">
+		</center>
+	</form>
+	
+	<form method=post name=GAFFER>
+		<input type="hidden" name="AKS_USE_XLR">
+		<input type="hidden" name="AKS_MAIN_XLR">
+		<table width="540" border="1" cellspacing="1" cellpadding="3"   bordercolor="#9BABBD">
+			<tr>
+				<td class="title" colspan="2" id="gaffer_window_id">Gaffer's Window</td>
+			</tr>
+			<tr> 
+				<td class="head">
+					<font id="gaffer_stat">Second Source</font><br>	
+				</td>
+				<td>
+					<input type="radio" value="0" name="GAFFER_ENABLE"><b>Enable</b>&nbsp;&nbsp;<input type="radio" value="1" name="GAFFER_ENABLE"><b>Disable</b>
+					&nbsp;&nbsp;<input name="USE_XLR" type="checkbox" onClick="checkbox_use_xlr()"><b>Use XLR</b>
+					&nbsp;&nbsp;<input name="MAIN_XLR" type="checkbox" onClick="checkbox_main_xlr()"><b>XLR As Main</b>
+				</td>
+			</tr>
+			<tr> 
+				<td class="head">
+					<font id="gaffer_subnet">Second Source Art-Net ID</font><br>	
+				</td>
+				<td>
+					<select name="GAFFER_SUBNET" size="1">
+						<option value="0">0</option>
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+						<option value="4">4</option>
+						<option value="5">5</option>
+						<option value="6">6</option>
+						<option value="7">7</option>
+						<option value="8">8</option>
+						<option value="9">9</option>
+						<option value="10">10</option>
+						<option value="11">11</option>
+						<option value="12">12</option>
+						<option value="13">13</option>
+						<option value="14">14</option>
+						<option value="15">15</option>
+					</select>&nbsp;&nbsp;
+					<select name="GAFFER_UNIVERSE" size="1">
+						<option value="0">0</option>
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+						<option value="4">4</option>
+						<option value="5">5</option>
+						<option value="6">6</option>
+						<option value="7">7</option>
+						<option value="8">8</option>
+						<option value="9">9</option>
+						<option value="10">10</option>
+						<option value="11">11</option>
+						<option value="12">12</option>
+						<option value="13">13</option>
+						<option value="14">14</option>
+						<option value="15">15</option>
+					</select>					
+				</td>
+			</tr>			
+			<tr > 
+				<td class="head" id="gaffer_range">Channel Range</td>
+				<td><b>Lower:</b>&nbsp;&nbsp;<input name="GAFFER_LOWER" maxlength=4 size=4 value="10">&emsp;
+				    <b>Upper:</b>&nbsp;&nbsp;<input name="GAFFER_UPPER" maxlength=4 size=4 value="16"></td>
+			</tr > 
+		</table> 
+		<p/>
+		<center>
+			<input type=button style="{width:120px;}" value="Apply" onClick="Apply_gaffer()" id="apply_gaffer_id">&nbsp;&nbsp;
+			<input type=button style="{width:120px;}" value="Cancel" onClick="Cancel_gaffer()" id="cancel_gaffer_id">
+		</center>
+	</form>
+
+
+
+<hr id="HF_hr_id"> 
+
+<div id="HF_LOGO_ID" style="visibility:hidden;display:none;"> 
+<form id= "HF_Conn_id">
+<dl>
+	<dt><b id="logo_company">Hi-Flying Electronics Technology Co.., Ltd.</b></dt>
+	<dt id="logo_connect">Technical Support</dt>
+	<dt id="logo_mail">peter_dong@hi-flying.com  QQ:2452483191</dt>
+	<dt id="logo_phone">Phone：13681967916</dt>
+</dl>
+</form>
+</div>
+
+
+<div id="YR_LOGO_ID" style="visibility:hidden;display:none;"> 
+<form id= "YR_Conn_id">
+<dl>
+	<dt><b id="logo_company_yr">Jinan Usr Technology Co. Ltd    http://en.usr.cn</b></dt>
+	<dt id="logo_connect_yr">Contact:</dt>
+	<dt id="logo_mail_yr">tec@usr.cn     QQ:800025565</dt>
+	<dt id="logo_phone_yr">86-531-55507297</dt>
+</dl>
+</form>
+</div>
+
+<script>pageTail();
+function displayMsg(eleID, strMsg)
+{
+	var strMessage1 = document.getElementById(eleID) ;
+	strMessage1.innerHTML = strMsg;
+}
+
+/*REAL
+<%
+CGI_MAP(BATTERY_ID, CFG_BATTERY_ID);
+%>
+REAL*/
+
+//displayMsg("BATTERY_ID", "Battery: 88%");
+//displayMsg('BATTERY_ID', '<center><font color="black" size="2">Mode: </font><font color="orange" size="3"><b>WiFi Client</b> &nbsp;&nbsp;&nbsp;</font><font color="black" size="2">IP: </font><font color="blue" size="3"><b>10.10.100.101</b> &nbsp;&nbsp;</font><font color="black" size="2">Battery: </font><font color="green" size="3"><b>69%</b> &nbsp;&nbsp;</font></center>');
+</script>
+</BODY>
+</HTML>
