@@ -141,19 +141,20 @@ function Apply_refresh() {
 <BODY leftmargin=0 topmargin=0 onload=init()>
 <script>pageHead();</script>
 
-<center><h1 id="AdvamceTitle">AKS Firmware Update</h1></center>
+<center><h1 id="AdvamceTitle">Firmware Update</h1></center>
 
 <hr>
 <form method=post name=HFA21TEST target="_blank">
 </form>
 
 	<form method=post name=Advance>
-		<table width="540" border="1" cellspacing="1" cellpadding="3"   bordercolor="#9BABBD">
+		<table id="ADVA_TBL" width="540" border="1" cellspacing="1" cellpadding="3"   bordercolor="#9BABBD">
 			<tr>
 				<td height="20">
-					<pre>Node Name       IP Address       ID     eCos Ver.        SAMD Ver.       TIMO Ver.</pre>			
+					<pre>Node Name       IP Address       ID        eCos Ver.          SAMD Ver.      </pre>			
 				</td>
 			</tr>
+		<!--  /*			
 			<tr>
 				<td height="20">
 					<pre id="AKS_ADVA1"></pre>
@@ -233,10 +234,11 @@ function Apply_refresh() {
 				<td height="20">
 					<pre id="AKS_ADVA16"></pre>
 				</td>
-			</tr>				
+			</tr>
+		-->				
 		</table> 
 		<center>
-			<input type=button style="{width:120px;}" value="Previous" onClick="Apply_back()" id="ap_Apply1_back_id">
+			<br><input type=button style="{width:120px;}" value="Previous" onClick="Apply_back()" id="ap_Apply1_back_id">
 			<input type=button style="{width:120px;}" value="Refresh" onClick="Apply_refresh()" id="ap_refresh1_back_id">
 		<!--  /*
 			<button type="button" onclick="window.location.href='/EN/constellation.html'">Refresh</button>
@@ -271,7 +273,7 @@ function Apply_refresh() {
 </tbody></table>
 </form>
 
-<form name="Upgrade_TIMO" method=POST action=update_firmware.html enctype=multipart/form-data >
+<form name="Upgrade_TIMO" method=POST action=update_firmware.html enctype=multipart/form-data style="display:none">
 <INPUT type=hidden name=CMD value=TIMO_UPG>
 <INPUT type=hidden name=GO value=advance.htm>
 <table width="540" border="1" cellspacing="1" cellpadding="3" bordercolor="#9BABBD">
@@ -396,10 +398,34 @@ function displayMsg(eleID, strMsg)
 	strMessage1.innerHTML = strMsg;
 }
 
+function consAddRow(aks_num)
+{
+	var i;
+	var para;
+	var para1;
+	var element;
+	var para2;
+	var num;
+	num=1*aks_num;
 
+	for (i = 1; i < 1 + num; i++) 
+	{
+		para = document.createElement("tr");
+		para1 = document.createElement("td");
+		para1.setAttribute("height", "20");
+		para2 = document.createElement("pre");
+		para2.setAttribute("id", "AKS_ADVA" + i);
+		para1.appendChild(para2);
+		para.appendChild(para1);
+
+		element = document.getElementById("ADVA_TBL");
+		element.appendChild(para);
+	}
+}
 
 /*REAL
 <%
+CGI_MAP(AKS_CONS_NUM, CFG_AKS_CONS_NUM);
 CGI_MAP(AKS_ADVA1, CFG_AKS_ADVA1);
 CGI_MAP(AKS_ADVA2, CFG_AKS_ADVA2);
 CGI_MAP(AKS_ADVA3, CFG_AKS_ADVA3);
@@ -416,6 +442,14 @@ CGI_MAP(AKS_ADVA13, CFG_AKS_ADVA13);
 CGI_MAP(AKS_ADVA14, CFG_AKS_ADVA14);
 CGI_MAP(AKS_ADVA15, CFG_AKS_ADVA15);
 CGI_MAP(AKS_ADVA16, CFG_AKS_ADVA16);
+CGI_MAP(AKS_ADVA17, CFG_AKS_ADVA17);
+CGI_MAP(AKS_ADVA18, CFG_AKS_ADVA18);
+CGI_MAP(AKS_ADVA19, CFG_AKS_ADVA19);
+CGI_MAP(AKS_ADVA20, CFG_AKS_ADVA20);
+CGI_MAP(AKS_ADVA21, CFG_AKS_ADVA21);
+CGI_MAP(AKS_ADVA22, CFG_AKS_ADVA22);
+CGI_MAP(AKS_ADVA23, CFG_AKS_ADVA23);
+CGI_MAP(AKS_ADVA24, CFG_AKS_ADVA24);
 %>
 
 REAL*/
