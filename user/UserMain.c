@@ -71,6 +71,9 @@ struct eth_drv_sc	*dev;
 
 #define AKS_PRIORITIES	8			// since the web server uses 8, the UserMain thread need to change 8 too
 
+#define MAGIC0			0xab
+#define MAGIC1			0x12
+
 static int operation_mode;
 
 // #define debug(format, args...) fprintf (stderr, format, args)
@@ -212,6 +215,7 @@ typedef struct _web_data
 	unsigned char led_b[8];	
 	unsigned char use_xlr[2];
 	unsigned char main_xlr[2];
+	unsigned char magic[2];
 }WEB_DATA_T;
 
 WEB_DATA_T g_web_config = {0};
@@ -784,11 +788,14 @@ void web_flash_data_init(void)
 		}
 		ck_sum ^= fls_data[i];
 	}
-	if(g_web_config.initFlag != ck_sum)
+	if((g_web_config.initFlag != ck_sum) || (g_web_config.magic[0] != MAGIC0) || (g_web_config.magic[1] != MAGIC1))
 	{
 		memset(&g_web_config,0,sizeof(WEB_DATA_T));
 
-		sprintf(g_web_config.name,"Ratpac AKS");
+		if (!(strcmp(build_img, "AKS")))
+			sprintf(g_web_config.name,"Ratpac AKS");
+		else
+			sprintf(g_web_config.name,"Satellite");
 		sprintf(g_web_config.universe,"0");
 		sprintf(g_web_config.subnet,"0");
 		sprintf(g_web_config.gaffer_enb,"1");		// disable
@@ -799,7 +806,7 @@ void web_flash_data_init(void)
 		sprintf(g_web_config.gaffer_upper,"1");
 
 		sprintf(g_web_config.sacn_enb,"1");		// disable
-		sprintf(g_web_config.sacn_universe,"100");
+		sprintf(g_web_config.sacn_universe,"1");
 		
 		sprintf(g_web_config.timopower,"3");
 		sprintf(g_web_config.channelWidth,"16");
@@ -810,7 +817,8 @@ void web_flash_data_init(void)
 		sprintf(g_web_config.led_b,"102");		
 		sprintf(g_web_config.use_xlr,"0");
 		sprintf(g_web_config.main_xlr,"0");	
-		
+		g_web_config.magic[0] = MAGIC0;
+		g_web_config.magic[1] = MAGIC1;		
 		write_data_to_flash();
 		//m2m_do_reload();
 	}
@@ -1446,7 +1454,7 @@ void Joo_uart_send(char *data)
 #define REMOTE_CLIENT_PORT 10001
 #define MAX_MSG 100
 static char msg[MAX_MSG];
-#define MAX_NUM_ENTRY 16
+#define MAX_NUM_ENTRY 24
 
 struct client_ent
 {
