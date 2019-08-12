@@ -1,0 +1,459 @@
+<HTML>
+<HEAD>
+<META http-equiv="Pragma" content="no-cache">
+<META http-equiv=Content-Type 	content="text/html" charset="gb2312">
+<link rel="stylesheet" href="../style/normal_ws.css" type="text/css">
+<TITLE>Satellite Firmware Update</TITLE>
+<SCRIPT language=JavaScript src="../utils.js"></SCRIPT>
+<SCRIPT language=JavaScript src=spec.js></SCRIPT>
+<SCRIPT language=JavaScript>
+/*DEMO*/
+addCfg("save_lan",120,"1");
+
+//addCfg("apcli_enable",212,"1");
+//addCfg("Data_Transfor_Mode",212,"2");
+//addCfg("AKS_NAME",212,"JOO RatPac");
+//addCfg("AKS_NAME1",212,"JOO Test");
+//addCfg("AKS_ADVA1",212,"Constellation test1           10.10.100.20");
+//addCfg("AKS_ADVA2",212,"Constellation test2");
+//addCfg("AKS_NAME3",212,"JOO Test");
+/*END_DEMO*/
+
+/*REAL
+<%
+
+//CGI_MAP(AKS_ADVA1, CFG_AKS_ADVA1);
+//CGI_MAP(AKS_ADVA2, CFG_AKS_ADVA2);
+//CGI_MAP(AKS_ADVA3, CFG_AKS_ADVA3);
+//CGI_MAP(AKS_ADVA4, CFG_AKS_ADVA4);
+//CGI_MAP(AKS_ADVA5, CFG_AKS_ADVA5);
+//CGI_MAP(AKS_ADVA6, CFG_AKS_ADVA6);
+//CGI_MAP(AKS_ADVA7, CFG_AKS_ADVA7);
+//CGI_MAP(AKS_ADVA8, CFG_AKS_ADVA8);
+//CGI_MAP(AKS_ADVA9, CFG_AKS_ADVA9);
+//CGI_MAP(AKS_ADVA10, CFG_AKS_ADVA10);
+//CGI_MAP(AKS_ADVA11, CFG_AKS_ADVA11);
+//CGI_MAP(AKS_ADVA12, CFG_AKS_ADVA12);
+//CGI_MAP(AKS_ADVA13, CFG_AKS_ADVA13);
+//CGI_MAP(AKS_ADVA14, CFG_AKS_ADVA14);
+//CGI_MAP(AKS_ADVA15, CFG_AKS_ADVA15);
+//CGI_MAP(AKS_ADVA16, CFG_AKS_ADVA16);
+
+%>
+
+REAL*/
+
+function initvalue()
+ {
+	init_1();
+ }
+
+ 
+
+var slanV="<%CGI_GET_FLANG() ;%>";
+var logoV="<%CGI_GET_FLOGO();%>";	
+function init(){
+	if(logoV=="HF")
+		{
+			document.getElementById("HF_LOGO_ID").style.visibility = "visible";
+			document.getElementById("HF_LOGO_ID").style.display = "";
+			document.getElementById("YR_LOGO_ID").style.visibility = "hidden";
+			document.getElementById("YR_LOGO_ID").style.display = "none";
+			
+		}
+	else if (logoV=="YRKJ")
+		{
+			document.getElementById("YR_LOGO_ID").style.visibility = "visible";
+			document.getElementById("YR_LOGO_ID").style.display = "";
+			document.getElementById("HF_LOGO_ID").style.visibility = "hidden";
+			document.getElementById("HF_LOGO_ID").style.display = "none";
+		
+		}
+	else
+		{
+			document.getElementById("YR_LOGO_ID").style.visibility = "hidden";
+			document.getElementById("YR_LOGO_ID").style.display = "none";
+			document.getElementById("HF_LOGO_ID").style.visibility = "hidden";
+			document.getElementById("HF_LOGO_ID").style.display = "none";
+			document.getElementById("HF_hr_id").style.visibility = "hidden";
+			document.getElementById("HF_hr_id").style.display = "none";
+		
+		}
+		
+	/*if(slanV=="zhcn")
+		setLanguageCN_2();
+	else if (slanV=="en")
+		setLanguageEN_2();
+	else
+		setLanguageCN_2();	*/
+	initvalue();
+/*	
+	var broadcastssidEnableArray2 = document.CRMXSettings.AKS_Bit_Settings.value.split("");
+ 	if(broadcastssidEnableArray2[0]==1)
+ 	{
+		document.CRMXSettings.AKS_BIT_SETTINGS.checked=1;
+	}
+	else
+	{
+		document.CRMXSettings.AKS_BIT_SETTINGS.checked=0;	
+	}
+*/	
+}
+
+function Reset() {
+	init();
+}
+
+function init_1()
+{
+	f=document.Advance;
+	cfg2Form(f);
+	//initvalue_4();
+}
+function Cancel_1() {
+	init_1();
+}
+
+function reload_advance()
+{
+	var URL = '/EN/advance.html';
+    document.location.href = URL;
+}
+
+function Apply_back() {
+	var URL = '/EN/constellation.html';
+    document.location.href = URL;
+}
+
+function Apply_refresh() {
+
+	//var f=document.HFA21TEST;
+	//form2Cfg(f);
+	//subForm(f,'do_constellation.html','CONSTELLATION_REFRESH',cPage);
+	//setTimeout(function(){ reload_advance(); }, 5000);
+	// cannot reload constellation here, it will be excuted before refresh is done
+	var URL = '/EN/advance.html';
+    document.location.href = URL;
+}
+
+</SCRIPT>
+</HEAD>
+<BODY leftmargin=0 topmargin=0 onload=init()>
+<script>pageHead();</script>
+
+<center><h1 id="AdvamceTitle">Firmware Update</h1></center>
+
+<hr>
+<form method=post name=HFA21TEST target="_blank">
+</form>
+
+	<form method=post name=Advance>
+		<table id="ADVA_TBL" width="540" border="1" cellspacing="1" cellpadding="3"   bordercolor="#9BABBD">
+			<tr>
+				<td height="20">
+					<pre>Node Name       IP Address       ID        eCos Ver.          SAMD Ver.      </pre>			
+				</td>
+			</tr>
+		<!--  /*			
+			<tr>
+				<td height="20">
+					<pre id="AKS_ADVA1"></pre>
+				</td>
+			</tr>
+			<tr>
+				<td height="20">
+					<pre id="AKS_ADVA2"></pre>
+				</td>
+			</tr>
+			<tr>
+				<td height="20">
+					<pre id="AKS_ADVA3"></pre>
+				</td>
+			</tr>
+			<tr>
+				<td height="20">
+					<pre id="AKS_ADVA4"></pre>
+				</td>
+			</tr>
+			<tr>
+				<td height="20">
+					<pre id="AKS_ADVA5"></pre>
+				</td>
+			</tr>
+			<tr>
+				<td height="20">
+					<pre id="AKS_ADVA6"></pre>
+				</td>
+			</tr>
+			<tr>
+				<td height="20">
+					<pre id="AKS_ADVA7"></pre>
+				</td>
+			</tr>
+			<tr>
+				<td height="20">
+					<pre id="AKS_ADVA8"></pre>
+				</td>
+			</tr>
+			<tr>
+				<td height="20">
+					<pre id="AKS_ADVA9"></pre>
+				</td>
+			</tr>
+			<tr>
+				<td height="20">
+					<pre id="AKS_ADVA10"></pre>
+				</td>
+			</tr>
+			<tr>
+				<td height="20">
+					<pre id="AKS_ADVA11"></pre>
+				</td>
+			</tr>
+			<tr>
+				<td height="20">
+					<pre id="AKS_ADVA12"></pre>
+				</td>
+			</tr>
+			<tr>
+				<td height="20">
+					<pre id="AKS_ADVA13"></pre>
+				</td>
+			</tr>
+			<tr>
+				<td height="20">
+					<pre id="AKS_ADVA14"></pre>
+				</td>
+			</tr>
+			<tr>
+				<td height="20">
+					<pre id="AKS_ADVA15"></pre>
+				</td>
+			</tr>
+			<tr>
+				<td height="20">
+					<pre id="AKS_ADVA16"></pre>
+				</td>
+			</tr>
+		-->				
+		</table> 
+		<center>
+			<br><input type=button style="{width:120px;}" value="Previous" onClick="Apply_back()" id="ap_Apply1_back_id">
+			<input type=button style="{width:120px;}" value="Refresh" onClick="Apply_refresh()" id="ap_refresh1_back_id">
+		<!--  /*
+			<button type="button" onclick="window.location.href='/EN/constellation.html'">Refresh</button>
+		-->
+		</center>
+	</form>
+  	<!--  /* 
+	<iframe name="subIframe" width="560" height="315"  frameborder="2" allowfullscreen></iframe>
+	-->
+	
+<form name="Upgrade_eCos" method=POST action=update_firmware.html enctype=multipart/form-data >
+<INPUT type=hidden name=CMD value=SYS_UPG>
+<INPUT type=hidden name=GO value=advance.htm>
+<table width="540" border="1" cellspacing="1" cellpadding="3" bordercolor="#9BABBD">
+<tbody>
+<tr>
+	<td class="head" width="40%" id="upgradeFWLocation">eCos Firmware Location:</td>
+	<td> <input name="files" size="20" maxlength="256" type="file" value=""></td>
+</tr>
+</tbody></table>
+</form>
+	
+<form name="Upgrade_SAMD" method=POST action=update_firmware.html enctype=multipart/form-data >
+<INPUT type=hidden name=CMD value=SAMD_UPG>
+<INPUT type=hidden name=GO value=advance.htm>
+<table width="540" border="1" cellspacing="1" cellpadding="3" bordercolor="#9BABBD">
+<tbody>
+<tr>
+	<td class="head" width="40%" id="upgradeSAMDLocation">SAMD Firmware Location:</td>
+	<td> <input name="files" size="20" maxlength="256" type="file" value=""></td>
+</tr>
+</tbody></table>
+</form>
+
+<form name="Upgrade_TIMO" method=POST action=update_firmware.html enctype=multipart/form-data style="display:none">
+<INPUT type=hidden name=CMD value=TIMO_UPG>
+<INPUT type=hidden name=GO value=advance.htm>
+<table width="540" border="1" cellspacing="1" cellpadding="3" bordercolor="#9BABBD">
+<tbody>
+<tr>
+	<td class="head" width="40%" id="upgradeTIMOLocation">TIMO Firmware Location:</td>
+	<td> <input name="files" size="20" maxlength="256" type="file" value=""></td>
+</tr>
+</tbody></table>
+</form>
+
+<hr id="HF_hr_id"> 
+
+<div id="HF_LOGO_ID" style="visibility:hidden;display:none;"> 
+<form id= "HF_Conn_id">
+<dl>
+	<dt><b id="logo_company">Hi-Flying Electronics Technology Co.., Ltd.</b></dt>
+	<dt id="logo_connect">Technical Support</dt>
+	<dt id="logo_mail">peter_dong@hi-flying.com  QQ:2452483191</dt>
+	<dt id="logo_phone">Phone：13681967916</dt>
+</dl>
+</form>
+</div>
+
+
+<div id="YR_LOGO_ID" style="visibility:hidden;display:none;"> 
+<form id= "YR_Conn_id">
+<dl>
+	<dt><b id="logo_company_yr">Jinan Usr Technology Co. Ltd    http://en.usr.cn</b></dt>
+	<dt id="logo_connect_yr">Contact:</dt>
+	<dt id="logo_mail_yr">tec@usr.cn     QQ:800025565</dt>
+	<dt id="logo_phone_yr">86-531-55507297</dt>
+</dl>
+</form>
+</div>
+
+<script>pageTail();
+
+function updateFirmware(fwform, whichunit)
+ {
+	var f=fwform;
+	var m='';
+	if(f.files.value=="")
+    {
+		if(slanV=="en")
+		alert("Please select the file!");
+		else
+		alert("?????!");
+		return ;
+	}  
+	if(slanV=="en")
+		m='Are you sure you want to upgrade?';
+	else
+	    m='CH????????';
+	event.srcElement.style.background='#ADECEA';	
+	if(confirm(m))
+	{	
+		var elemiFrm = document.getElementById('subIframeId');
+		if (elemiFrm)
+		{
+			//alert("Found IFRAME!");
+			elemiFrm.parentNode.removeChild(elemiFrm);
+		}	
+		elemiFrm = document.getElementById('subIframeId2');
+		if (elemiFrm)
+		{
+			//alert("Found IFRAME!");
+			elemiFrm.parentNode.removeChild(elemiFrm);
+		}	
+		
+	    var ifrm = document.createElement('iframe');
+		ifrm.setAttribute('name', 'subIframe');
+		ifrm.setAttribute('id', 'subIframeId'); // assign an id
+		ifrm.height = "30";
+		ifrm.width = "540";
+		ifrm.frameborder="0"
+		f.parentNode.appendChild(ifrm);
+		//var html = '<body>Upgrade Firmware, Please Wait...</body>';
+		var html = '<body>' + 'Upgrade Firmware, Please Wait...' +  f.name + '</body>';
+		ifrm.contentWindow.document.open();
+		//alert("Alert2!");		
+		ifrm.contentWindow.document.write(html);
+		//alert("Alert3!");		
+		ifrm.contentWindow.document.close();
+		//alert("Alert4!");
+
+	    var ifrm2 = document.createElement('iframe');
+		ifrm2.setAttribute('name', 'subIframe2');
+		ifrm2.setAttribute('id', 'subIframeId2'); // assign an id
+		ifrm2.height = "60";
+		ifrm2.width = "540";
+		ifrm2.frameborder="0"
+		f.parentNode.appendChild(ifrm2);		
+		//alert("Alert5!");
+		//f.parentNode.appendChild(ifrm);
+		//alert("Alert6!");
+		f.action = whichunit;
+		f.target = 'subIframe2';
+		//alert("Alert7");		
+		//subForm(f,'update_firmware.html','SAMD_UPG',cPage);
+		f.submit();
+    }
+	else
+	{
+		event.srcElement.style.background='';
+	}
+}
+
+
+
+function popupCenter(url, title, w, h) 
+{
+  var left = (screen.width/2)-(w/2);
+  var top = (screen.height/2)-(h/2);
+  var newwin = window.open(url, title, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width='+w+', height='+h+', top='+top+', left='+left);
+  setTimeout(function(){ newwin.close(); }, 3000);
+}
+
+function displayMsg(eleID, strMsg)
+{
+	var strMessage1 = document.getElementById(eleID) ;
+	strMessage1.innerHTML = strMsg;
+}
+
+function consAddRow(aks_num)
+{
+	var i;
+	var para;
+	var para1;
+	var element;
+	var para2;
+	var num;
+	num=1*aks_num;
+
+	for (i = 1; i < 1 + num; i++) 
+	{
+		para = document.createElement("tr");
+		para1 = document.createElement("td");
+		para1.setAttribute("height", "20");
+		para2 = document.createElement("pre");
+		para2.setAttribute("id", "AKS_ADVA" + i);
+		para1.appendChild(para2);
+		para.appendChild(para1);
+
+		element = document.getElementById("ADVA_TBL");
+		element.appendChild(para);
+	}
+}
+
+/*REAL
+<%
+CGI_MAP(AKS_CONS_NUM, CFG_AKS_CONS_NUM);
+CGI_MAP(AKS_ADVA1, CFG_AKS_ADVA1);
+CGI_MAP(AKS_ADVA2, CFG_AKS_ADVA2);
+CGI_MAP(AKS_ADVA3, CFG_AKS_ADVA3);
+CGI_MAP(AKS_ADVA4, CFG_AKS_ADVA4);
+CGI_MAP(AKS_ADVA5, CFG_AKS_ADVA5);
+CGI_MAP(AKS_ADVA6, CFG_AKS_ADVA6);
+CGI_MAP(AKS_ADVA7, CFG_AKS_ADVA7);
+CGI_MAP(AKS_ADVA8, CFG_AKS_ADVA8);
+CGI_MAP(AKS_ADVA9, CFG_AKS_ADVA9);
+CGI_MAP(AKS_ADVA10, CFG_AKS_ADVA10);
+CGI_MAP(AKS_ADVA11, CFG_AKS_ADVA11);
+CGI_MAP(AKS_ADVA12, CFG_AKS_ADVA12);
+CGI_MAP(AKS_ADVA13, CFG_AKS_ADVA13);
+CGI_MAP(AKS_ADVA14, CFG_AKS_ADVA14);
+CGI_MAP(AKS_ADVA15, CFG_AKS_ADVA15);
+CGI_MAP(AKS_ADVA16, CFG_AKS_ADVA16);
+CGI_MAP(AKS_ADVA17, CFG_AKS_ADVA17);
+CGI_MAP(AKS_ADVA18, CFG_AKS_ADVA18);
+CGI_MAP(AKS_ADVA19, CFG_AKS_ADVA19);
+CGI_MAP(AKS_ADVA20, CFG_AKS_ADVA20);
+CGI_MAP(AKS_ADVA21, CFG_AKS_ADVA21);
+CGI_MAP(AKS_ADVA22, CFG_AKS_ADVA22);
+CGI_MAP(AKS_ADVA23, CFG_AKS_ADVA23);
+CGI_MAP(AKS_ADVA24, CFG_AKS_ADVA24);
+%>
+
+REAL*/
+
+</script>
+</BODY>
+</HTML>
