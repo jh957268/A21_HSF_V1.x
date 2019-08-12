@@ -7,4 +7,10 @@ static unsigned char *eCos_ver= STR(BUILD_VER);
 #else
 static unsigned char *eCos_ver= "9.99";
 #endif
+
+#ifdef BUILD_IMG
+static unsigned char *build_img= STR(BUILD_IMG);
+#else
+static unsigned char *build_img= "AKS";
+#endif
 	
