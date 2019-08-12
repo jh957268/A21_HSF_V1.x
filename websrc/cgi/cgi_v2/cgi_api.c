@@ -597,7 +597,25 @@ void CGI_var_map(http_req *req, char *name, int id)
 		case CFG_AKS_ADVA13:
 		case CFG_AKS_ADVA14:
 		case CFG_AKS_ADVA15:
-		case CFG_AKS_ADVA16:
+		case CFG_AKS_ADVA16:		
+		case CFG_AKS_ADVA17:
+		case CFG_AKS_ADVA18:
+		case CFG_AKS_ADVA19:
+		case CFG_AKS_ADVA20:
+		case CFG_AKS_ADVA21:
+		case CFG_AKS_ADVA22:
+		case CFG_AKS_ADVA23:
+		case CFG_AKS_ADVA24:
+#if 0		
+		case CFG_AKS_ADVA25:
+		case CFG_AKS_ADVA26:
+		case CFG_AKS_ADVA27:
+		case CFG_AKS_ADVA28:
+		case CFG_AKS_ADVA29:
+		case CFG_AKS_ADVA30:
+		case CFG_AKS_ADVA31:
+		case CFG_AKS_ADVA32:
+#endif		
 			base_idx = ((CFG_AKS_ADVA1 >> 16) & 0xff);
 			idx = ((id >> 16) & 0xff) - base_idx;
 			if (-1 == get_client_entry(idx, node_name, ip_addr, universe, art_sub, battery))
@@ -620,7 +638,7 @@ void CGI_var_map(http_req *req, char *name, int id)
 			
 			sprintf(cmd_buff, "<button type=\"button\" onclick=\"popupCenter('http://%s/EN/id.html', 'myPop1',400,300);\">ID</button>", ip_addr_save);
 			link_len = strlen(cmd_buff);
-			fill_space(cmd_buff, link_len+3);
+			fill_space(cmd_buff, link_len+5);
 			sc_convert(cmd_buff);
 			WEB_printf(req, "'%s'+",cmd_buff);			
 			
@@ -628,7 +646,7 @@ void CGI_var_map(http_req *req, char *name, int id)
 			strcat(val, " ");
 			sprintf(cmd_buff, "<button type=\"button\" onclick=\"updateFirmware(document.Upgrade_eCos, 'http://%s/EN/update_firmware.html');\">Update</button>", ip_addr_save);
 			link_len = strlen(cmd_buff);
-			fill_space(cmd_buff, link_len+3);
+			fill_space(cmd_buff, link_len+5);
 			strcat(val, cmd_buff);
 			sc_convert(val);
 			WEB_printf(req, "'%s'+",val);
@@ -640,8 +658,10 @@ void CGI_var_map(http_req *req, char *name, int id)
 			fill_space(cmd_buff, link_len+3);
 			strcat(val, cmd_buff);
 			sc_convert(val);
-			WEB_printf(req, "'%s'+",val);
-			
+			// WEB_printf(req, "'%s'+",val);
+			WEB_printf(req, "'%s'",val);        // temporary remove TIMO
+		
+#if 0		
 			get_TIMO_ver(val);
 			strcat(val, " ");			
 			sprintf(cmd_buff, "<button type=\"button\" onclick=\"updateFirmware(document.Upgrade_TIMO, 'http://%s/EN/update_firmware.html');\">Update</button>", ip_addr_save);
@@ -650,6 +670,8 @@ void CGI_var_map(http_req *req, char *name, int id)
 			strcat(val, cmd_buff);
 			sc_convert(val);			
 			WEB_printf(req, "'%s'",val);			// last one
+#endif
+			
 			WEB_printf(req, ");\n");				// close quote		
 			return;
 		case CFG_AKS_CONS1:
@@ -667,8 +689,25 @@ void CGI_var_map(http_req *req, char *name, int id)
 		case CFG_AKS_CONS13:
 		case CFG_AKS_CONS14:
 		case CFG_AKS_CONS15:
-		case CFG_AKS_CONS16:
+		case CFG_AKS_CONS16:		
+		case CFG_AKS_CONS17:
+		case CFG_AKS_CONS18:
+		case CFG_AKS_CONS19:
+		case CFG_AKS_CONS20:
+		case CFG_AKS_CONS21:
+		case CFG_AKS_CONS22:
+		case CFG_AKS_CONS23:
+		case CFG_AKS_CONS24:
 #if 0		
+		case CFG_AKS_CONS25:
+		case CFG_AKS_CONS26:
+		case CFG_AKS_CONS27:
+		case CFG_AKS_CONS28:
+		case CFG_AKS_CONS29:
+		case CFG_AKS_CONS30:
+		case CFG_AKS_CONS31:
+		case CFG_AKS_CONS32:		
+		
 			if (CFG_AKS_CONS1 == id)
 			{
 				do_refresh_clients();
@@ -827,9 +866,9 @@ void CGI_var_map(http_req *req, char *name, int id)
 			get_SAMD_ver(cmd_buff);
 			strcat(val, "  SAMD:");
 			strcat(val, cmd_buff);
-			get_TIMO_ver(cmd_buff);	
-			strcat(val, "  TIMO:");
-			strcat(val, cmd_buff);			
+			//get_TIMO_ver(cmd_buff);	
+			//strcat(val, "  TIMO:");
+			//strcat(val, cmd_buff);			
 			WEB_printf(req, "displayMsg('%s',",name);
 			WEB_printf(req, "'%s'",val);			// last one
 			WEB_printf(req, ");\n");				// close quote	
