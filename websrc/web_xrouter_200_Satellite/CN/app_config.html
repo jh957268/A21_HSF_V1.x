@@ -1,0 +1,606 @@
+<HTML>
+<HEAD>
+<META http-equiv="Pragma" content="no-cache">
+<META http-equiv=Content-Type 	content="text/html" charset="gb2312">
+<TITLE> M2M Web Server</TITLE>
+<SCRIPT language=JavaScript src="../utils.js"></SCRIPT>
+<SCRIPT language=JavaScript src=spec.js></SCRIPT>
+<link rel="stylesheet" href="../style/normal_ws.css" type="text/css">
+<SCRIPT language=JavaScript>
+/*DEMO*/
+
+
+addCfg("uart_baudrate",511,"15");
+addCfg("uart_bits",512,"2");
+addCfg("uart_parity",513,"2");
+addCfg("uart_stop",514,"1");
+addCfg("uart_fc",515,"1");
+
+addCfg("RMIP",521,"10.10.10.200");
+addCfg("RMPORT",522,"80");
+addCfg("autoframe_mode",523,"enable");
+addCfg("AutoFrame_Time",524,"250");
+addCfg("AutoFrame_Length",525,"250");
+
+
+addCfg("net_mode",535,"client");
+addCfg("net_protocol",536,"TCP");
+addCfg("net_port",537,"8899");
+addCfg("net_ip",538,"10.10.10.100");
+addCfg("tcp_ms",539,"32");
+addCfg("tcp_to",540,"300");
+
+/*END_DEMO*/
+/*REAL
+<%
+
+
+CGI_MAP(uart_baudrate,CFG_M2M_UART_BAUD);
+CGI_MAP(uart_bits,CFG_M2M_UART_BITS);
+CGI_MAP(uart_parity,CFG_M2M_UART_PARITY);
+CGI_MAP(uart_stop,CFG_M2M_UART_STOP);
+CGI_MAP(uart_fc,CFG_M2M_UART_FC);
+
+
+CGI_MAP(RMIP, CFG_SYS_RM_IP);
+CGI_MAP(RMPORT,CFG_SYS_RM_PORT);
+CGI_MAP(autoframe_mode,CFG_M2M_UART_AF);
+CGI_MAP(AutoFrame_Time,CFG_M2M_UART_AFT);
+CGI_MAP(AutoFrame_Length,CFG_M2M_UART_AFL);
+CGI_MAP(net_mode,CFG_M2M_NET_MODE);
+CGI_MAP(net_protocol,CFG_M2M_NET_PROC);
+CGI_MAP(net_port,CFG_M2M_NET_PORT);
+CGI_MAP(net_ip,CFG_M2M_NET_SERADD);
+CGI_MAP(tcp_ms,CFG_M2M_NET_MAXSK);
+CGI_MAP(tcp_to,CFG_M2M_NET_TCPTO);
+
+
+
+%>
+
+REAL*/
+function NetCheckValue()
+{
+	var p= document.form_net_setting.net_port.value ;
+
+	var to= document.form_net_setting.tcp_to.value ;
+	
+	var ms= document.form_net_setting.tcp_ms.value ;
+
+	var ad= document.form_net_setting.net_ip.value ;
+	
+	var mode= document.form_net_setting.net_mode.options.selectedIndex ;
+	
+	var prot= document.form_net_setting.net_protocol.options.selectedIndex ;
+	
+	var ip1;
+	
+	
+	
+    if(prot==1)
+	{  
+		if (p== "")
+		  {
+			alert('Please input the port value!');
+			document.form_net_setting.net_port.focus();
+			document.form_net_setting.net_port.select();
+			return false;	
+		   }
+		
+			p= 1*p;
+	   if (!((p>0)&&(p<=65535)))
+	     {
+			alert('The port value shall be: > 0 and <= 65535');
+			document.form_net_setting.net_port.focus();
+			document.form_net_setting.net_port.select();
+			return false;
+	     } 
+		 ip1 = ad.substring(0,3);
+		 ip1 = 1*ip1;
+	
+		if((ip1>223)&&(ip1<240))
+		 {
+		 	alert('The net ip error,not support Multicast');
+			document.form_net_setting.net_ip.focus();
+			document.form_net_setting.net_ip.select();
+			return false;
+		 }
+		 
+		/*
+	   if (!verifyIP2(ad,"IP Address")) 
+		 {
+			ad.focus();
+			ad.select();
+			return false;
+		  }
+		 */
+			return true;
+	
+	
+	}
+	else 
+	{ 
+				if (p== "")
+				{		
+					alert('Please input the port value!');
+					document.form_net_setting.net_port.focus();
+					document.form_net_setting.net_port.select();
+					return false;	
+				}
+	
+				p= 1*p;
+				if (!((p>0)&&(p<=65535)))
+				{		
+					alert('The port value shall be: > 0 and <= 65535');
+					document.form_net_setting.net_port.focus();
+					document.form_net_setting.net_port.select();
+					return false;
+				} 
+				to= 1*to;
+				if (!((to>=0)&&(to<=600)))
+				{			
+					alert('The TCP Timeout shall be: > 0 and <= 600');
+					document.form_net_setting.tcp_to.focus();
+					document.form_net_setting.tcp_to.select();
+					return false;
+				} 
+				if(mode==0)
+				{	
+					ms= 1*ms;
+					if (!((ms>=1)&&(ms<=32)))
+					{
+						alert('The MAX TCP Number shall be: 1~32');
+						document.form_net_setting.tcp_ms.focus();
+						document.form_net_setting.tcp_ms.select();
+						return  false;
+					} 
+					else
+						return true;
+			
+				}
+			return true;
+	}
+
+}
+
+
+ function initvalue_1()
+ {	
+	var Vubaud=getCfg("uart_baudrate");
+	var Vubits=getCfg("uart_bits");
+	var Vuparity=getCfg("uart_parity");
+	var Vustop=getCfg("uart_stop");
+	var Vufc=getCfg("uart_fc");
+
+ 	if((Vubaud>=0)&&(Vubaud<=19))
+		document.form_uart_setting.uart_baudrate.options.selectedIndex = Vubaud-6;
+	else
+		document.form_uart_setting.uart_baudrate.options.selectedIndex = 0;
+	
+	
+/*
+	if(Vubits=="1")
+	document.form_uart_setting.uart_bits.options.selectedIndex = 1;
+	else if(Vubits=="2")
+	document.form_uart_setting.uart_bits.options.selectedIndex = 2;
+	else if(Vubits=="3")
+	document.form_uart_setting.uart_bits.options.selectedIndex = 3;
+	else
+	document.form_uart_setting.uart_bits.options.selectedIndex = 0;
+*/	
+    if((Vubits>=0)&&(Vubits<=3))
+	document.form_uart_setting.uart_bits.options.selectedIndex = Vubits;
+	else
+	document.form_uart_setting.uart_bits.options.selectedIndex = 0;
+	
+	/*
+	if(Vuparity=="1")
+	document.form_uart_setting.uart_parity.options.selectedIndex = 1;
+	else if(Vuparity=="2")
+	document.form_uart_setting.uart_parity.options.selectedIndex = 2;
+	else if(Vuparity=="3")
+	document.form_uart_setting.uart_parity.options.selectedIndex = 3;
+	else if(Vuparity=="4")
+	document.form_uart_setting.uart_parity.options.selectedIndex = 4;
+	else
+	document.form_uart_setting.uart_parity.options.selectedIndex = 0;
+	*/
+	if((Vuparity>=0)&&(Vuparity<=4))
+	document.form_uart_setting.uart_parity.options.selectedIndex = Vuparity;
+	else
+	document.form_uart_setting.uart_parity.options.selectedIndex = 0;
+	
+	if(Vustop=="1")
+	document.form_uart_setting.uart_stop.options.selectedIndex = 1;
+	else
+	document.form_uart_setting.uart_stop.options.selectedIndex = 0;
+	
+	
+	if(Vufc=="1")
+	document.form_uart_setting.uart_fc.options.selectedIndex = 1;
+	else
+	document.form_uart_setting.uart_fc.options.selectedIndex = 0;
+	
+ }
+ function AutoframeModeOnChange()
+ {	 
+   if(document.form_autoframe_setting.autoframe_mode.options.selectedIndex==1)
+      {
+	   document.getElementById("AutoFrame_Time_id").style.visibility = "visible";
+	   document.getElementById("AutoFrame_Time_id").style.display = "";
+	   document.getElementById("AutoFrame_Length_id").style.visibility = "visible";
+	   document.getElementById("AutoFrame_Length_id").style.display = "";
+	  }
+	else
+	   {
+	    document.getElementById("AutoFrame_Time_id").style.visibility = "hidden";
+	    document.getElementById("AutoFrame_Time_id").style.display = "none";
+		document.getElementById("AutoFrame_Length_id").style.visibility = "hidden";
+	    document.getElementById("AutoFrame_Length_id").style.display = "none";
+	   
+	   
+	   }
+ 
+ 
+ }
+
+ function netModeOnChange()
+{
+	var idx= document.form_net_setting.net_mode.options.selectedIndex ;
+	var idx2= document.form_net_setting.net_protocol.options.selectedIndex ;
+	var NetIPClient = getCfg("net_ip");
+	
+	idx= 1*idx;
+	idx2= 1*idx2;
+
+	 if (idx2== 1)		//net_protocol=UDP
+	{
+		document.form_net_setting.net_ip.value= NetIPClient;
+		document.form_net_setting.net_mode.disabled= true;
+		document.form_net_setting.net_ip.disabled= false;
+		document.form_net_setting.tcp_ms.disabled= true;
+		document.getElementById("tcp_maxsock").style.visibility = "visible";
+		document.getElementById("tcp_timeout").style.visibility = "hidden";
+		document.getElementById("tcp_timeout").style.display = "none";
+	}
+	 else			//net_mode= server and net_protocol=TCP
+	{   if (idx== 0)
+		{
+		document.form_net_setting.net_ip.disabled= true;
+		document.form_net_setting.net_mode.disabled= false;
+		document.form_net_setting.tcp_ms.disabled= false;
+		document.getElementById("tcp_maxsock").style.visibility = "visible";
+		document.getElementById("tcp_timeout").style.visibility = "visible";
+		document.getElementById("tcp_timeout").style.display = "";
+		}
+		
+	
+	   else
+	   {
+		document.form_net_setting.net_ip.value= NetIPClient;
+		document.form_net_setting.net_ip.disabled= false;
+		document.form_net_setting.net_mode.disabled= false;
+		document.form_net_setting.tcp_ms.disabled= true;
+		document.getElementById("tcp_maxsock").style.visibility = "visible";
+		document.getElementById("tcp_timeout").style.visibility = "visible";
+		document.getElementById("tcp_timeout").style.display = "";
+		
+		
+	   }
+   }
+}
+
+
+ function initvalue_3()
+ {	 
+ 
+    if(getCfg("net_mode")=="client")
+	document.form_net_setting.net_mode.options.selectedIndex=1 ;
+	else
+	document.form_net_setting.net_mode.options.selectedIndex=0 ;
+	if(getCfg("net_protocol")=="UDP")
+	document.form_net_setting.net_protocol.options.selectedIndex=1 ;
+	else
+	document.form_net_setting.net_protocol.options.selectedIndex=0 ;
+	netModeOnChange();
+ 
+ 
+ }
+
+ 
+function Vapply2()
+{
+ var Vafmode=document.form_autoframe_setting.autoframe_mode.options.selectedIndex;
+ var Vaftime=document.form_autoframe_setting.AutoFrame_Time.value;
+ var Vaflength=document.form_autoframe_setting.AutoFrame_Length.value;
+
+	if(Vafmode==1)
+	{
+		if(!((Vaftime>=100)&&(Vaftime<=10000)))
+		{
+			document.form_autoframe_setting.AutoFrame_Time.focus();
+			document.form_autoframe_setting.AutoFrame_Time.select();
+			alert("please input number 100-10000 !");
+			return false;
+	
+	    }
+		else if(!((Vaflength>=16)&&(Vaflength<=4096)))
+		{
+		
+		   document.form_autoframe_setting.AutoFrame_Length.focus();
+		   document.form_autoframe_setting.AutoFrame_Length.select();
+		   alert("please input number 16-4096 !");
+		   return false;
+		
+		}
+		else
+		
+		return true;
+	}
+	else
+	
+	return true;
+
+}
+ <!--**-->
+function init(){
+ /*var slanV="<%CGI_GET_FLANG() ;%>";
+		init_logo();
+		if(slanV=="zhcn")
+			setLanguageCN_2();
+		else if (slanV=="en")
+			setLanguageEN_2();
+		else
+			setLanguageCN_2();*/
+	
+	init_1();
+	init_2();
+	init_3();
+}
+
+<!--1**-->
+function init_1(){
+	var f=document.form_uart_setting;
+	    cfg2Form(f);
+		initvalue_1();
+		
+	
+}
+function Cancel_1(){
+	init_1();
+}
+function Apply_1() {
+	f=document.form_uart_setting;
+
+	form2Cfg(f);
+	subForm(f,'do_cmd.html',' Application Setting',cPage);
+}
+<!--2**-->
+function init_2(){
+	var f=document.form_autoframe_setting;
+	var Vauto_mdoe=getCfg("autoframe_mode");
+	    cfg2Form(f);
+		if(Vauto_mdoe=="enable")
+		document.form_autoframe_setting.autoframe_mode.options.selectedIndex=1;
+		else
+		document.form_autoframe_setting.autoframe_mode.options.selectedIndex=0;
+		
+		AutoframeModeOnChange();
+		
+}
+function Cancel_2() {
+	init_2();
+}
+function Apply_2() {
+var f=document.form_autoframe_setting;
+	if(Vapply2()==false)
+			return;
+	form2Cfg(f);
+	subForm(f,'do_cmd.html',' Application Setting',cPage);
+}
+
+
+<!--3**-->
+function init_3(){
+	var f=document.form_net_setting;
+	    cfg2Form(f);
+		initvalue_3();
+		
+}
+function Cancel_3() {
+	init_3();
+}
+function Apply_3() {
+var	f=document.form_net_setting;
+
+    if(!NetCheckValue())
+	{
+		
+		return;
+		
+	}
+
+	form2Cfg(f);
+	subForm(f,'do_cmd.html',' Application Setting',cPage);
+}
+
+
+
+</SCRIPT>
+</HEAD>
+<BODY leftmargin=0 topmargin=0 onload="init()">
+<script>pageHead();</script>
+<h1 id="appTitle">串口及网络协议设置 </h1>
+<p id="appIntroduction"> 设置模块应用程序的串口参数及网络协议参数。 </p>
+<hr />
+
+<form method=post name=form_uart_setting >
+<table width="540" border="1" cellspacing="1" cellpadding="3" bordercolor="#9BABBD">
+  <tr> 
+    <td class="title" colspan="2" id="uart_setting_id">串口参数设置</td>
+  </tr>
+  <tr> 
+    <td class="head" width="40%" id="para_uart_baudrate_id">波特率</td>
+    <td>
+      <select name="uart_baudrate" id="uart_baudrate_id" size="1">
+	  <!--
+        <option value="0">50</option>
+        <option value="1">75</option>
+        <option value="2">110</option>
+        <option value="3">134</option>
+        <option value="4">150</option>
+        <option value="5">200</option>-->
+        <option value="6">300</option>
+        <option value="7">600</option>
+		<option value="8">1200</option>
+        <option value="9">1800</option>
+        <option value="10">2400</option>
+        <option value="11">4800</option>
+        <option value="12">9600</option>
+        <option value="13">19200</option>
+        <option value="14">38400</option>
+        <option value="15">57600</option>
+        <option value="16">115200</option>
+        <option value="17">230400</option>
+        <option value="18">345600</option>
+        <option value="19">460800</option>
+      </select>
+    </td>
+  </tr>
+  <tr> 
+    <td class="head" id="para_uart_bits_id">数据位</td>
+    <td>
+      <select name="uart_bits" id="uart_bits_id" size="1">
+        <option value="0">5</option>
+        <option value="1">6</option>
+        <option value="2">7</option>
+        <option value="3">8</option>
+      </select>
+    </td>
+  </tr>
+  <tr> 
+    <td class="head" id="para_uart_parity_id">检验位</td>
+    <td>
+      <select name="uart_parity" id="uart_parity_id" size="1">
+        <option value="0">None</option>
+        <option value="1">Odd</option>
+        <option value="2">Even</option>
+        <option value="3">Mark</option>
+        <option value="4">Space</option>
+      </select>
+    </td>
+  </tr>
+  <tr> 
+    <td class="head" id="para_uart_stop_id">停止位</td>
+    <td>
+      <select name="uart_stop" id="uart_stop_id" size="1">
+        <option value="0">1</option>
+        <option value="1">2</option>
+      </select>
+    </td>
+  </tr>
+  <tr> 
+    <td class="head" id="para_uart_fc_id">硬件流控（CTSRTS）</td>
+    <td>
+      <select name="uart_fc" id="uart_fc_id" size="1">
+        <option value="0">Disable</option>
+        <option value="1">Enable</option>
+      </select>
+    </td>
+  </tr>
+</table> 
+<p/>
+<center>
+<input type=button style="{width:120px;}" value="确定" onClick="Apply_1()" id="app_Apply1_lan_id">&nbsp;&nbsp;
+<input type=button style="{width:120px;}" value="取消" onClick="Cancel_1()" id="app_Cancel1_lan_id">
+</center>
+<br />
+
+
+</form> 
+
+<form method=post name=form_autoframe_setting >
+<table width="540" border="1" cellspacing="1" cellpadding="3" bordercolor="#9BABBD">
+  <tr> 
+    <td class="title" colspan="3" id="app_UARTAFSetting_lan_id">串口自动成帧设置</td>
+  </tr>
+  <tr> 
+    <td class="head"  colspan="2" width="50%" id="app_UARTAF_lan_id">串口自动成帧 </td>
+    <td>
+      <select name="autoframe_mode"  size="1" onchange="AutoframeModeOnChange()">
+        <option value="disable">Disable</option>
+        <option value="enable">Enable</option>
+      </select>
+    </td>
+  </tr>
+  <tr id="AutoFrame_Time_id" style="visibility:hidden;display:none;">
+	<td class="head" width="50%" colspan="2" id="app_AFTime_lan_id">自动成帧时间(100~10000)(ms)</td>
+	<td><input name="AutoFrame_Time" type="text"></td>
+  </tr>
+  <tr id="AutoFrame_Length_id" style="visibility:hidden;display:none;">
+	<td class="head" colspan="2" id="app_AFLength_lan_id">自动成帧字节数(16~4096)</td>
+	<td><input name="AutoFrame_Length" type="text"></td>
+  </tr>  
+</table>
+<p/>
+<center>
+<input type=button style="{width:120px;}" value="确定" onClick="Apply_2()" id="app_Apply2_lan_id">&nbsp;&nbsp;
+<input type=button style="{width:120px;}" value="取消" onClick="Cancel_2()" id="app_Cancel2_lan_id">
+</center>
+</form>
+<br />
+
+<form method=post name=form_net_setting >
+<table width="540" border="1" cellspacing="1" cellpadding="3" bordercolor="#9BABBD">
+  <tr> 
+    <td class="title" colspan="2" id="net_setting_id">网络参数设置</td>
+  </tr>
+  <tr> 
+    <td class="head" width="40%" id="para_net_mode_id">网络模式</td>
+    <td>
+      <select name="net_mode" id="net_mode_id" size="1" onchange=netModeOnChange()>
+        <option value="server">Server</option>
+        <option value="client">Client</option>
+      </select>
+    </td>
+  </tr>
+  <tr> 
+    <td class="head" id="para_net_protocol_id">协议</td>
+    <td>
+      <select name="net_protocol" id="net_protocol_id" size="1" onchange=netModeOnChange()>
+        <option value="TCP">TCP</option>
+        <option value="UDP">UDP</option>
+      </select>
+    </td>
+  </tr>
+  <tr> 
+    <td class="head" id="para_net_port_id">端口</td>
+		<td><input name="net_port" maxlength=32 size=32 value="8899"></td>
+  <tr> 
+    <td class="head" id="para_net_ip_id">服务器地址</td>
+		<td><input name="net_ip" maxlength=32 size=32 value="10.10.10.100"></td>
+  </tr>
+  <tr id="tcp_maxsock" style="visibility:visible;display:;"> 
+    <td class="head" id="para_maxsock_id">最大TCP连接数(1~32)</td>
+		<td><input id="tcp_maxsock_id" name="tcp_ms" maxlength=32 size=32 value="32"></td>
+  </tr>
+  <tr id="tcp_timeout" style="visibility:hidden;display:none;"> 
+    <td class="head" id="para_tcpto_id">TCP超时设置 (小于600 秒)</td>
+		<td><input id="tcp_to_id" name="tcp_to" maxlength=32 size=32 value="300"></td>
+  </tr>
+
+</table> 
+	<p/>
+<center>
+<input type=button style="{width:120px;}" value="确定" onClick="Apply_3()" id="app_Apply3_lan_id">&nbsp;&nbsp;
+<input type=button style="{width:120px;}" value="取消" onClick="Cancel_3()" id="app_Cancel3_lan_id">
+</center>
+</form>
+
+<br />
+
+
+
+<script>pageTail();</script>
+</BODY>
+</HTML>
