@@ -211,8 +211,11 @@ function Apply_1() {
 		return false;
     }	
 */
-	form2Cfg(f);
-	subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
+	if(confirm('Unit will be restarted if sACN parameters have been changed!'))
+	{
+		form2Cfg(f);
+		subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
+	}
 }
 
 function init_gaffer()
