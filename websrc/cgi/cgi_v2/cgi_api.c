@@ -242,6 +242,7 @@ int CGI_do_cmd(http_req *req)
 	char * cmd;
 	int update_cnt =0;
 	int forceToReboot = 0;
+	int sACNforceToReboot = 0;
 	//char ebuff[64];
 
 #if	(defined(CONFIG_HTTPD_MAX_USERS)&&(CONFIG_HTTPD_MAX_USERS>1))
@@ -332,7 +333,11 @@ int CGI_do_cmd(http_req *req)
 			{
 				forceToReboot = 1;
 			}
-
+			if ((CFG_SACN_UNIV ==  id) || (CFG_PROTNAME == id))
+			{
+				sACNforceToReboot = 1;
+			}
+			
 			rc = ratpac_set_str(id, val);    // return 0 or -1, 0 means done and success
 			if (-1 == rc)
 			{
@@ -528,6 +533,11 @@ bad:
 	if (rc < 0)
 	{
 		diag_printf("cgi result=%d\n", rc);
+	}
+	if (sACNforceToReboot == 1)
+	{
+		mon_snd_cmd(MON_CMD_REBOOT);
+		rc = CGI_RC_REBOOT;
 	}
 	
 	return rc;
