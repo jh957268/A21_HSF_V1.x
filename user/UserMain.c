@@ -1143,6 +1143,31 @@ void UserMain(void *arg)
 			//}
 		}
 	}
+	
+	ret1 = hfat_send_cmd("AT+UART\r\n", strlen("AT+UART\r\n"), at_rsp, sizeof(at_rsp));
+	if (HF_SUCCESS != ret1)
+	{
+		at_rsp[0] = 0;
+		eprintf("hfat_send_cmd uart fails\n");
+		while (1)
+		{
+			hf_thread_delay(5000);
+		}
+	}
+	else
+	{
+		at_rsp[13] = 0;
+		eprintf("hfat_send_cmd: %s\n", at_rsp);
+	}
+
+	if (!strstr(at_rsp, "+ok=230400"))
+	{
+		hfat_send_cmd("AT+UART=230400,8,1,NONE\r\n", strlen("AT+UART=230400,8,1,NONE\r\n"), at_rsp, sizeof(at_rsp));
+		while (1)
+		{
+			hf_thread_delay(5000);    // after changing speed, wait for box reset to take effect
+		}
+	}
 
 	ret1 = hfthread_create(client_thread_main,"udp_client_main",1536,(void*)1,AKS_PRIORITIES,NULL,NULL);
 
