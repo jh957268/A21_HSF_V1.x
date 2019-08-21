@@ -927,7 +927,7 @@ void CGI_var_map(http_req *req, char *name, int id)
 			ratpac_get_str(id, val);
 			WEB_printf(req, "consAddRow('%s');\n",val);			
 
-			break;
+			return;
 		default:
 			idx = ratpac_get_str(id, val);
 			if (-1 == idx)
