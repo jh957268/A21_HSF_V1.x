@@ -574,6 +574,7 @@ void fill_space(char *datarray, int arrlen)
 
 int Joo_uart_cmd(char *cmd, int len, char *expect_resp, cyg_tick_count_t timeout_tick);
 int get_client_entry(int idx, char *node_name, char *ip_addr, char *universe, char *art_sub, char *battery);
+int get_client_entry_adva(int idx, char *node_name, char *ip_addr, char *ecos_ver, char *samd_ver, char *timo_ver);
 void CGI_var_map(http_req *req, char *name, int id)
 {
 	static char val[512+128];    // carefule, the stack size may not be enough for such a big value
@@ -628,10 +629,11 @@ void CGI_var_map(http_req *req, char *name, int id)
 #endif		
 			base_idx = ((CFG_AKS_ADVA1 >> 16) & 0xff);
 			idx = ((id >> 16) & 0xff) - base_idx;
-			if (-1 == get_client_entry(idx, node_name, ip_addr, universe, art_sub, battery))
+			if (-1 == get_client_entry_adva(idx, node_name, ip_addr, battery, universe, art_sub))
 			{
 				return;
 			}
+			// battery:ecos_ver,  universe:samd_ver, art_sub:timo_ver
 			WEB_printf(req, "displayMsg('%s',",name);
 			
 			sprintf(ip_addr_save, "%s", ip_addr);	
@@ -652,8 +654,9 @@ void CGI_var_map(http_req *req, char *name, int id)
 			sc_convert(cmd_buff);
 			WEB_printf(req, "'%s'+",cmd_buff);			
 			
-			get_eCos_ver(val);
-			strcat(val, " ");
+			//get_eCos_ver(val);
+			//strcat(val, " ");
+			sprintf(val, "%s ", battery);			
 			sprintf(cmd_buff, "<button type=\"button\" onclick=\"updateFirmware(document.Upgrade_eCos, 'http://%s/EN/update_firmware.html');\">Update</button>", ip_addr_save);
 			link_len = strlen(cmd_buff);
 			fill_space(cmd_buff, link_len+5);
@@ -661,8 +664,9 @@ void CGI_var_map(http_req *req, char *name, int id)
 			sc_convert(val);
 			WEB_printf(req, "'%s'+",val);
 	
-			get_SAMD_ver(val);
-			strcat(val, " ");			
+			//get_SAMD_ver(val);
+			//strcat(val, " ");	
+			sprintf(val, "%s ", universe);		
 			sprintf(cmd_buff, "<button type=\"button\" onclick=\"updateFirmware(document.Upgrade_SAMD, 'http://%s/EN/update_firmware.html');\">Update</button>", ip_addr_save);
 			link_len = strlen(cmd_buff);
 			fill_space(cmd_buff, link_len+3);
