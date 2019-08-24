@@ -1312,48 +1312,56 @@ void UserMain(void *arg)
 			hfuart_send(HFUART0, Timo,sizeof(Timo),100);
 
 			//char ipAddress[4]={};
+			int rc;			
 			if (AP_MODE == operation_mode)
 			{
-				ipAddress[0] = 0xa;
-				ipAddress[1] = 0xa;
-				ipAddress[2] = 0x64;
-				ipAddress[3] = 0xfe;
+				rc = hfat_send_cmd("AT+LANN\r\n", sizeof("AT+LANN\r\n"),at_rsp,sizeof(at_rsp));				
+				//ipAddress[0] = 0xa;
+				//ipAddress[1] = 0xa;
+				//ipAddress[2] = 0x64;
+				//ipAddress[3] = 0xfe;
 			}
 			else
-			{
-				int rc;
-				
+			{			
 				rc = hfat_send_cmd("AT+WANN\r\n", sizeof("AT+WANN\r\n"),at_rsp,sizeof(at_rsp));
-				at_rsp[24] = 0;
-				if (HF_SUCCESS != rc)
+			}
+			at_rsp[24] = 0;
+			if (HF_SUCCESS != rc)
+			{
+				eprintf("WAN Command fails.\n");
+				ipAddress[0] = 0x0;
+				ipAddress[1] = 0x0;
+				ipAddress[2] = 0x0;
+				ipAddress[3] = 0x0;
+			}
+			else if (strstr(at_rsp, "+ERR"))
+			{
+				eprintf("WAN Command Err.\n");
+				ipAddress[0] = 0x0;
+				ipAddress[1] = 0x0;
+				ipAddress[2] = 0x0;
+				ipAddress[3] = 0x0;
+			}			
+			else
+			{
+				const char s[] = ".,";
+				char *token;
+				if (isdigit(at_rsp[4]))
 				{
-					eprintf("WAN Command fails.\n");
-					ipAddress[0] = 0x0;
-					ipAddress[1] = 0x0;
-					ipAddress[2] = 0x0;
-					ipAddress[3] = 0x0;
+					token = strtok((char *)&at_rsp[4], s);
 				}
-				else if (strstr(at_rsp, "+ERR"))
-				{
-					eprintf("WAN Command Err.\n");
-					ipAddress[0] = 0x0;
-					ipAddress[1] = 0x0;
-					ipAddress[2] = 0x0;
-					ipAddress[3] = 0x0;
-				}			
 				else
 				{
-					const char s[] = ".,";
-					char *token;
 					token = strtok((char *)&at_rsp[9], s);
-					ipAddress[0] = (char)atoi(token);
-					token = strtok(NULL, s);
-					ipAddress[1] = (char)atoi(token);
-					token = strtok(NULL, s);
-					ipAddress[2] = (char)atoi(token);
-					token = strtok(NULL, s);
-					ipAddress[3] = (char)atoi(token);					
 				}
+				ipAddress[0] = (char)atoi(token);
+				token = strtok(NULL, s);
+				ipAddress[1] = (char)atoi(token);
+				token = strtok(NULL, s);
+				ipAddress[2] = (char)atoi(token);
+				token = strtok(NULL, s);
+				ipAddress[3] = (char)atoi(token);					
+			}
 #if 0				
 				else if (strstr(at_rsp, "+ok=DHCP,0.0.0.0"))
 				{
@@ -1390,7 +1398,7 @@ void UserMain(void *arg)
 					}
 				}
 #endif				
-			}
+			
 #if 0			
 		    char ipAddressSTR[20]={};
 			CFG_get_str(CFG_str2id("LAN_IP"),ipAddressSTR);
