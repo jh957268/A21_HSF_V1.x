@@ -1496,6 +1496,10 @@ struct client_ent
 	char universe[4];
 	char subnet[4];
 	char baterry[8];
+	char eCos_ver[8];
+	char samd_ver[8];
+	char timo_ver[8];
+	char sacn_univ[8];
 	int	 age_cnt;
 };
 
@@ -1629,6 +1633,10 @@ static void server_thread_main(void* arg)
 			msg[22] = 0;
 			msg[26] = 0;
 			msg[36] = 0;
+			msg[44] = 0;
+			msg[51] = 0;
+			msg[59] = 0;
+			msg[71] = 0;
 				
 			char ip_addr[20];
 			sprintf(ip_addr, "%s", inet_ntoa(cliAddr.sin_addr));
@@ -1926,6 +1934,10 @@ USER_FUNC static void client_thread_main(void* arg)
 			ratpac_get_str( CFG_str2id("AKS_UNIVERSE"), &cli_recv[20]);
 			ratpac_get_str( CFG_str2id("AKS_SUBNET"), &cli_recv[24]);
 			sprintf(&cli_recv[30], "%s", battery_info);
+			sprintf(&cli_recv[40], "%s", eCos_ver);
+			sprintf(&cli_recv[48], "%s", samd_ver);
+			sprintf(&cli_recv[56], "%s", timo_ver);
+			ratpac_get_str( CFG_SACN_UNIV, &cli_recv[64]);	
 			cli_recv[36] = 0;
 			//sprintf(&cli_recv[0], "AKS" );
 			//sprintf(&cli_recv[20], "10");
@@ -1938,7 +1950,7 @@ USER_FUNC static void client_thread_main(void* arg)
 #endif
 			// serv.sin_addr.s_addr = addr.sin_addr.s_addr;
 			serv.sin_addr.s_addr = 0xff000000 | ((uint8_t)ipAddress[2] << 16) | ((uint8_t)ipAddress[1] << 8) | (uint8_t)ipAddress[0];			
-			rc = sendto(sd, cli_recv, 40, 0, 
+			rc = sendto(sd, cli_recv, 76, 0, 
 				(struct sockaddr *) &serv, 
 				sizeof(serv));
 			if ( rc < 0)
@@ -1970,6 +1982,30 @@ int get_client_entry(int idx, char *node_name, char *ip_addr, char *universe, ch
 
 	//sprintf(battery, "%s", battery_info);
 	snprintf(battery, 8, "%s%%", client_valid_list[idx].baterry);	
+	return 0;
+}
+
+int get_client_entry_adva(int idx, char *node_name, char *ip_addr, char *ecos_ver, char *samd_ver, char *timo_ver)
+{
+	if (idx >= client_valid_num)
+	{
+		node_name[0] = 0;
+		ip_addr[0] = 0;
+		ecos_ver[0] = 0;
+		samd_ver[0] = 0;
+		timo_ver[0] = 0;
+		return -1;
+	}
+	sprintf(node_name, "%s", client_valid_list[idx].node_name);
+	if (strlen(node_name) == 0)
+	{
+		sprintf(node_name,"NoName");
+	}
+	sprintf(ip_addr, "%s", client_valid_list[idx].ip_addr);
+	sprintf(ecos_ver, "%s", client_valid_list[idx].eCos_ver);
+	sprintf(samd_ver, "%s", client_valid_list[idx].samd_ver);	
+	sprintf(timo_ver, "%s", client_valid_list[idx].timo_ver);
+
 	return 0;
 }
 
@@ -2654,6 +2690,12 @@ void age_client_list(int new)
 	sprintf(client_list[0].universe, tmp_buff);	
 	ratpac_get_str( CFG_str2id("AKS_SUBNET"), tmp_buff);
 	sprintf(client_list[0].subnet, tmp_buff);
+	ratpac_get_str( CFG_SACN_UNIV, tmp_buff);
+	sprintf(client_list[0].sacn_univ, tmp_buff);
+	
+	sprintf(client_list[0].eCos_ver, "%s", eCos_ver);
+	sprintf(client_list[0].samd_ver, "%s", samd_ver);
+	sprintf(client_list[0].timo_ver, "%s", timo_ver);	
 	client_list[0].age_cnt = 3;
 	
 	client_valid_list[0] = client_list[0];
@@ -2712,6 +2754,10 @@ void populate_new_client(char *ip_ad, char *rcv_msg)
 			sprintf(client_list[i].universe, &rcv_msg[20]);
 			sprintf(client_list[i].subnet, &rcv_msg[24]);
 			sprintf(client_list[i].baterry, &rcv_msg[30]);
+			sprintf(client_list[i].eCos_ver, &rcv_msg[40]);
+			sprintf(client_list[i].samd_ver, &rcv_msg[48]);
+			sprintf(client_list[i].timo_ver, &rcv_msg[56]);
+			sprintf(client_list[i].sacn_univ, &rcv_msg[64]);			
 			client_list[i].age_cnt = AGE_COUNT;	
 			age_client_list(1);
 			return;
