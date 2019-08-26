@@ -2508,7 +2508,12 @@ void get_SAMD_ver(char *buffer)
 void get_TIMO_ver(char *buffer)
 {
 	strcpy(buffer, timo_ver);
-}			
+}
+
+void get_SysUpTime(char *buffer)
+{
+	sprintf(buffer,"%llu", cyg_current_time());
+}				
 
 void get_eCos_rel_build(char *buffer)
 {
