@@ -192,6 +192,7 @@ void get_SAMD_ver(char *buffer);
 void get_TIMO_ver(char *buffer);
 void get_battery_info(char *buffer);
 void get_module_ipaddress_mode(char *ip, char *mode);
+void get_SysUpTime(char *buffer);
 
 int Send_Link_Command(void);
 int Send_UnLink_Command(void);
@@ -880,6 +881,9 @@ void CGI_var_map(http_req *req, char *name, int id)
 			get_SAMD_ver(cmd_buff);
 			strcat(val, "  SAMD:");
 			strcat(val, cmd_buff);
+			get_SysUpTime(cmd_buff);
+			strcat(val, "  Uptime:");
+			strcat(val, cmd_buff);				
 			//get_TIMO_ver(cmd_buff);	
 			//strcat(val, "  TIMO:");
 			//strcat(val, cmd_buff);			
