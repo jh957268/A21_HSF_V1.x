@@ -151,5 +151,5 @@ void send_artnet_header(uint8_t seq, char *dmx_slot, int slot_cnt )
 	char *dmx_data = dmx_slot - sizeof(artnet_hdr_msg);
 	artnet_hdr_msg.Sequence = seq;
 	memcpy((void *)dmx_data, (void *)&artnet_hdr_msg, sizeof(artnet_hdr_msg));
-	hfuart_send(HFUART0, &artnet_hdr_msg, sizeof(artnet_hdr_msg) + slot_cnt,1000);
+	hfuart_send(HFUART0, dmx_data, sizeof(artnet_hdr_msg) + slot_cnt,1000);
 }
