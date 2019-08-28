@@ -881,9 +881,10 @@ void CGI_var_map(http_req *req, char *name, int id)
 			get_SAMD_ver(cmd_buff);
 			strcat(val, "  SAMD:");
 			strcat(val, cmd_buff);
-			get_SysUpTime(cmd_buff);
-			strcat(val, "  Uptime:");
-			strcat(val, cmd_buff);				
+			//get_SysUpTime(cmd_buff);
+			//strcat(val, "  Uptime:");
+			//strcat(val, cmd_buff);
+			
 			//get_TIMO_ver(cmd_buff);	
 			//strcat(val, "  TIMO:");
 			//strcat(val, cmd_buff);			
