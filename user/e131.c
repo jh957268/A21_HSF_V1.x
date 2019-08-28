@@ -64,6 +64,7 @@ extern void process_artnet_msg(int sockfd, uint8_t *raw, int len, struct sockadd
 extern void init_artpollreply_msg(void);
 
 extern volatile char ipAddress[];
+unsigned int dmx_count = 0;
 
 /* Create a socket file descriptor suitable for E1.31 communication */
 int e131_socket(void) {
@@ -345,7 +346,7 @@ const char *e131_strerror(const e131_error_t error)
 
 #if 1
 static e131_packet_t packet;
-void send_artnet_header(uint8_t seq);
+void send_artnet_header(uint8_t seq, char *dmx_slot, int slot_cnt);
 
 void sACN_main(void *arg) 
 {
@@ -427,9 +428,10 @@ void sACN_main(void *arg)
 	
 	// send it to SAMD
     last_seq = packet.frame.seq_number;
-	send_artnet_header(last_seq);
+	send_artnet_header(last_seq, (char *)&packet.dmp.prop_val[1], ntohs(packet.dmp.prop_val_cnt) - 1);
 	//send the E131 DMX data
-	hfuart_send(HFUART0, (char *)&packet.dmp.prop_val[1], packet.dmp.prop_val_cnt - 1,1000);
+	//hfuart_send(HFUART0, (char *)&packet.dmp.prop_val[1], packet.dmp.prop_val_cnt - 1,1000);
+	dmx_count++;
   }
 }
 #endif
