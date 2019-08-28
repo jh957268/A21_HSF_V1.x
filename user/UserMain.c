@@ -2512,7 +2512,9 @@ void get_TIMO_ver(char *buffer)
 
 void get_SysUpTime(char *buffer)
 {
-	sprintf(buffer,"%llu", cyg_current_time());
+	extern unsigned int dmx_count;
+	
+	sprintf(buffer,"%llu - %d", cyg_current_time(), dmx_count);
 }				
 
 void get_eCos_rel_build(char *buffer)
