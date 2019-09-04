@@ -148,8 +148,13 @@ void process_artnet_msg(int sockfd, uint8_t *raw, int len, struct sockaddr_in fr
 
 void send_artnet_header(uint8_t seq, char *dmx_slot, int slot_cnt )
 {
+	int len;
 	char *dmx_data = dmx_slot - sizeof(artnet_hdr_msg);
 	artnet_hdr_msg.Sequence = seq;
 	memcpy((void *)dmx_data, (void *)&artnet_hdr_msg, sizeof(artnet_hdr_msg));
-	hfuart_send(HFUART0, dmx_data, sizeof(artnet_hdr_msg) + slot_cnt,1000);
+	len = sizeof(artnet_hdr_msg) + slot_cnt;
+	if (hfuart_send(HFUART0, dmx_data, len,1000) == len)
+	{
+		dmx_count++;
+	}
 }
