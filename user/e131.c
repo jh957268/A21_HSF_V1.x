@@ -428,6 +428,10 @@ void sACN_main(void *arg)
 	
 	// send it to SAMD
     last_seq = packet.frame.seq_number;
+	if (packet.dmp.prop_val[0] != 0x00)
+	{
+		continue;
+	}
 	send_artnet_header(last_seq, (char *)&packet.dmp.prop_val[1], ntohs(packet.dmp.prop_val_cnt) - 1);
 	//send the E131 DMX data
 	//hfuart_send(HFUART0, (char *)&packet.dmp.prop_val[1], packet.dmp.prop_val_cnt - 1,1000);
