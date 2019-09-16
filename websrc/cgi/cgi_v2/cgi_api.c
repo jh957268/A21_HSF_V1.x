@@ -742,6 +742,12 @@ void CGI_var_map(http_req *req, char *name, int id)
 			{
 				return;
 			}
+#ifdef ADVANCE_CONSTELLATION			
+			sprintf(val,"U");
+			strcat(val,battery);
+			WEB_printf(req, "BuildDisplayMsg('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s');\n",name, node_name,ip_addr,"artnet" ,art_sub, universe, "1", "AP", val, "3");
+			return;
+#endif			
 			//sprintf(node_name, "AKS_NODE%d", idx);
 			//sprintf(ip_addr,"10.10.100.2%d", idx);
 			//sprintf(universe,"%d", idx);
