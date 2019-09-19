@@ -344,6 +344,10 @@ function Apply_2() {
 
 function renameAksName(id, ipAdd)
 {
+	var f=document.HFA21TEST;
+
+	form2Cfg(f);
+
 	alert(id + ' ' + ipAdd);
 	alert('aks_name_id_' + id);
 	var myEle = document.getElementById('aks_name_id_' + id);
@@ -356,6 +360,8 @@ function renameAksName(id, ipAdd)
 	{
 		alert("found " + id + ' value = ' + myEle.value);
 	}
+	var url = 'http://' + ipAdd + '/EN/';
+	subForm(f, url + 'do_constellation.html','RENAME_AKS=' + myEle.value,cPage);
 }
 
 function applyProtUni(id, ipAdd)
