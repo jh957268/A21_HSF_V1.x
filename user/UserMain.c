@@ -215,6 +215,7 @@ typedef struct _web_data
 	unsigned char led_b[8];	
 	unsigned char use_xlr[2];
 	unsigned char main_xlr[2];
+	unsigned char sort_by[4];
 	unsigned char magic[2];
 }WEB_DATA_T;
 
@@ -816,7 +817,8 @@ void web_flash_data_init(void)
 		sprintf(g_web_config.led_g,"112");
 		sprintf(g_web_config.led_b,"102");		
 		sprintf(g_web_config.use_xlr,"0");
-		sprintf(g_web_config.main_xlr,"0");	
+		sprintf(g_web_config.main_xlr,"0");
+		sprintf(g_web_config.sort_by,"0");		
 		g_web_config.magic[0] = MAGIC0;
 		g_web_config.magic[1] = MAGIC1;		
 		write_data_to_flash();
@@ -1236,7 +1238,7 @@ void UserMain(void *arg)
 				if ((uint8_t)ipAddress[0] == 0)
 				{
 					ap_wln_channel = 0;
-					channel[0] = 0;
+					channel[0] = 1;
 					get_ap_wln_channel = 0;
 				}
 				else if (0 == get_ap_wln_channel) 
@@ -1258,7 +1260,7 @@ void UserMain(void *arg)
 			}
 			else
 			{
-				channel[0] = 0;
+				channel[0] = 1;
 			}
 
 			char width[4]={};
@@ -1500,6 +1502,10 @@ struct client_ent
 	char samd_ver[8];
 	char timo_ver[8];
 	char sacn_univ[8];
+	char sort_by[4];
+	char crmx_power[4];
+	char host_mode[4];
+	char protocol[4];
 	int	 age_cnt;
 };
 
@@ -1937,7 +1943,11 @@ USER_FUNC static void client_thread_main(void* arg)
 			sprintf(&cli_recv[40], "%s", eCos_ver);
 			sprintf(&cli_recv[48], "%s", samd_ver);
 			sprintf(&cli_recv[56], "%s", timo_ver);
-			ratpac_get_str( CFG_SACN_UNIV, &cli_recv[64]);	
+			ratpac_get_str( CFG_SACN_UNIV, &cli_recv[64]);
+			ratpac_get_str( CFG_PROTNAME, &cli_recv[72]);
+			ratpac_get_str( CFG_TIMO_POWER, &cli_recv[76]);
+			ratpac_get_str( CFG_SORT_BY, &cli_recv[80]);				
+			sprintf(&cli_recv[84], "%d", operation_mode);			
 			cli_recv[36] = 0;
 			//sprintf(&cli_recv[0], "AKS" );
 			//sprintf(&cli_recv[20], "10");
@@ -1950,7 +1960,7 @@ USER_FUNC static void client_thread_main(void* arg)
 #endif
 			// serv.sin_addr.s_addr = addr.sin_addr.s_addr;
 			serv.sin_addr.s_addr = 0xff000000 | ((uint8_t)ipAddress[2] << 16) | ((uint8_t)ipAddress[1] << 8) | (uint8_t)ipAddress[0];			
-			rc = sendto(sd, cli_recv, 76, 0, 
+			rc = sendto(sd, cli_recv, 96, 0, 
 				(struct sockaddr *) &serv, 
 				sizeof(serv));
 			if ( rc < 0)
@@ -1961,8 +1971,7 @@ USER_FUNC static void client_thread_main(void* arg)
 	}
 
 }
-
-int get_client_entry(int idx, char *node_name, char *ip_addr, char *universe, char *art_sub, char *battery)
+int get_client_entry(int idx, char *node_name, char *ip_addr, char *universe, char *art_sub, char *battery, char *protocol, char *sacn_uni, char *sort_by, char *host_mode, char *timopower)
 {
 	if (idx >= client_valid_num)
 	{
@@ -1978,8 +1987,14 @@ int get_client_entry(int idx, char *node_name, char *ip_addr, char *universe, ch
 	}
 	sprintf(ip_addr, "%s", client_valid_list[idx].ip_addr);
 	sprintf(universe, "%s", client_valid_list[idx].universe);
-	sprintf(art_sub, "%s", client_valid_list[idx].subnet);	
+	sprintf(art_sub, "%s", client_valid_list[idx].subnet);
 
+	sprintf(protocol, "%s", client_valid_list[idx].protocol);
+	sprintf(sacn_uni, "%s", client_valid_list[idx].sacn_univ);
+	sprintf(sort_by, "%s", client_valid_list[idx].sort_by);
+	sprintf(host_mode, "%s", client_valid_list[idx].host_mode);
+	sprintf(timopower, "%s", client_valid_list[idx].crmx_power);
+	
 	//sprintf(battery, "%s", battery_info);
 	snprintf(battery, 8, "%s%%", client_valid_list[idx].baterry);	
 	return 0;
@@ -2147,7 +2162,10 @@ int ratpac_get_str(int id, char *val)
 			break;
 		case CFG_AKS_MAIN_XLR:	
 			snprintf(val, 2, "%s", g_web_config.main_xlr);			
-			break;	
+			break;
+		case CFG_SORT_BY:	
+			snprintf(val, 2, "%s", g_web_config.sort_by);			
+			break;				
 		case CFG_AKS_CONS_NUM:
 			snprintf(val, 2, "%d", client_valid_num);
 			break;
@@ -2219,7 +2237,10 @@ int ratpac_set_str(int id, char *val)
 			break;
 		case CFG_AKS_MAIN_XLR:
 			snprintf(g_web_config.main_xlr, 2, "%s", val);			
-			break;				
+			break;
+		case CFG_SORT_BY:
+			snprintf(g_web_config.sort_by, 2, "%s", val);			
+			break;		
 		default:
 			return -1;
 	}
@@ -2699,10 +2720,17 @@ void age_client_list(int new)
 	sprintf(client_list[0].subnet, tmp_buff);
 	ratpac_get_str( CFG_SACN_UNIV, tmp_buff);
 	sprintf(client_list[0].sacn_univ, tmp_buff);
+	ratpac_get_str( CFG_SORT_BY, tmp_buff);
+	sprintf(client_list[0].sort_by, tmp_buff);
+	ratpac_get_str( CFG_TIMO_POWER, tmp_buff);
+	sprintf(client_list[0].crmx_power, tmp_buff);
+	ratpac_get_str( CFG_PROTNAME, tmp_buff);
+	sprintf(client_list[0].protocol, tmp_buff);	
 	
 	sprintf(client_list[0].eCos_ver, "%s", eCos_ver);
 	sprintf(client_list[0].samd_ver, "%s", samd_ver);
-	sprintf(client_list[0].timo_ver, "%s", timo_ver);	
+	sprintf(client_list[0].timo_ver, "%s", timo_ver);
+	sprintf(client_list[0].host_mode, "%d", operation_mode);	
 	client_list[0].age_cnt = 3;
 	
 	client_valid_list[0] = client_list[0];
@@ -2764,7 +2792,11 @@ void populate_new_client(char *ip_ad, char *rcv_msg)
 			sprintf(client_list[i].eCos_ver, &rcv_msg[40]);
 			sprintf(client_list[i].samd_ver, &rcv_msg[48]);
 			sprintf(client_list[i].timo_ver, &rcv_msg[56]);
-			sprintf(client_list[i].sacn_univ, &rcv_msg[64]);			
+			sprintf(client_list[i].sacn_univ, &rcv_msg[64]);
+			sprintf(client_list[i].protocol, &rcv_msg[72]);
+			sprintf(client_list[i].crmx_power, &rcv_msg[76]);
+			sprintf(client_list[i].sort_by, &rcv_msg[80]);
+			sprintf(client_list[i].host_mode, &rcv_msg[84]);			
 			client_list[i].age_cnt = AGE_COUNT;	
 			age_client_list(1);
 			return;
@@ -2781,6 +2813,14 @@ void populate_new_client(char *ip_ad, char *rcv_msg)
 			sprintf(client_list[i].universe, &rcv_msg[20]);
 			sprintf(client_list[i].subnet, &rcv_msg[24]);
 			sprintf(client_list[i].baterry, &rcv_msg[30]);
+			sprintf(client_list[i].eCos_ver, &rcv_msg[40]);
+			sprintf(client_list[i].samd_ver, &rcv_msg[48]);
+			sprintf(client_list[i].timo_ver, &rcv_msg[56]);
+			sprintf(client_list[i].sacn_univ, &rcv_msg[64]);
+			sprintf(client_list[i].protocol, &rcv_msg[72]);
+			sprintf(client_list[i].crmx_power, &rcv_msg[76]);
+			sprintf(client_list[i].sort_by, &rcv_msg[80]);
+			sprintf(client_list[i].host_mode, &rcv_msg[84]);			
 			client_list[i].age_cnt = AGE_COUNT;
 			age_client_list(1);
 			return;
