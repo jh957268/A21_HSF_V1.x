@@ -423,6 +423,24 @@ int CGI_do_cmd(http_req *req)
 		write_data_to_flash();					// write ratpac data to flash
 		return CGI_RC_OK;
 	}
+	if (strstr(cmd, "RENAME_AKS"))
+	{
+		char aks_node_name[24];
+		char *tmp1;
+
+		tmp1 = strchr(cmd, '=');
+		if (0 == tmp1)
+		{
+			return (CGI_RC_OK);
+		}
+		tmp1++;
+		
+		sprintf(aks_node_name, "%s", tmp1);
+		ratpac_set_str(CFG_AKS_NAME,aks_node_name);
+		//CFG_save(0);
+		write_data_to_flash();					// write ratpac data to flash
+		return CGI_RC_OK;
+	}	
 
 ReadyToOut:	
 
@@ -742,6 +760,7 @@ void CGI_var_map(http_req *req, char *name, int id)
 			{
 				return;
 			}
+#define ADVANCE_CONSTELLATION			
 #ifdef ADVANCE_CONSTELLATION			
 			sprintf(val,"U");
 			strcat(val,battery);
