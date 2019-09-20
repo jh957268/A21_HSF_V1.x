@@ -592,7 +592,7 @@ void fill_space(char *datarray, int arrlen)
 }
 
 int Joo_uart_cmd(char *cmd, int len, char *expect_resp, cyg_tick_count_t timeout_tick);
-int get_client_entry(int idx, char *node_name, char *ip_addr, char *universe, char *art_sub, char *battery);
+int get_client_entry(int idx, char *node_name, char *ip_addr, char *universe, char *art_sub, char *battery, char *protocol, char *sacn_uni, char *sort_by, char *host_mode, char *timo_power);
 int get_client_entry_adva(int idx, char *node_name, char *ip_addr, char *ecos_ver, char *samd_ver, char *timo_ver);
 void CGI_var_map(http_req *req, char *name, int id)
 {
@@ -605,7 +605,8 @@ void CGI_var_map(http_req *req, char *name, int id)
 	char universe[4];
 	char art_sub[4];
 	char ip_addr_save[20];
-	char sel_ele[64];
+	char sel_ele[60];
+	char timo_power[4];
 	char battery[12];
 	int node_len, link_len;
 	int uni_num, art_sub_num;
@@ -755,16 +756,16 @@ void CGI_var_map(http_req *req, char *name, int id)
 			}
 #endif		
 			base_idx = ((CFG_AKS_CONS1 >> 16) & 0xff);	
-			idx = ((id >> 16) & 0xff) - base_idx;
-			if (-1 == get_client_entry(idx, node_name, ip_addr, universe, art_sub, battery))
+			idx = ((id >> 16) & 0xff) - base_idx;	
+			if (-1 == get_client_entry(idx, node_name, ip_addr, universe, art_sub, battery,  href_link,cmd_buff, ip_addr_save,sel_ele, timo_power))
 			{
 				return;
 			}
 #define ADVANCE_CONSTELLATION			
 #ifdef ADVANCE_CONSTELLATION			
-			sprintf(val,"U");
+			sprintf(val,"B");
 			strcat(val,battery);
-			WEB_printf(req, "BuildDisplayMsg('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s');\n",name, node_name,ip_addr,"artnet" ,art_sub, universe, "1", "AP", val, "3");
+			WEB_printf(req, "BuildDisplayMsg('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s');\n",name, node_name,ip_addr, href_link ,art_sub, universe,cmd_buff , sel_ele, val, timo_power, ip_addr_save);
 			return;
 #endif			
 			//sprintf(node_name, "AKS_NODE%d", idx);
