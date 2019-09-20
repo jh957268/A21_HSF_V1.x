@@ -3,6 +3,31 @@
 <META http-equiv="Pragma" content="no-cache">
 <META http-equiv=Content-Type 	content="text/html" charset="gb2312">
 <link rel="stylesheet" href="../style/normal_ws.css" type="text/css">
+<style>
+
+table {
+    border-collapse: collapse;
+    border-right: none;
+	border-left: none;	
+}
+
+th {
+  background-color: #4CAF50;
+  color: white;
+    border-right: none;
+	border-left: none;  
+}
+
+td {
+    border-right: none;
+	border-left: none;
+}
+
+h1 {
+	background: url(../style/images/img13.png) no-repeat left top;
+}
+
+</style>
 <TITLE>Ratpac Constellation</TITLE>
 <SCRIPT language=JavaScript src="../utils.js"></SCRIPT>
 <SCRIPT language=JavaScript src=spec.js></SCRIPT>
@@ -238,111 +263,55 @@ function Apply_2() {
 <form method=post name=HFA21TEST target="_blank">
 
 	</form>
+<form method=post name=SORTAUTO target="_blank">
+	<table id="SORT_TBL" width="760" border="0" cellspacing="1" cellpadding="3"   bordercolor="#9BABBD">
+		<tr bgcolor="#E2C0F0">
+			<td>
+				<b>Sort By:</b> <select id="sort_id" size="1">
+						<option value="0">Node Name</option>
+						<option value="1">IP</option>
+						<option value="2">Battery</option>
+						<option value="3">Universe #</option>
+					</select>
+				<input type=button style="{width:120px;}" value="Apply" onClick="apply_sort()">					
+			</td>
+			<td align="right">
+				<b>Auto-Number Start Universes : </b><input id="auto_univ_id"  maxlength=8 size=8 value="1">
+				<input type=button style="{width:120px;}" value="Art-Net" onClick="artnet_auto()">
+				<input type=button style="{width:120px;}" value="sACN" onClick="sacn_auto()">				
+			</td>			
+		</tr>
+	</table> 	
+</form>
 
-
-	<form method=post name=CRMXSettings>
-
-	</form>
-	
-
-	<form method=post name=CONSTELLATION>
-		<table id="CONS_TBL" width="540" border="1" cellspacing="1" cellpadding="3"   bordercolor="#9BABBD">
-			<tr>
-				<td height="20">
-					<pre>Node Name       IP Address      Battery Identify   Wireless CRMX      Art-Sub/Universe</pre>
-				</td>
-			</tr>
-		<!--  /*			
-			<tr>
-				<td height="20">
-					<pre id="AKS_CONS1"></pre>
-				</td>
-			</tr>
-			<tr>
-				<td height="20">
-					<pre id="AKS_CONS2"></pre>
-				</td>
-			</tr>
-			<tr>
-				<td height="20">
-					<pre id="AKS_CONS3"></pre>
-				</td>
-			</tr>
-			<tr>
-				<td height="20">
-					<pre id="AKS_CONS4"></pre>
-				</td>
-			</tr>
-			<tr>
-				<td height="20">
-					<pre id="AKS_CONS5"></pre>
-				</td>
-			</tr>
-			<tr>
-				<td height="20">
-					<pre id="AKS_CONS6"></pre>
-				</td>
-			</tr>
-			<tr>
-				<td height="20">
-					<pre id="AKS_CONS7"></pre>
-				</td>
-			</tr>
-			<tr>
-				<td height="20">
-					<pre id="AKS_CONS8"></pre>
-				</td>
-			</tr>
-			<tr>
-				<td height="20">
-					<pre id="AKS_CONS9"></pre>
-				</td>
-			</tr>
-			<tr>
-				<td height="20">
-					<pre id="AKS_CONS10"></pre>
-				</td>
-			</tr>
-			<tr>
-				<td height="20">
-					<pre id="AKS_CONS11"></pre>
-				</td>
-			</tr>
-			<tr>
-				<td height="20">
-					<pre id="AKS_CONS12"></pre>
-				</td>
-			</tr>
-			<tr>
-				<td height="20">
-					<pre id="AKS_CONS13"></pre>
-				</td>
-			</tr>
-			<tr>
-				<td height="20">
-					<pre id="AKS_CONS14"></pre>
-				</td>
-			</tr>
-			<tr>
-				<td height="20">
-					<pre id="AKS_CONS15"></pre>
-				</td>
-			</tr>
-			<tr>
-				<td height="20">
-					<pre id="AKS_CONS16"></pre>
-				</td>
-			</tr>
-		-->			
-		</table> 
+	<table id="add_table" width="760" border="1" cellspacing="1" cellpadding="3"   bordercolor="#9BABBD">
+		<tr bgcolor="yellow">
+			<td>
+				<b>Node Name/IP Address</b> 			
+			</td>
+			<td> 
+				<b>Host Mode/Battery</b> 			
+			</td>
+			<td>
+				<b>Wireless CRMX/Power</b> 			
+			</td>
+			<td>
+				<b>Protocol/Universe</b> 			
+			</td>			
+		</tr>
+	</table> 
 		<center>
 			<br><input type=button style="{width:120px;}" value="Refresh" onClick="Apply_refresh()" id="ap_Apply1_refresh_id">
 			<br><br><br><input type=button style="{width:120px;}" value="Firmware Update Mode" onClick="Apply_advance()" id="ap_Apply1_advance_id">
 		<!--  /*
 			<button type="button" onclick="window.location.href='/EN/constellation.html'">Refresh</button>
 		-->
-		</center>
+		</center>	
+
+	<form method=post name=CRMXSettings>
+
 	</form>
+	
   	<!--  /* 
 	<iframe name="subIframe" width="560" height="315"  frameborder="2" allowfullscreen></iframe>
 	-->
@@ -372,6 +341,172 @@ function Apply_2() {
 </div>
 
 <script>pageTail();
+
+function renameAksName(id, ipAdd)
+{
+	var f=document.HFA21TEST;
+
+	form2Cfg(f);
+
+	alert(id + ' ' + ipAdd);
+	alert('aks_name_id_' + id);
+	var myEle = document.getElementById('aks_name_id_' + id);
+	if (myEle)
+	{
+		alert("found " + id + 'value = ' + myEle.value);
+	}
+	//myEle = document.getElementById('IP' + id.substr(3));
+	//	if (myEle)
+	//{
+	//	alert("found " + id + ' value = ' + myEle.value);
+	//}
+	var url = 'http://' + ipAdd + '/EN/';
+	subForm(f, url + 'do_constellation.html','RENAME_AKS=' + myEle.value,cPage);
+}
+
+function applyProtUni(id, ipAdd)
+{
+	alert(id + ' ' + ipAdd);
+}
+
+function setTimoPwr(id, ipAdd)
+{
+	alert(id + ' ' + ipAdd);
+	alert('aks_name_id_' + id);
+	var myEle = document.getElementById('timo_pwr_id_' + id);
+	if (myEle)
+	{
+		alert("found " + id + 'value = ' + myEle.value);
+	}
+}
+
+function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, hostType, battery, timoPwr, sort_by)
+{
+	var msg = '<input id="aks_name_id_' + consId + '"' + ' maxlength=20 size=16 value='+nName+'><input type=button value="Rename" onClick="renameAksName('+ '\''+consId+'\',' + '\''+ipAddr+'\')"' + '>';
+	var msg1 = '<button type="button" onClick="popupCenter(' + '\'http://' + ipAddr + '/EN/link.html\'' + ',\'myPop1\', 400, 300)">Link</button>';
+	var msg2 = '<button type="button" onClick="popupCenter(' + '\'http://' + ipAddr + '/EN/unlink.html\'' + ',\'myPop1\', 400, 300)">Unlink</button>';
+	var msg3 = '<button type="button" onClick="popupCenter(' + '\'http://' + ipAddr + '/EN/id.html\'' + ',\'myPop1\', 400, 300)">ID</button>';	
+	var msgx = '<br><a href=http://'+ipAddr+' target="_blank">'+ipAddr+'</a>';
+	//var myEle = document.getElementById('IP' + consId.substr(3));
+	//if (myEle)
+	//{
+	//	myEle.value = ipAddr;
+	//}
+	var msg4;
+	if (hostType == 'AP')
+	{
+		msg4 = '<b>DHCP Host</b>  &#128246;<b>AP</b>';
+	}
+	else if (hostType == 'ETH')
+	{
+		msg4 = '<b>Dynamic</b>  &#128246;<b>AP</b>';
+	}
+	else
+	{
+		msg4 = '<b>WiFI</b>  &#128246;<b>Station</b>';	
+	}
+	var msg5;
+	if (battery.charAt(0) == 'U')
+	{
+		msg5 = '<br>&#128268;' + battery.substr(1);
+	}
+	else
+	{
+		msg5 = '<br>&#128267;' + battery.substr(1);
+	}
+	var msg6 = '<br>Power:<select id="timo_pwr_id_' + consId + '"' + ' size="1"> \
+						<option value="0">250mW</option> \
+						<option value="1">160mW</option> \
+						<option value="2">100mW</option> \
+						<option value="3">&nbsp;65mW</option> \
+						<option value="4">&nbsp;25mW</option> \
+						<option value="5">&nbsp;10mW</option> \
+				</select>';
+	var msg7 = '<input type=button value="Set" onClick="setTimoPwr('+ '\''+consId+'\',' + '\''+ipAddr+'\')"' + '>';
+	var msg8 = '<input type="radio" value="0" name="PROTNAME_' +  consId + '"' + ' id="artnet_id_' + consId + '"' + '><b>Art-Net</b>';
+	var msg9 = '<br><input type="radio" value="1" name="PROTNAME_' +  consId + '"' + ' id="sacn_id_' + consId + '"' + '><b>sACN</b>';
+	
+	var msg10 = '&nbsp;&nbsp;&nbsp&nbsp;<b>Sub:</b><select id="sub_id_' + consId + '"' + ' size="1"> \
+						<option value="0">0</option> \
+						<option value="1">1</option> \
+						<option value="2">2</option> \
+						<option value="3">3</option> \
+						<option value="4">4</option> \
+						<option value="5">5</option> \
+						<option value="6">6</option> \
+						<option value="7">7</option> \
+						<option value="8">8</option> \
+						<option value="9">9</option> \
+						<option value="10">10</option> \
+						<option value="11">11</option> \
+						<option value="12">12</option> \
+						<option value="13">13</option> \
+						<option value="14">14</option> \
+						<option value="15">15</option> \
+				</select>';	
+	var msg11 = '&nbsp;&nbsp;<b>Uni:</b><select id="uni_id_' + consId + '"' + ' size="1"> \
+						<option value="0">0</option> \
+						<option value="1">1</option> \
+						<option value="2">2</option> \
+						<option value="3">3</option> \
+						<option value="4">4</option> \
+						<option value="5">5</option> \
+						<option value="6">6</option> \
+						<option value="7">7</option> \
+						<option value="8">8</option> \
+						<option value="9">9</option> \
+						<option value="10">10</option> \
+						<option value="11">11</option> \
+						<option value="12">12</option> \
+						<option value="13">13</option> \
+						<option value="14">14</option> \
+						<option value="15">15</option> \
+				</select>';
+	var msg12 = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Uni:</b><input id="sacn_uni_id_' + consId + '"' + ' maxlength=8 size=8> <input type=button value="Apply" onClick="applyProtUni('+ '\''+consId+'\',' + '\''+ipAddr+'\')"' + '>';				
+	//alert(msg+msg2+msg1+msg8);
+	//displayMsg(consId, msg+msg4+msg1+msg2+msg3+msg8+msg10+msg11+msgx+msg5+msg6+msg7+msg9+msg12);
+	
+	var tbl_idx = 1*consId.substr(8);
+	var table = document.getElementById("add_table");
+	var row = table.insertRow(tbl_idx);
+	if ( tbl_idx === 0 || !!(tbl_idx && !(tbl_idx%2)))
+	{
+		row.style.backgroundColor = "#cbccc6";
+	}
+	else
+	{
+		row.style.backgroundColor = "#DFEFE9";	
+	}
+	var cell0 = row.insertCell(0);
+	var cell1 = row.insertCell(1);
+	var cell2 = row.insertCell(2);
+	var cell3 = row.insertCell(3);
+	
+	cell0.innerHTML = msg + msgx;
+	cell1.innerHTML = msg4 + msg5;	
+	cell2.innerHTML = msg1 + msg2 + msg3 + msg6 + msg7;
+	cell3.innerHTML = msg8 + msg10 + msg11 + msg9 + msg12;
+
+	var para1 = document.createElement("input");
+	para1.setAttribute("id", "IP_CONS" + tbl_idx);
+	para1.setAttribute("type", "hidden");
+	table.appendChild(para1);
+	para1.value = ipAddr;	
+	
+	document.getElementById('timo_pwr_id_' + consId).value = timoPwr;
+	document.getElementById('sub_id_' + consId).value = artSub;
+	document.getElementById('uni_id_' + consId).value = artUni;
+	document.getElementById('sacn_uni_id_' + consId).value = sACNUni;
+	if (prot == 'artnet')
+	{
+		document.getElementById('artnet_id_' + consId).checked = true;
+	}
+	else
+	{
+		document.getElementById('sacn_id_' + consId).checked = true;
+	}
+		
+}
 
 function do_SetUniverse(url, universe) {
 	var f=document.HFA21TEST;
@@ -451,7 +586,7 @@ function consAddRow(aks_num)
 
 /*REAL
 <%
-CGI_MAP(AKS_CONS_NUM, CFG_AKS_CONS_NUM);
+//CGI_MAP(AKS_CONS_NUM, CFG_AKS_CONS_NUM);
 CGI_MAP(AKS_CONS1, CFG_AKS_CONS1);
 CGI_MAP(AKS_CONS2, CFG_AKS_CONS2);
 CGI_MAP(AKS_CONS3, CFG_AKS_CONS3);
@@ -482,6 +617,9 @@ REAL*/
 
 //displayMsg('AKS_CONS1', 'This is a test <IMG SRC=\"../images/battery.png\">  \nThis is anothre test');
 //displayMsg('AKS_CONS2', 'This is added New row');
+document.getElementById('sort_id').value = '1';
+//BuildDisplayMsg('AKS_CONS1','AKS_TEST1','10.10.100.254','artnet', '2', '1', '1','AP','B98%','2');
+//BuildDisplayMsg('AKS_CONS2','AKS_TEST2','10.10.100.253','sacn', '3', '1', '1','dhcp','U99%','3');
 </script>
 </BODY>
 </HTML>
