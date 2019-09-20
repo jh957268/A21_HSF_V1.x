@@ -210,6 +210,7 @@
 #define CFG_AKS_ADVA30			        CFG_USER_(104,CFG_TYPE_STR)
 #define CFG_AKS_ADVA31			        CFG_USER_(105,CFG_TYPE_STR)
 #define CFG_AKS_ADVA32			        CFG_USER_(106,CFG_TYPE_STR)
+#define CFG_SORT_BY						CFG_USER_(107,CFG_TYPE_STR)
 
 // M2M: gohuy
 #define CFG_M2M_(idx,type) 			CFG_ID_(CFG_ID_M2M,idx,type,0)
