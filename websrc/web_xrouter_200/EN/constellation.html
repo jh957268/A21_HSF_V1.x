@@ -355,11 +355,11 @@ function renameAksName(id, ipAdd)
 	{
 		alert("found " + id + 'value = ' + myEle.value);
 	}
-	myEle = document.getElementById('IP' + id.substr(3));
-		if (myEle)
-	{
-		alert("found " + id + ' value = ' + myEle.value);
-	}
+	//myEle = document.getElementById('IP' + id.substr(3));
+	//	if (myEle)
+	//{
+	//	alert("found " + id + ' value = ' + myEle.value);
+	//}
 	var url = 'http://' + ipAdd + '/EN/';
 	subForm(f, url + 'do_constellation.html','RENAME_AKS=' + myEle.value,cPage);
 }
