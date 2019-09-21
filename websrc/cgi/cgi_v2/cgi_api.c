@@ -760,7 +760,7 @@ void CGI_var_map(http_req *req, char *name, int id)
 			//int get_client_entry(int idx, char *node_name, char *ip_addr, char *universe, char *art_sub, char *battery, char *protocol, char *sacn_uni, char *sort_by, char *host_mode, char *timo_power);
 			//href_link:protocol   cmd_buff:sacn_uni  ip_addr_save:sort_by  sel_ele:host_mode    timo_power:timo_power
 			
-			if (-1 == get_client_entry(idx, node_name, ip_addr, universe, art_sub, battery,  href_link,cmd_buff, ip_addr_save,sel_ele, timo_power))
+			if (-1 == get_client_entry(idx, node_name, ip_addr, universe, art_sub, battery, href_link, cmd_buff, ip_addr_save, sel_ele, timo_power))
 			{
 				return;
 			}
@@ -769,7 +769,7 @@ void CGI_var_map(http_req *req, char *name, int id)
 			sprintf(val,"B");
 			strcat(val,battery);
 			// function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, hostType, battery, timoPwr, sort_by)			
-			WEB_printf(req, "BuildDisplayMsg('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s');\n",name, node_name,ip_addr, href_link ,art_sub, universe,cmd_buff , sel_ele, val, timo_power, ip_addr_save);
+			WEB_printf(req, "BuildDisplayMsg('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s');\n",name, node_name,ip_addr, href_link ,art_sub, universe,cmd_buff , sel_ele, val, timo_power, ip_addr_save);
 			return;
 #endif			
 			//sprintf(node_name, "AKS_NODE%d", idx);
@@ -911,9 +911,9 @@ void CGI_var_map(http_req *req, char *name, int id)
 			get_SAMD_ver(cmd_buff);
 			strcat(val, "  SAMD:");
 			strcat(val, cmd_buff);
-			get_SysUpTime(cmd_buff);
-			strcat(val, "  Uptime:");
-			strcat(val, cmd_buff);
+			//get_SysUpTime(cmd_buff);
+			//strcat(val, "  Uptime:");
+			//strcat(val, cmd_buff);
 			
 			//get_TIMO_ver(cmd_buff);	
 			//strcat(val, "  TIMO:");
