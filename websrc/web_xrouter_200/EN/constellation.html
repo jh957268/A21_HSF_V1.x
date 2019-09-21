@@ -393,13 +393,13 @@ function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, h
 	//	myEle.value = ipAddr;
 	//}
 	var msg4;
-	if (hostType == 'AP')
+	if (hostType == '1')
 	{
 		msg4 = '<b>DHCP Host</b>  &#128246;<b>AP</b>';
 	}
-	else if (hostType == 'ETH')
+	else if (hostType == '2')
 	{
-		msg4 = '<b>Dynamic</b>  &#128246;<b>AP</b>';
+		msg4 = '<b>Dynamic</b>  &#128268;<b>ETH</b>';
 	}
 	else
 	{
@@ -505,7 +505,7 @@ function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, h
 	{
 		document.getElementById('sacn_id_' + consId).checked = true;
 	}
-		
+	document.getElementById('sort_id').value = sort_by;	
 }
 
 function do_SetUniverse(url, universe) {
@@ -617,8 +617,8 @@ REAL*/
 
 //displayMsg('AKS_CONS1', 'This is a test <IMG SRC=\"../images/battery.png\">  \nThis is anothre test');
 //displayMsg('AKS_CONS2', 'This is added New row');
-document.getElementById('sort_id').value = '1';
-//BuildDisplayMsg('AKS_CONS1','AKS_TEST1','10.10.100.254','artnet', '2', '1', '1','AP','B98%','2');
+//document.getElementById('sort_id').value = '1';
+//BuildDisplayMsg('AKS_CONS1','AKS_TEST1','10.10.100.254','artnet', '2', '1', '1','2','B98%','2','1');
 //BuildDisplayMsg('AKS_CONS2','AKS_TEST2','10.10.100.253','sacn', '3', '1', '1','dhcp','U99%','3');
 </script>
 </BODY>
