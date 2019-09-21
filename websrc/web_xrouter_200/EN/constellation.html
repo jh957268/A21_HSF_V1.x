@@ -250,13 +250,33 @@ function artnet_auto()
 {
 	var i;
 	var myEle;
+	var f=document.HFA21TEST;
+
+	form2Cfg(f);
+	
+	myEle = document.getElementById('auto_univ_id');
+	
+	//alert('auto number is ' + myEle.value);
+	var auto_num = 1 * myEle.value;
+	
+	//auto_num = auto_num + 1;
+
+	//alert('auto number is then ' + auto_num);	
 	
 	for (i = 1; i < 25; i++)
 	{
 		myEle = document.getElementById('IP_CONS' + i);
 		if (myEle)
 		{
-			alert('artnet auto found IP_CONS' + i + ' value = ' + myEle.value);
+			//alert('artnet auto found IP_CONS' + i + ' value = ' + myEle.value);
+			if (auto_num > 255)
+			{
+				alert("Arnet Universe out of range!");
+				return;
+			}
+			var url = 'http://' + myEle.value + '/EN/';
+			subForm(f, url + 'do_constellation.html','AUTO_ARTNET_UNIV=' + auto_num, cPage);
+			auto_num = auto_num + 1;
 		}
 		else
 		{
@@ -269,21 +289,28 @@ function sacn_auto()
 {
 	var i;
 	var myEle;
+	var f=document.HFA21TEST;
+
+	form2Cfg(f);
+	
 	myEle = document.getElementById('auto_univ_id');
 	
-	alert('auto number is ' + myEle.value);
+	//alert('auto number is ' + myEle.value);
 	var auto_num = 1 * myEle.value;
 	
-	auto_num = auto_num + 1;
+	//auto_num = auto_num + 1;
 
-	alert('auto number is then ' + auto_num);	
+	//alert('auto number is then ' + auto_num);	
 	
 	for (i = 1; i < 25; i++)
 	{
 		myEle = document.getElementById('IP_CONS' + i);
 		if (myEle)
 		{
-			alert('artnet auto found IP_CONS' + i + ' value = ' + myEle.value);
+			//alert('artnet auto found IP_CONS' + i + ' value = ' + myEle.value);
+			var url = 'http://' + myEle.value + '/EN/';
+			subForm(f, url + 'do_constellation.html','AUTO_SACN_UNIV=' + auto_num, cPage);
+			auto_num = auto_num + 1;
 		}
 		else
 		{
@@ -394,8 +421,8 @@ function renameAksName(id, ipAdd)
 
 	form2Cfg(f);
 
-	alert(id + ' ' + ipAdd);
-	alert('aks_name_id_' + id);
+	//alert(id + ' ' + ipAdd);
+	//alert('aks_name_id_' + id);
 	var myEle = document.getElementById('aks_name_id_' + id);
 	if (myEle)
 	{
