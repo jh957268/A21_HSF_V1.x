@@ -440,6 +440,51 @@ int CGI_do_cmd(http_req *req)
 		//CFG_save(0);
 		write_data_to_flash();					// write ratpac data to flash
 		return CGI_RC_OK;
+	}
+	if (strstr(cmd, "AUTO_SACN_UNIV"))
+	{
+		char sacn_num[16];
+		char *tmp1;
+
+		tmp1 = strchr(cmd, '=');
+		if (0 == tmp1)
+		{
+			return (CGI_RC_OK);
+		}
+		tmp1++;
+		
+		sprintf(sacn_num, "%s", tmp1);
+		ratpac_set_str(CFG_SACN_UNIV,sacn_num);
+		//CFG_save(0);
+		write_data_to_flash();					// write ratpac data to flash
+		mon_snd_cmd(MON_CMD_REBOOT);
+		return CGI_RC_REBOOT;		
+	}
+	if (strstr(cmd, "AUTO_ARTNET_UNIV"))
+	{
+		char art_subnet[4], uniNo[4];
+		char arnet_num[8];		
+		char *tmp1;
+		unsigned int artnum, subnum, uninum;
+
+		tmp1 = strchr(cmd, '=');
+		if (0 == tmp1)
+		{
+			return (CGI_RC_OK);
+		}
+		tmp1++;
+		
+		sprintf(arnet_num, "%s", tmp1);
+		artnum = atoi(arnet_num);
+		subnum = (artnum >> 4) & 0xf;
+		uninum = (artnum & 0xf);
+		sprintf(art_subnet, "%s", subnum);
+		sprintf(uniNo, "%s", uninum);		
+		ratpac_set_str(CFG_AKS_UNIVERSE,uniNo);
+		ratpac_set_str(CFG_AKS_SUBNET,art_subnet);
+		//CFG_save(0);
+		write_data_to_flash();
+		return CGI_RC_OK;		
 	}	
 
 ReadyToOut:	
