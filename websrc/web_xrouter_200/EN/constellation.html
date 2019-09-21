@@ -246,6 +246,44 @@ function Apply_2() {
 	subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
 }
 
+function artnet_auto()
+{
+	var i;
+	var myEle;
+	
+	for (i = 1; i < 25; i++)
+	{
+		myEle = document.getElementById('IP_CONS' + i);
+		if (myEle)
+		{
+			alert('artnet auto found IP_CONS' + i + ' value = ' + myEle.value);
+		}
+		else
+		{
+			return;
+		}
+	}
+}
+
+function sacn_auto()
+{
+	var i;
+	var myEle;
+	
+	for (i = 1; i < 25; i++)
+	{
+		myEle = document.getElementById('IP_CONS' + i);
+		if (myEle)
+		{
+			alert('artnet auto found IP_CONS' + i + ' value = ' + myEle.value);
+		}
+		else
+		{
+			return;
+		}
+	}
+}
+
 </SCRIPT>
 </HEAD>
 <BODY leftmargin=0 topmargin=0 onload=init()>
@@ -414,7 +452,7 @@ function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, h
 	{
 		msg5 = '<br>&#128267;' + battery.substr(1);
 	}
-	var msg6 = '<br>Power:<select id="timo_pwr_id_' + consId + '"' + ' size="1"> \
+	var msg6 = '<br><b>Power:</b><select id="timo_pwr_id_' + consId + '"' + ' size="1"> \
 						<option value="0">250mW</option> \
 						<option value="1">160mW</option> \
 						<option value="2">100mW</option> \
@@ -497,7 +535,7 @@ function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, h
 	document.getElementById('sub_id_' + consId).value = artSub;
 	document.getElementById('uni_id_' + consId).value = artUni;
 	document.getElementById('sacn_uni_id_' + consId).value = sACNUni;
-	if (prot == 'artnet')
+	if (prot == '0')
 	{
 		document.getElementById('artnet_id_' + consId).checked = true;
 	}
