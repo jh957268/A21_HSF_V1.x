@@ -641,6 +641,7 @@ function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, h
 	{
 		document.getElementById('sort_id').value = sort_by;	
 	}
+	document.getElementById('aks_name_id_' + consId).value = nName;
 }
 
 function do_SetUniverse(url, universe) {
@@ -753,7 +754,7 @@ REAL*/
 //displayMsg('AKS_CONS1', 'This is a test <IMG SRC=\"../images/battery.png\">  \nThis is anothre test');
 //displayMsg('AKS_CONS2', 'This is added New row');
 //document.getElementById('sort_id').value = '1';
-//BuildDisplayMsg('AKS_CONS1','AKS_TEST1','10.10.100.254','0', '2', '1', '1','2','B98%','2','1');
+//BuildDisplayMsg('AKS_CONS1','AKS TEST1','10.10.100.254','0', '2', '1', '1','2','B98%','2','1','10.10.100.254');
 //BuildDisplayMsg('AKS_CONS2','AKS_TEST2','10.10.100.253','1', '3', '1', '1','dhcp','U99%','3');
 </script>
 </BODY>
