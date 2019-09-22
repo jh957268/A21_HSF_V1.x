@@ -426,9 +426,10 @@ int CGI_do_cmd(http_req *req)
 	}
 	if (strstr(cmd, "SET_PROTO_UNIVERSE"))
 	{
-		char art_subnet[4], uniNo[4], suni[8], prot[4];
+		char art_subnet[4], uniNo[4], suni[8], prot[4], pre_prot[4], pre_suni[8];
 		char *tmp1, *tmp2, *tmp3, *tmp4;
 
+		forceToReboot = 0;
 		tmp1 = strchr(cmd, '=');
 		if (0 == tmp1)
 		{
@@ -458,17 +459,32 @@ int CGI_do_cmd(http_req *req)
 		*tmp4 = 0;
 		tmp4++;
 		
+		ratpac_get_str(CFG_PROTNAME,pre_prot);
+		ratpac_get_str(CFG_SACN_UNIV,pre_suni);
+			
 		sprintf(art_subnet, "%s", tmp1);
 		sprintf(uniNo, "%s", tmp2);
 		sprintf(suni, "%s", tmp3);
-		sprintf(prot, "%s", tmp4);			
+		sprintf(prot, "%s", tmp4);	
+		if (strcmp(pre_prot,prot))
+		{
+			forceToReboot = 1;
+		}
+		if (pre_prot[0] == '1' && strcmp(pre_suni,suni))
+		{
+			forceToReboot = 1;
+		}
+		
 		ratpac_set_str(CFG_AKS_UNIVERSE,uniNo);
 		ratpac_set_str(CFG_AKS_SUBNET,art_subnet);
 		ratpac_set_str(CFG_SACN_UNIV,suni);
 		ratpac_set_str(CFG_PROTNAME,prot);		
 		//CFG_save(0);
 		write_data_to_flash();					// write ratpac data to flash
-		mon_snd_cmd(MON_CMD_REBOOT);
+		if (forceToReboot == 1)
+		{
+			mon_snd_cmd(MON_CMD_REBOOT);
+		}
 		return CGI_RC_REBOOT;
 	}	
 	if (strstr(cmd, "RENAME_AKS"))
@@ -539,6 +555,7 @@ int CGI_do_cmd(http_req *req)
 	{
 		char sacn_num[16];
 		char *tmp1;
+		char pre_prot[4];		
 
 		tmp1 = strchr(cmd, '=');
 		if (0 == tmp1)
@@ -551,7 +568,11 @@ int CGI_do_cmd(http_req *req)
 		ratpac_set_str(CFG_SACN_UNIV,sacn_num);
 		//CFG_save(0);
 		write_data_to_flash();					// write ratpac data to flash
-		mon_snd_cmd(MON_CMD_REBOOT);
+		ratpac_get_str(CFG_PROTNAME,pre_prot);
+		if (pre_prot[0] == '1')
+		{
+			mon_snd_cmd(MON_CMD_REBOOT);
+		}
 		return CGI_RC_REBOOT;		
 	}
 	if (strstr(cmd, "AUTO_ARTNET_UNIV"))
