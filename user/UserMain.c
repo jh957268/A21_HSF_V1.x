@@ -1514,6 +1514,8 @@ struct client_ent client_valid_list[MAX_NUM_ENTRY];
 static client_valid_num = 0;
 static char tmp_buff[20];
 
+struct client_ent *sort_array[MAX_NUM_ENTRY];
+
 char this_node_ip_address[20];
 
 static void server_thread_main(void* arg) 
@@ -1975,6 +1977,8 @@ USER_FUNC static void client_thread_main(void* arg)
 }
 int get_client_entry(int idx, char *node_name, char *ip_addr, char *universe, char *art_sub, char *battery, char *protocol, char *sacn_uni, char *sort_by, char *host_mode, char *timopower)
 {
+	struct client_ent *client_ptr;
+	
 	if (idx >= client_valid_num)
 	{
 		node_name[0] = 0;
@@ -1982,6 +1986,27 @@ int get_client_entry(int idx, char *node_name, char *ip_addr, char *universe, ch
 		universe[0] = 0;
 		return -1;
 	}
+	
+	client_ptr = sort_array[idx];
+
+	sprintf(node_name, "%s", client_ptr->node_name);
+	if (strlen(node_name) == 0)
+	{
+		sprintf(node_name,"NoName");
+	}
+	sprintf(ip_addr, "%s", client_ptr->ip_addr);
+	sprintf(universe, "%s", client_ptr->universe);
+	sprintf(art_sub, "%s", client_ptr->subnet);
+
+	sprintf(protocol, "%s", client_ptr->protocol);
+	sprintf(sacn_uni, "%s", client_ptr->sacn_univ);
+	sprintf(sort_by, "%s", client_ptr->sort_by);
+	sprintf(host_mode, "%s", client_ptr->host_mode);
+	sprintf(timopower, "%s", client_ptr->crmx_power);
+	
+	//sprintf(battery, "%s", battery_info);
+	snprintf(battery, 8, "%s%%", client_ptr->baterry);
+#if 0	
 	sprintf(node_name, "%s", client_valid_list[idx].node_name);
 	if (strlen(node_name) == 0)
 	{
@@ -1998,7 +2023,8 @@ int get_client_entry(int idx, char *node_name, char *ip_addr, char *universe, ch
 	sprintf(timopower, "%s", client_valid_list[idx].crmx_power);
 	
 	//sprintf(battery, "%s", battery_info);
-	snprintf(battery, 8, "%s%%", client_valid_list[idx].baterry);	
+	snprintf(battery, 8, "%s%%", client_valid_list[idx].baterry);
+#endif	
 	return 0;
 }
 
@@ -2829,5 +2855,16 @@ void populate_new_client(char *ip_ad, char *rcv_msg)
 			return;
 		}
 	}	
+}
+
+void sort_client_list(void)
+{
+	int i;
+	
+	for (i = 0; i < client_valid_num; i++)
+	{
+		sort_array[i] = &client_valid_list[i];
+	}
+	// sort the sort_array
 }	
 
