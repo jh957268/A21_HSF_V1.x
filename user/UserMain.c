@@ -2239,7 +2239,7 @@ int ratpac_set_str(int id, char *val)
 			snprintf(g_web_config.main_xlr, 2, "%s", val);			
 			break;
 		case CFG_SORT_BY:
-			snprintf(g_web_config.sort_by, 2, "%s", val);			
+			snprintf(g_web_config.sort_by, 2, "%s", val);
 			break;		
 		default:
 			return -1;
