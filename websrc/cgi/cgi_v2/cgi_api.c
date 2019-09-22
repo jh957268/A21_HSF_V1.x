@@ -475,6 +475,7 @@ int CGI_do_cmd(http_req *req)
 	{
 		char aks_node_name[24];
 		char *tmp1;
+		int i;
 
 		tmp1 = strchr(cmd, '=');
 		if (0 == tmp1)
@@ -484,6 +485,14 @@ int CGI_do_cmd(http_req *req)
 		tmp1++;
 		
 		sprintf(aks_node_name, "%s", tmp1);
+		for (i = 0; i < strlen(aks_node_name); i++)
+		{
+			if (aks_node_name[i] == '?')
+			{
+				aks_node_name[i] = ' ';
+			}
+		}
+		
 		ratpac_set_str(CFG_AKS_NAME,aks_node_name);
 		//CFG_save(0);
 		write_data_to_flash();					// write ratpac data to flash
