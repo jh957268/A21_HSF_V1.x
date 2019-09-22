@@ -635,7 +635,10 @@ function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, h
 	{
 		document.getElementById('sacn_id_' + consId).checked = true;
 	}
-	document.getElementById('sort_id').value = sort_by;	
+	if (consId == 'AKS_CONS1')
+	{
+		document.getElementById('sort_id').value = sort_by;	
+	}
 }
 
 function do_SetUniverse(url, universe) {
