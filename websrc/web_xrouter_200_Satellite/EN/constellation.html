@@ -246,6 +246,108 @@ function Apply_2() {
 	subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
 }
 
+var delay_cnt;
+function delay_loop()
+{
+	var i;
+	
+	delay_cnt = 0;
+	for (i = 0; i < 200000000; i++)
+	{
+		delay_cnt = delay_cnt+1;
+	}
+}
+
+function artnet_auto()
+{
+	var i;
+	var myEle;
+	var f=document.HFA21TEST;
+
+	form2Cfg(f);
+	
+	myEle = document.getElementById('auto_univ_id');
+	
+	//alert('auto number is ' + myEle.value);
+	var auto_num = 1 * myEle.value;
+	
+	//auto_num = auto_num + 1;
+
+	//alert('auto number is then ' + auto_num);	
+	
+	for (i = 1; i < 25; i++)
+	{
+		myEle = document.getElementById('IP_CONS' + i);
+		if (myEle)
+		{
+			//alert('artnet auto found IP_CONS' + i + ' value = ' + myEle.value);
+			if (auto_num > 255)
+			{
+				alert("Arnet Universe out of range!");
+				return;
+			}
+			var url = 'http://' + myEle.value + '/EN/';
+			subForm(f, url + 'do_constellation.html','AUTO_ARTNET_UNIV=' + auto_num, cPage);
+			delay_loop();
+			auto_num = auto_num + 1;
+		}
+		else
+		{
+			return;
+		}
+	}
+}
+
+function sacn_auto()
+{
+	var i;
+	var myEle;
+	var f=document.HFA21TEST;
+
+	form2Cfg(f);
+	
+	myEle = document.getElementById('auto_univ_id');
+	
+	//alert('auto number is ' + myEle.value);
+	var auto_num = 1 * myEle.value;
+	
+	//auto_num = auto_num + 1;
+
+	//alert('auto number is then ' + auto_num);
+	if (!confirm('System will reboot if protocol is sACN!'))
+	{
+		return;
+	}
+	
+	for (i = 1; i < 25; i++)
+	{
+		myEle = document.getElementById('IP_CONS' + i);
+		if (myEle)
+		{
+			//alert('artnet auto found IP_CONS' + i + ' value = ' + myEle.value);
+			var url = 'http://' + myEle.value + '/EN/';
+			subForm(f, url + 'do_constellation.html','AUTO_SACN_UNIV=' + auto_num, cPage);
+			delay_loop();
+			auto_num = auto_num + 1;
+		}
+		else
+		{
+			return;
+		}
+	}
+}
+
+function apply_sort()
+{
+	var myEle;
+	var f=document.HFA21TEST;
+
+	form2Cfg(f);
+	
+	myEle = document.getElementById('sort_id');
+	subForm(f,'do_constellation.html','SET_SORT=' + myEle.value,cPage);
+}
+
 </SCRIPT>
 </HEAD>
 <BODY leftmargin=0 topmargin=0 onload=init()>
@@ -271,7 +373,8 @@ function Apply_2() {
 						<option value="0">Node Name</option>
 						<option value="1">IP</option>
 						<option value="2">Battery</option>
-						<option value="3">Universe #</option>
+						<option value="3">Art-Net Universe #</option>
+						<option value="4">sACN Universe #</option>
 					</select>
 				<input type=button style="{width:120px;}" value="Apply" onClick="apply_sort()">					
 			</td>
@@ -348,39 +451,74 @@ function renameAksName(id, ipAdd)
 
 	form2Cfg(f);
 
-	alert(id + ' ' + ipAdd);
-	alert('aks_name_id_' + id);
+	//alert(id + ' ' + ipAdd);
+	//alert('aks_name_id_' + id);
 	var myEle = document.getElementById('aks_name_id_' + id);
 	if (myEle)
 	{
-		alert("found " + id + 'value = ' + myEle.value);
-	}
+		//alert("found " + id + 'value = ' + myEle.value);
+	
 	//myEle = document.getElementById('IP' + id.substr(3));
 	//	if (myEle)
 	//{
 	//	alert("found " + id + ' value = ' + myEle.value);
 	//}
-	var url = 'http://' + ipAdd + '/EN/';
-	subForm(f, url + 'do_constellation.html','RENAME_AKS=' + myEle.value,cPage);
+		var str = myEle.value;
+		str = str.split(" ").join("?");
+		var url = 'http://' + ipAdd + '/EN/';
+		subForm(f, url + 'do_constellation.html','RENAME_AKS=' + str,cPage);
+	}
 }
 
 function applyProtUni(id, ipAdd)
 {
-	alert(id + ' ' + ipAdd);
+	//alert(id + ' ' + ipAdd);
+	var f=document.HFA21TEST;
+
+	form2Cfg(f);
+
+	if (!confirm('System will reboot if protocol or sACN universe has changed!'))
+	{
+		return;
+	}
+	
+	var asub = document.getElementById('sub_id_' + id).value;
+	var auni = document.getElementById('uni_id_' + id).value;
+	var suni = document.getElementById('sacn_uni_id_' + id).value;
+	var proto;
+	
+	if (document.getElementById('artnet_id_' + id).checked == true)
+	{
+		proto = '0';
+	}
+	else
+	{
+		proto = '1';
+	}
+	
+	//alert ('protocol Univer ' + asub + auni + suni + proto);
+	var value = asub + '-' + auni + '-' + suni + '-' + proto;
+	var url = 'http://' + ipAdd + '/EN/';
+	subForm(f, url + 'do_constellation.html','SET_PROTO_UNIVERSE=' + value,cPage);
 }
 
 function setTimoPwr(id, ipAdd)
 {
-	alert(id + ' ' + ipAdd);
-	alert('aks_name_id_' + id);
+	var f=document.HFA21TEST;
+
+	form2Cfg(f);
+	//alert(id + ' ' + ipAdd);
+	//alert('aks_name_id_' + id);
 	var myEle = document.getElementById('timo_pwr_id_' + id);
 	if (myEle)
 	{
-		alert("found " + id + 'value = ' + myEle.value);
+		//alert("found " + id + 'value = ' + myEle.value);
+		var url = 'http://' + ipAdd + '/EN/';
+		subForm(f, url + 'do_constellation.html','SET_TIMO_POWER=' + myEle.value,cPage);
 	}
 }
 
-function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, hostType, battery, timoPwr, sort_by)
+function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, hostType, battery, timoPwr, sort_by, nodeIpAddr)
 {
 	var msg = '<input id="aks_name_id_' + consId + '"' + ' maxlength=20 size=16 value='+nName+'><input type=button value="Rename" onClick="renameAksName('+ '\''+consId+'\',' + '\''+ipAddr+'\')"' + '>';
 	var msg1 = '<button type="button" onClick="popupCenter(' + '\'http://' + ipAddr + '/EN/link.html\'' + ',\'myPop1\', 400, 300)">Link</button>';
@@ -393,13 +531,13 @@ function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, h
 	//	myEle.value = ipAddr;
 	//}
 	var msg4;
-	if (hostType == 'AP')
+	if (hostType == '1')
 	{
 		msg4 = '<b>DHCP Host</b>  &#128246;<b>AP</b>';
 	}
-	else if (hostType == 'ETH')
+	else if (hostType == '2')
 	{
-		msg4 = '<b>Dynamic</b>  &#128246;<b>AP</b>';
+		msg4 = '<b>Dynamic</b>  &#128268;<b>ETH</b>';
 	}
 	else
 	{
@@ -414,7 +552,7 @@ function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, h
 	{
 		msg5 = '<br>&#128267;' + battery.substr(1);
 	}
-	var msg6 = '<br>Power:<select id="timo_pwr_id_' + consId + '"' + ' size="1"> \
+	var msg6 = '<br><b>Power:</b><select id="timo_pwr_id_' + consId + '"' + ' size="1"> \
 						<option value="0">250mW</option> \
 						<option value="1">160mW</option> \
 						<option value="2">100mW</option> \
@@ -497,7 +635,7 @@ function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, h
 	document.getElementById('sub_id_' + consId).value = artSub;
 	document.getElementById('uni_id_' + consId).value = artUni;
 	document.getElementById('sacn_uni_id_' + consId).value = sACNUni;
-	if (prot == 'artnet')
+	if (prot == '0')
 	{
 		document.getElementById('artnet_id_' + consId).checked = true;
 	}
@@ -505,7 +643,12 @@ function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, h
 	{
 		document.getElementById('sacn_id_' + consId).checked = true;
 	}
-		
+	// when sorting, AKS_CONS1 will not be this IP address, and the following will not work
+	if (nodeIpAddr == ipAddr)
+	{
+		document.getElementById('sort_id').value = sort_by;	
+	}
+	document.getElementById('aks_name_id_' + consId).value = nName;
 }
 
 function do_SetUniverse(url, universe) {
@@ -617,9 +760,9 @@ REAL*/
 
 //displayMsg('AKS_CONS1', 'This is a test <IMG SRC=\"../images/battery.png\">  \nThis is anothre test');
 //displayMsg('AKS_CONS2', 'This is added New row');
-document.getElementById('sort_id').value = '1';
-//BuildDisplayMsg('AKS_CONS1','AKS_TEST1','10.10.100.254','artnet', '2', '1', '1','AP','B98%','2');
-//BuildDisplayMsg('AKS_CONS2','AKS_TEST2','10.10.100.253','sacn', '3', '1', '1','dhcp','U99%','3');
+//document.getElementById('sort_id').value = '1';
+//BuildDisplayMsg('AKS_CONS1','AKS TEST1','10.10.100.254','0', '2', '1', '1','2','B98%','2','1','10.10.100.254');
+//BuildDisplayMsg('AKS_CONS2','AKS_TEST2','10.10.100.253','1', '3', '1', '1','dhcp','U99%','3');
 </script>
 </BODY>
 </HTML>
