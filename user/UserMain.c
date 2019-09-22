@@ -2881,12 +2881,57 @@ void populate_new_client(char *ip_ad, char *rcv_msg)
 
 void sort_client_list(void)
 {
-	int i;
+	int i, j;
+	char sortby[4];
+	struct client_ent *a;
+	int result = 0;
+	char str1[8], str2[8];
+	
+	ratpac_get_str( CFG_SORT_BY, sortby);
 	
 	for (i = 0; i < client_valid_num; i++)
 	{
 		sort_array[i] = &client_valid_list[i];
 	}
 	// sort the sort_array
+	
+    for (i = 0; i < client_valid_num; ++i) 
+    {
+		for (j = i + 1; j < client_valid_num; ++j)
+        {
+			switch (sortby[0])
+			{
+				case '0':
+					result = strcmp(sort_array[i]->node_name, sort_array[j]->node_name);
+					break;
+				case '1':
+					result = strcmp(sort_array[i]->ip_addr, sort_array[j]->ip_addr);				
+					break;
+				case '2':
+					result = strcmp(sort_array[i]->baterry, sort_array[j]->baterry);				
+					break;
+				case '3':
+					sprintf(str1, "%s%s", sort_array[i]->subnet,sort_array[i]->universe);
+					sprintf(str2, "%s%s", sort_array[j]->subnet,sort_array[j]->universe);
+					result = strcmp(str1, str2);					
+					break;
+				case '4':
+					result = strcmp(sort_array[i]->sacn_univ, sort_array[j]->sacn_univ);				
+					break;					
+				default:
+					return;
+			}
+			// if (number[i] > number[j]) 			
+			if (result > 0)	
+			{
+				//a =  number[i];		   
+				//number[i] = number[j];
+				//number[j] = a;
+				a =  sort_array[i];		   
+				sort_array[i] = sort_array[j];
+				sort_array[j] = a;			   
+			}
+        }
+    }	
 }	
 
