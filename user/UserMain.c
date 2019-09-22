@@ -52,6 +52,7 @@ void populate_new_client(char *ip_ad, char *rcv_msg);
 void save_valid_client_entry(int i);
 
 void send_artpollreply_msg(void);
+void web_flash_data_init(int flag);
 
 static int refresh_clients;
 static char gaffer_data[514];
@@ -321,6 +322,19 @@ static int USER_FUNC cmd_web_para_rd(pat_session_t s,int argc,char *argv[],char 
 	}
 	
 	//refresh_clients = 1;
+
+	return 0;
+}
+
+static int USER_FUNC cmd_web_para_default(pat_session_t s,int argc,char *argv[],char *rsp,int len)
+{
+	int ret = 0;
+	char *input;
+	
+	if(argc != 1)
+		return -1;
+	
+	web_flash_data_init(1);
 
 	return 0;
 }
@@ -647,6 +661,7 @@ const hfat_cmd_t user_define_at_cmds_table[]=
 	{"BITSETTING",cmd_web_para_bitsetting,"AT+BITSETTING: get/set BITSETTING,value must be 0 or 1\r\n",NULL},
 	{"ARTNET",cmd_web_para_artnet,"AT+ARTNET: get/set ARTNET,value must be on or off\r\n",NULL},
 	{"RD",cmd_web_para_rd,"AT+RD: RD register value\r\n",NULL},
+	{"DEFAULT",cmd_web_para_default,"AT+DEFAULT: reset to default,value must be 1 or 0\r\n",NULL},
 	
 //AT CMD: init data after reload
 	{"WNODENAME",reload_cmd_web_para_node_name,"AT+WNODENAME: get/set device node init name after reload\r\n",NULL},
@@ -761,7 +776,7 @@ static int hfsys_event_callback( uint32_t event_id,void * param)
 	}
 	return 0;
 }
-void web_flash_data_init(void)
+void web_flash_data_init(int flag)
 {
 	int i;
 	unsigned char ck_sum = 0;
@@ -788,6 +803,13 @@ void web_flash_data_init(void)
 			break;
 		}
 		ck_sum ^= fls_data[i];
+	}
+	if (1 == flag)
+	{
+		// reset to default, just make it difference
+		g_web_config.initFlag = 1;
+		ck_sum = 0x55;
+		
 	}
 	if((g_web_config.initFlag != ck_sum) || (g_web_config.magic[0] != MAGIC0) || (g_web_config.magic[1] != MAGIC1))
 	{
@@ -1018,7 +1040,7 @@ void UserMain(void *arg)
 	{
 		u_printf("register system event fail\n");
 	}
-	web_flash_data_init();   // cannot print UART0, since it is not started yet. If so, system will crash, and box is not recovery!!! */
+	web_flash_data_init(0);   // cannot print UART0, since it is not started yet. If so, system will crash, and box is not recovery!!! */
 	if(hfnet_start_assis(ASSIS_PORT)!=HF_SUCCESS)
 	{
 		HF_Debug(DEBUG_WARN,"start assis fail\n");
