@@ -1514,6 +1514,8 @@ struct client_ent client_valid_list[MAX_NUM_ENTRY];
 static client_valid_num = 0;
 static char tmp_buff[20];
 
+char this_node_ip_address[20];
+
 static void server_thread_main(void* arg) 
 {
   int sd, rc, n, cliLen;
@@ -2738,7 +2740,8 @@ void age_client_list(int new)
 	
 	sin_addr.s_addr = ((uint8_t)ipAddress[3] << 24) | ((uint8_t)ipAddress[2] << 16) | ((uint8_t)ipAddress[1] << 8) | (uint8_t)ipAddress[0];
 	tmp = inet_ntoa(sin_addr);
-	snprintf(client_valid_list[0].ip_addr, 20, "%s", tmp);	
+	snprintf(client_valid_list[0].ip_addr, 20, "%s", tmp);
+	snprintf(this_node_ip_address, 20, "%s", tmp);	
 
 	client_valid_num = 1;
 	
