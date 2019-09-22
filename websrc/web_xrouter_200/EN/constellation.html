@@ -635,6 +635,7 @@ function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, h
 	{
 		document.getElementById('sacn_id_' + consId).checked = true;
 	}
+	// when sorting, AKS_CONS1 will not be this IP address, and the following will not work
 	if (consId == 'AKS_CONS1')
 	{
 		document.getElementById('sort_id').value = sort_by;	
