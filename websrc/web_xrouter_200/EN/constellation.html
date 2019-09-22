@@ -373,7 +373,8 @@ function apply_sort()
 						<option value="0">Node Name</option>
 						<option value="1">IP</option>
 						<option value="2">Battery</option>
-						<option value="3">Universe #</option>
+						<option value="3">Art-Net Universe #</option>
+						<option value="4">sACN Universe #</option>
 					</select>
 				<input type=button style="{width:120px;}" value="Apply" onClick="apply_sort()">					
 			</td>
@@ -510,7 +511,7 @@ function setTimoPwr(id, ipAdd)
 	}
 }
 
-function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, hostType, battery, timoPwr, sort_by)
+function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, hostType, battery, timoPwr, sort_by, nodeIpAddr)
 {
 	var msg = '<input id="aks_name_id_' + consId + '"' + ' maxlength=20 size=16 value='+nName+'><input type=button value="Rename" onClick="renameAksName('+ '\''+consId+'\',' + '\''+ipAddr+'\')"' + '>';
 	var msg1 = '<button type="button" onClick="popupCenter(' + '\'http://' + ipAddr + '/EN/link.html\'' + ',\'myPop1\', 400, 300)">Link</button>';
@@ -636,7 +637,7 @@ function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, h
 		document.getElementById('sacn_id_' + consId).checked = true;
 	}
 	// when sorting, AKS_CONS1 will not be this IP address, and the following will not work
-	if (consId == 'AKS_CONS1')
+	if (nodeIpAddr == ipAddr)
 	{
 		document.getElementById('sort_id').value = sort_by;	
 	}
