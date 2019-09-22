@@ -193,6 +193,7 @@ void get_TIMO_ver(char *buffer);
 void get_battery_info(char *buffer);
 void get_module_ipaddress_mode(char *ip, char *mode);
 void get_SysUpTime(char *buffer);
+void sort_client_list(void);
 
 int Send_Link_Command(void);
 int Send_UnLink_Command(void);
@@ -884,7 +885,11 @@ void CGI_var_map(http_req *req, char *name, int id)
 					hf_thread_delay(1000);
 				}
 			}
-#endif		
+#endif	
+			if (CFG_AKS_CONS1 == id)
+			{
+				sort_client_list();
+			}
 			base_idx = ((CFG_AKS_CONS1 >> 16) & 0xff);	
 			idx = ((id >> 16) & 0xff) - base_idx;
 			//int get_client_entry(int idx, char *node_name, char *ip_addr, char *universe, char *art_sub, char *battery, char *protocol, char *sacn_uni, char *sort_by, char *host_mode, char *timo_power);
