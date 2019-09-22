@@ -423,6 +423,53 @@ int CGI_do_cmd(http_req *req)
 		write_data_to_flash();					// write ratpac data to flash
 		return CGI_RC_OK;
 	}
+	if (strstr(cmd, "SET_PROTO_UNIVERSE"))
+	{
+		char art_subnet[4], uniNo[4], suni[8], prot[4];
+		char *tmp1, *tmp2, *tmp3, *tmp4;
+
+		tmp1 = strchr(cmd, '=');
+		if (0 == tmp1)
+		{
+			return (CGI_RC_OK);
+		}
+		tmp1++;
+		tmp2 = strchr(tmp1, '-');
+		if (0 == tmp2)
+		{
+			return (CGI_RC_OK);
+		}
+		*tmp2 = 0;
+		tmp2++;
+		
+		tmp3 = strchr(tmp2, '-');
+		if (0 == tmp3)
+		{
+			return (CGI_RC_OK);
+		}
+		*tmp3 = 0;
+		tmp3++;
+		tmp4 = strchr(tmp3, '-');
+		if (0 == tmp4)
+		{
+			return (CGI_RC_OK);
+		}
+		*tmp4 = 0;
+		tmp4++;
+		
+		sprintf(art_subnet, "%s", tmp1);
+		sprintf(uniNo, "%s", tmp2);
+		sprintf(suni, "%s", tmp3);
+		sprintf(prot, "%s", tmp4);			
+		ratpac_set_str(CFG_AKS_UNIVERSE,uniNo);
+		ratpac_set_str(CFG_AKS_SUBNET,art_subnet);
+		ratpac_set_str(CFG_SACN_UNIV,suni);
+		ratpac_set_str(CFG_PROTNAME,prot);		
+		//CFG_save(0);
+		write_data_to_flash();					// write ratpac data to flash
+		mon_snd_cmd(MON_CMD_REBOOT);
+		return CGI_RC_REBOOT;
+	}	
 	if (strstr(cmd, "RENAME_AKS"))
 	{
 		char aks_node_name[24];
@@ -441,6 +488,43 @@ int CGI_do_cmd(http_req *req)
 		write_data_to_flash();					// write ratpac data to flash
 		return CGI_RC_OK;
 	}
+	if (strstr(cmd, "SET_SORT"))
+	{
+		char sort[8];
+		char *tmp1;
+
+		tmp1 = strchr(cmd, '=');
+		if (0 == tmp1)
+		{
+			return (CGI_RC_OK);
+		}
+		tmp1++;
+		
+		sprintf(sort, "%s", tmp1);
+		ratpac_set_str(CFG_SORT_BY,sort);
+		//CFG_save(0);
+		write_data_to_flash();					// write ratpac data to flash
+		return CGI_RC_OK;
+	}	
+	if (strstr(cmd, "SET_TIMO_POWER"))
+	{
+		char timo_power[8];
+		char *tmp1;
+
+		tmp1 = strchr(cmd, '=');
+		if (0 == tmp1)
+		{
+			return (CGI_RC_OK);
+		}
+		tmp1++;
+		
+		sprintf(timo_power, "%s", tmp1);
+		ratpac_set_str(CFG_TIMO_POWER,timo_power);
+		//CFG_save(0);
+		write_data_to_flash();					// write ratpac data to flash
+		return CGI_RC_OK;
+	}		
+
 	if (strstr(cmd, "AUTO_SACN_UNIV"))
 	{
 		char sacn_num[16];
@@ -478,8 +562,8 @@ int CGI_do_cmd(http_req *req)
 		artnum = atoi(arnet_num);
 		subnum = (artnum >> 4) & 0xf;
 		uninum = (artnum & 0xf);
-		sprintf(art_subnet, "%s", subnum);
-		sprintf(uniNo, "%s", uninum);		
+		sprintf(art_subnet, "%d", subnum);
+		sprintf(uniNo, "%d", uninum);		
 		ratpac_set_str(CFG_AKS_UNIVERSE,uniNo);
 		ratpac_set_str(CFG_AKS_SUBNET,art_subnet);
 		//CFG_save(0);
