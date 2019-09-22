@@ -314,7 +314,7 @@ function sacn_auto()
 	//auto_num = auto_num + 1;
 
 	//alert('auto number is then ' + auto_num);
-	if (!confirm('Confirm auto set the sACN Universe, start universe = ' + auto_num))
+	if (!confirm('System will reboot if protocol is sACN!'))
 	{
 		return;
 	}
@@ -475,7 +475,12 @@ function applyProtUni(id, ipAdd)
 	//alert(id + ' ' + ipAdd);
 	var f=document.HFA21TEST;
 
-	form2Cfg(f); 
+	form2Cfg(f);
+
+	if (!confirm('System will reboot if protocol or sACN universe has changed!'))
+	{
+		return;
+	}
 	
 	var asub = document.getElementById('sub_id_' + id).value;
 	var auni = document.getElementById('uni_id_' + id).value;
