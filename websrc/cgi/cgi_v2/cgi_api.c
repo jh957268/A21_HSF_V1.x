@@ -723,6 +723,7 @@ void fill_space(char *datarray, int arrlen)
 int Joo_uart_cmd(char *cmd, int len, char *expect_resp, cyg_tick_count_t timeout_tick);
 int get_client_entry(int idx, char *node_name, char *ip_addr, char *universe, char *art_sub, char *battery, char *protocol, char *sacn_uni, char *sort_by, char *host_mode, char *timo_power);
 int get_client_entry_adva(int idx, char *node_name, char *ip_addr, char *ecos_ver, char *samd_ver, char *timo_ver);
+extern char this_node_ip_address[];
 void CGI_var_map(http_req *req, char *name, int id)
 {
 	static char val[512+128];    // carefule, the stack size may not be enough for such a big value
@@ -898,7 +899,8 @@ void CGI_var_map(http_req *req, char *name, int id)
 			sprintf(val,"B");
 			strcat(val,battery);
 			// function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, hostType, battery, timoPwr, sort_by)			
-			WEB_printf(req, "BuildDisplayMsg('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s');\n",name, node_name,ip_addr, href_link ,art_sub, universe,cmd_buff , sel_ele, val, timo_power, ip_addr_save);
+			WEB_printf(req, "BuildDisplayMsg('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s');\n",
+						name, node_name,ip_addr, href_link ,art_sub, universe,cmd_buff , sel_ele, val, timo_power, ip_addr_save, this_node_ip_address);
 			return;
 #endif			
 			//sprintf(node_name, "AKS_NODE%d", idx);
