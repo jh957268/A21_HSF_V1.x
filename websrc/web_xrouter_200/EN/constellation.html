@@ -463,8 +463,10 @@ function renameAksName(id, ipAdd)
 	//{
 	//	alert("found " + id + ' value = ' + myEle.value);
 	//}
+		var str = myEle.value;
+		str = str.split(" ").join("?");
 		var url = 'http://' + ipAdd + '/EN/';
-		subForm(f, url + 'do_constellation.html','RENAME_AKS=' + myEle.value,cPage);
+		subForm(f, url + 'do_constellation.html','RENAME_AKS=' + str,cPage);
 	}
 }
 
