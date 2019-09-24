@@ -367,7 +367,7 @@ function apply_sort()
 	</form>
 <form method=post name=SORTAUTO target="_blank">
 	<table id="SORT_TBL" width="760" border="0" cellspacing="1" cellpadding="3"   bordercolor="#9BABBD">
-		<tr bgcolor="#E2C0F0">
+		<tr bgcolor="#C0D8F0">
 			<td>
 				<b>Sort By:</b> <select id="sort_id" size="1">
 						<option value="0">Node Name</option>
@@ -388,7 +388,7 @@ function apply_sort()
 </form>
 
 	<table id="add_table" width="760" border="1" cellspacing="1" cellpadding="3"   bordercolor="#9BABBD">
-		<tr bgcolor="yellow">
+		<tr bgcolor="#FFFFEE">
 			<td>
 				<b>Node Name/IP Address</b> 			
 			</td>
@@ -553,12 +553,10 @@ function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, h
 		msg5 = '<br>&#128267;' + battery.substr(1);
 	}
 	var msg6 = '<br><b>Power:</b><select id="timo_pwr_id_' + consId + '"' + ' size="1"> \
-						<option value="0">250mW</option> \
-						<option value="1">160mW</option> \
-						<option value="2">100mW</option> \
-						<option value="3">&nbsp;65mW</option> \
-						<option value="4">&nbsp;25mW</option> \
-						<option value="5">&nbsp;10mW</option> \
+						<option value="2">20dBm/100mW</option> \
+						<option value="3">16dBm/40mW</option> \
+						<option value="4">11dBm/13mW</option> \
+						<option value="5">5dBm/3mW  </option> \
 				</select>';
 	var msg7 = '<input type=button value="Set" onClick="setTimoPwr('+ '\''+consId+'\',' + '\''+ipAddr+'\')"' + '>';
 	var msg8 = '<input type="radio" value="0" name="PROTNAME_' +  consId + '"' + ' id="artnet_id_' + consId + '"' + '><b>Art-Net</b>';
@@ -761,7 +759,7 @@ REAL*/
 //displayMsg('AKS_CONS1', 'This is a test <IMG SRC=\"../images/battery.png\">  \nThis is anothre test');
 //displayMsg('AKS_CONS2', 'This is added New row');
 //document.getElementById('sort_id').value = '1';
-//BuildDisplayMsg('AKS_CONS1','AKS TEST1','10.10.100.254','0', '2', '1', '1','2','B98%','2','1','10.10.100.254');
+//BuildDisplayMsg('AKS_CONS1','AKS TEST1','10.10.100.254','0', '2', '1', '1','2','B98%','3','1','10.10.100.254');
 //BuildDisplayMsg('AKS_CONS2','AKS_TEST2','10.10.100.253','1', '3', '1', '1','dhcp','U99%','3');
 </script>
 </BODY>
