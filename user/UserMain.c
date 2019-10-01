@@ -1251,6 +1251,10 @@ void UserMain(void *arg)
 			{
 				CFG_get_str(CFG_str2id("WLN_Channel"),channel);
 				channel[0] = (char)atoi(channel);
+				if (channel[0] < 1 || channel[0] > 11)
+				{
+					channel[0] = 1;
+				}
 			}
 			else if (STA_WIFI_MODE == operation_mode)
 			{	
