@@ -36,9 +36,9 @@ CGI_MAP(TIMO_POWER, CFG_TIMO_POWER);
 CGI_MAP(net_ip,CFG_M2M_NET_SERADD);
 CGI_MAP(net_port,CFG_M2M_NET_PORT);
 CGI_MAP(AKS_Bit_Settings, CFG_AKS_SETTINGS);
-CGI_MAP(LED_COLOR, CFG_LED_COLOR);
-CGI_MAP(LED_G, CFG_LED_G);
-CGI_MAP(LED_B, CFG_LED_B);
+//CGI_MAP(LED_COLOR, CFG_LED_COLOR);
+//CGI_MAP(LED_G, CFG_LED_G);
+//CGI_MAP(LED_B, CFG_LED_B);
 
 CGI_MAP(GAFFER_ENABLE, CFG_GAFFER_ENABLE);
 CGI_MAP(GAFFER_UNIVERSE, CFG_GAFFER_UNIVERSE);
@@ -323,40 +323,7 @@ function Cancel_2() {
 }
 function Apply_2() {
 	var f=document.CRMXSettings;
-	var rgb=document.CRMXSettings.LED_COLOR.value;
 
-	if(isNaN(rgb)){
-		alert(rgb + " is not a number");
-		return;
-	}	
-	rgb=1*rgb;
-	if (rgb > 255)
-	{
-		alert("R Color value is out of range");
-		return;
-	}
-	rgb=document.CRMXSettings.LED_G.value;
-	if(isNaN(rgb)){
-		alert(rgb + " is not a number");
-		return;
-	}	
-	rgb=1*rgb;
-	if (rgb > 255)
-	{
-		alert("G Color value is out of range");
-		return;
-	}	
-	rgb=document.CRMXSettings.LED_B.value;
-	if(isNaN(rgb)){
-		alert(rgb + " is not a number");
-		return;
-	}	
-	rgb=1*rgb;
-	if (rgb > 255)
-	{
-		alert("B Color value is out of range");
-		return;
-	}		
 	form2Cfg(f);
 	subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
 }
@@ -365,7 +332,7 @@ function Apply_2() {
 </HEAD>
 <BODY leftmargin=0 topmargin=0 onload=init()>
 <script>pageHead();</script>
-
+<script src="../jscolor.js"></script>
 <center><h1 id="opmodeconfigTitle">Main Settings</h1></center>
 <h3 id="BATTERY_ID"></h3>
 <hr>
@@ -456,7 +423,7 @@ function Apply_2() {
 		<input type="hidden" name="AKS_Bit_Settings">	
 		<table width="540" border="1" cellspacing="1" cellpadding="3"   bordercolor="#9BABBD">
 			<tr>
-				<td class="title" colspan="2" id="Wireless_CRMX_lan_id">Output Power and Color ID</td>
+				<td class="title" colspan="2" id="Wireless_CRMX_lan_id">Output Power</td>
 			</tr>
 			<tr> 
 				<td class="head">
@@ -514,15 +481,15 @@ function Apply_2() {
 					</select>
 				</td>
 			</tr>
-			-->
 			<tr> 
 				<td class="head">
 					<font id="led_color_level">Color ID</font><br>	
 				</td>
 				<td>
-					&nbsp;<b>R:&nbsp;</b><input name="LED_COLOR" maxlength=4 size=4>&nbsp;&nbsp;&nbsp;<b>G:&nbsp;</b><input name="LED_G" maxlength=4 size=4>&nbsp;&nbsp;&nbsp;<b>B:&nbsp;</b><input name="LED_B" maxlength=4 size=4>
+					&nbsp;<b>RGB Value:&nbsp;&nbsp;<input class="jscolor" name="LED_COLOR" maxlength=8 size=8>
 				</td>				
 			</tr>
+			-->			
 			<!--
 			<tr> 
 				<td class="head">
@@ -570,7 +537,7 @@ function Apply_2() {
 			</tr>
 			<tr> 
 				<td class="head">
-					<font id="gaffer_subnet">Second Source Art-Net ID</font><br>	
+					<font id="gaffer_subnet">Second Source Art-Net Universe</font><br>	
 				</td>
 				<td>
 					<select name="GAFFER_SUBNET" size="1">
