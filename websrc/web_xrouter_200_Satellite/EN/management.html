@@ -9,20 +9,9 @@
 <SCRIPT language=JavaScript>
 
 /*DEMO*/
-
-
-addCfg("SYSPS",106,"admin" );
-addCfg("admuser",107,"admin");
-
-
 /*END_DEMO*/
 /*REAL
 <%
-
-
-CGI_MAP(SYSPS,CFG_SYS_ADMPASS);
-CGI_MAP(admuser,CFG_SYS_USERS);
-CGI_MAP(AKS_CHANNEL_WIDTH, CFG_AKS_CHANNEL_WIDTH);
 CGI_MAP(AKS_SECOND_CHANNEL, CFG_AKS_SECOND_CHANNEL);
 %>
 
@@ -95,7 +84,7 @@ function Apply_2()
 		return ;
 	}  
 	if(slanV=="en")
-		m='Are you sure you want to upgrade?';
+		m='After updating, restart device before using!';
 	else
 	    m='你确定要升级吗?';
 	event.srcElement.style.background='#ADECEA';		
@@ -129,7 +118,7 @@ function Apply_3(whichf)
 	//document.getElementById("uploadSAMDApply").style.background='#993399';	
 	//this.style.background = #993399;
 	if(slanV=="en")
-		m='Are you sure you want to upgrade?';
+		m='Are you sure you want to upgrade?';	
 	else
 	    m='你确定要升级吗?';
 	if(confirm(m))
@@ -237,32 +226,7 @@ var secs;
 <pre id="AKS_REL_BUILD"></pre>
 <hr />
 
-<form name=frmSetup>
-<table width="540" border="1" cellspacing="1" cellpadding="3" bordercolor="#9BABBD">
-
-  <tr>
-    <td class="title" colspan="2" id="manAdmSet">Adminstrator Settings</td>
-  </tr>
-  <tr>
-    <td class="head" width="40%"id="manAdmAccount">Account</td>
-    <td><input type="text" width="40%" name="admuser" size="16" maxlength="16" value="admin"></td>
-  </tr>
- <tr><td class="head" id="DM_Password_lan_id">Password</td>
-	<td><input type=text maxlength="20" name=SYSPS size="16" value=admin ></td>
-</tr>
-
-
-</table>
-<p/>
-<center>
-<input type=button style="{width:120px;}" value="Apply" onClick="Apply_1()"  id="DM_Apply1_lan_id">&nbsp;&nbsp;
-<input type=button style="{width:120px;}" value="Cancel" onClick="Cancel_1()" id="DM_Cancel1_lan_id">
-</center>
-</form>
-
 <br>
-
-
 
 <form name="Rt_Module" >
 <INPUT type=hidden name=CMD value=SYS_CONF>
@@ -363,33 +327,6 @@ var secs;
 			<tr>
 				<td class="title" colspan="2" id="advsetting_id">Advanced Settings</td>
 			</tr>
-			<tr > 
-				<td class="head" id="artnet_port_id">Art-Net Port:(Default 6454)</td>
-				<td><input name="artnet_port" STYLE="background-color:#D3D3D3;" maxlength=32 size=20 value="6454" readonly></td>
-			</tr > 				
-			<tr > 
-				<td class="head" id="sacn_port_id">sACN Port:(Default 5568)</td>
-				<td><input name="sacn_port" STYLE="background-color:#D3D3D3;" maxlength=32 size=20 value="5568" readonly></td>
-			</tr > 			
-			<tr> 
-				<td class="head">
-					<font id="aks_timo_Width">CRMX Channel Block Width</font><br>	
-				</td>
-				<td>
-					<select name="AKS_CHANNEL_WIDTH" size="1">
-						<option value="9">18 Mhz</option>
-						<option value="10">20 Mhz</option>
-						<option value="11">22 Mhz</option>
-						<option value="12">24 Mhz</option>
-						<option value="13">26 Mhz</option>
-						<option value="14">28 Mhz</option>
-						<option value="15">30 Mhz</option>
-						<option value="16">32 Mhz</option>
-						<option value="17">34 Mhz</option>
-						<option value="18">36 Mhz</option>
-					</select>
-				</td>
-			</tr>			
 			<tr> 
 				<td class="head">
 					<font id="aks_timo_channel">CRMX Second Channel Block</font><br>	
