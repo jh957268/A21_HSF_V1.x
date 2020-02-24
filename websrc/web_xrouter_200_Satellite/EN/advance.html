@@ -324,10 +324,10 @@ function updateFirmware(fwform, whichunit)
 		alert("?????!");
 		return ;
 	}  
-	if(slanV=="en")
-		m='Are you sure you want to upgrade?';
+	if (fwform.name == 'Upgrade_eCos')
+		m='After updating, restart device before using!';
 	else
-	    m='CH????????';
+		m='Are you sure you want to upgrade?';
 	event.srcElement.style.background='#ADECEA';	
 	if(confirm(m))
 	{	
