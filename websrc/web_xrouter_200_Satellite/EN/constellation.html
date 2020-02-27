@@ -553,10 +553,10 @@ function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, h
 		msg5 = '<br>&#128267;' + battery.substr(1);
 	}
 	var msg6 = '<br><b>Power:</b><select id="timo_pwr_id_' + consId + '"' + ' size="1"> \
-						<option value="2">20dBm/100mW</option> \
-						<option value="3">16dBm/40mW</option> \
-						<option value="4">11dBm/13mW</option> \
-						<option value="5">5dBm/3mW  </option> \
+						<option value="2">100mW</option> \
+						<option value="3">40mW</option> \
+						<option value="4">13mW</option> \
+						<option value="5">&nbsp;3mW</option> \
 				</select>';
 	var msg7 = '<input type=button value="Set" onClick="setTimoPwr('+ '\''+consId+'\',' + '\''+ipAddr+'\')"' + '>';
 	var msg8 = '<input type="radio" value="0" name="PROTNAME_' +  consId + '"' + ' id="artnet_id_' + consId + '"' + '><b>Art-Net</b>';
