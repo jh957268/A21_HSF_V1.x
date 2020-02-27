@@ -56,7 +56,7 @@ void web_flash_data_init(int flag);
 
 static int refresh_clients;
 static char gaffer_data[514];
-static int HexCharToInt(char *str);
+static int HexCharToInt(unsigned char *str);
 
 cyg_mutex_t samd_mutex;
 
@@ -1005,7 +1005,7 @@ static int USER_FUNC socketb_recv_callback(uint32_t event,char *data,uint32_t le
 #endif
 
 
-static char rgb0, rgb1, rgb2;
+static unsigned char rgb0, rgb1, rgb2;
 //static char rgb_led_color[16];
 static char use_xlr, main_xlr, ip_code;
 
@@ -1485,9 +1485,9 @@ void UserMain(void *arg)
 			//rgb_led_color[3] = 0;
 			//rgb_led_color[7] = 0;
 			//rgb_led_color[11] = 0;
-			rgb0 = (char)HexCharToInt((char *)&g_web_config.led_color[0]);
-			rgb1 = (char)HexCharToInt((char *)&g_web_config.led_g[2]);
-			rgb2 = (char)HexCharToInt((char *)&g_web_config.led_b[4]);
+			rgb0 = (unsigned char)HexCharToInt((unsigned char *)&g_web_config.led_color[0]);
+			rgb1 = (unsigned char)HexCharToInt((unsigned char *)&g_web_config.led_color[2]);
+			rgb2 = (unsigned char)HexCharToInt((unsigned char *)&g_web_config.led_color[4]);
 			use_xlr = g_web_config.use_xlr[0] - '0';
 			main_xlr = g_web_config.main_xlr[0] - '0';
 			char Settings6[] = {'A','r','t','-','N','e','t',0,0,50,0,0, 6, gaf_enb, gaf_low_lsb, gaf_low_msb, gaf_high_lsb, gaf_high_msb, rgb0, rgb1, rgb2, use_xlr, main_xlr };
@@ -2940,9 +2940,9 @@ void sort_client_list(void)
     }	
 }
 
-static int HexCharToInt(char *str)
+static int HexCharToInt(unsigned char *str)
 {
-	char hexarr[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+	unsigned char hexarr[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
 	int msb, lsb;
 	int i;
