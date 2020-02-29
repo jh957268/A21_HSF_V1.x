@@ -533,15 +533,15 @@ function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, h
 	var msg4;
 	if (hostType == '1')
 	{
-		msg4 = '<b>DHCP Host</b>  &#128246;<b>AP</b>';
+		msg4 = '<b>DHCP Host</b>  &#128246;<b>Host</b>';
 	}
 	else if (hostType == '2')
 	{
-		msg4 = '<b>Dynamic</b>  &#128268;<b>ETH</b>';
+		msg4 = '<b>Dynamic</b>  &#128268;<b>ETH Client</b>';
 	}
 	else
 	{
-		msg4 = '<b>WiFI</b>  &#128246;<b>Station</b>';	
+		msg4 = '<b>WiFI</b>  &#128246;<b>WiFi Client</b>';	
 	}
 	var msg5;
 	if (battery.charAt(0) == 'U')
