@@ -1514,7 +1514,7 @@ void Joo_uart_send(char *data)
 
 #define LOCAL_SERVER_PORT 10000
 #define REMOTE_CLIENT_PORT 10001
-#define MAX_MSG 100
+#define MAX_MSG 108
 static char msg[MAX_MSG];
 #define MAX_NUM_ENTRY 24
 
@@ -1533,6 +1533,7 @@ struct client_ent
 	char crmx_power[4];
 	char host_mode[4];
 	char protocol[4];
+	char led_color[8];
 	int	 age_cnt;
 };
 
@@ -1978,7 +1979,8 @@ USER_FUNC static void client_thread_main(void* arg)
 			ratpac_get_str( CFG_PROTNAME, &cli_recv[72]);
 			ratpac_get_str( CFG_TIMO_POWER, &cli_recv[76]);
 			ratpac_get_str( CFG_SORT_BY, &cli_recv[80]);				
-			sprintf(&cli_recv[84], "%d", operation_mode);			
+			sprintf(&cli_recv[84], "%d", operation_mode);
+			ratpac_get_str( CFG_LED_COLOR, &cli_recv[90]);			
 			cli_recv[36] = 0;
 			//sprintf(&cli_recv[0], "AKS" );
 			//sprintf(&cli_recv[20], "10");
@@ -1991,7 +1993,7 @@ USER_FUNC static void client_thread_main(void* arg)
 #endif
 			// serv.sin_addr.s_addr = addr.sin_addr.s_addr;
 			serv.sin_addr.s_addr = 0xff000000 | ((uint8_t)ipAddress[2] << 16) | ((uint8_t)ipAddress[1] << 8) | (uint8_t)ipAddress[0];			
-			rc = sendto(sd, cli_recv, 96, 0, 
+			rc = sendto(sd, cli_recv, 100, 0, 
 				(struct sockaddr *) &serv, 
 				sizeof(serv));
 			if ( rc < 0)
@@ -2002,7 +2004,7 @@ USER_FUNC static void client_thread_main(void* arg)
 	}
 
 }
-int get_client_entry(int idx, char *node_name, char *ip_addr, char *universe, char *art_sub, char *battery, char *protocol, char *sacn_uni, char *sort_by, char *host_mode, char *timopower)
+int get_client_entry(int idx, char *node_name, char *ip_addr, char *universe, char *art_sub, char *battery, char *protocol, char *sacn_uni, char *sort_by, char *host_mode, char *timopower, char *led_color)
 {
 	struct client_ent *client_ptr;
 	
@@ -2030,6 +2032,7 @@ int get_client_entry(int idx, char *node_name, char *ip_addr, char *universe, ch
 	sprintf(sort_by, "%s", client_ptr->sort_by);
 	sprintf(host_mode, "%s", client_ptr->host_mode);
 	sprintf(timopower, "%s", client_ptr->crmx_power);
+	sprintf(led_color, "%s", client_ptr->led_color);
 	
 	//sprintf(battery, "%s", battery_info);
 	snprintf(battery, 8, "%s%%", client_ptr->baterry);
@@ -2780,7 +2783,9 @@ void age_client_list(int new)
 	ratpac_get_str( CFG_TIMO_POWER, tmp_buff);
 	sprintf(client_list[0].crmx_power, tmp_buff);
 	ratpac_get_str( CFG_PROTNAME, tmp_buff);
-	sprintf(client_list[0].protocol, tmp_buff);	
+	sprintf(client_list[0].protocol, tmp_buff);
+	ratpac_get_str( CFG_LED_COLOR, tmp_buff);
+	sprintf(client_list[0].led_color, tmp_buff);		
 	
 	sprintf(client_list[0].eCos_ver, "%s", eCos_ver);
 	sprintf(client_list[0].samd_ver, "%s", samd_ver);
@@ -2852,7 +2857,8 @@ void populate_new_client(char *ip_ad, char *rcv_msg)
 			sprintf(client_list[i].protocol, &rcv_msg[72]);
 			sprintf(client_list[i].crmx_power, &rcv_msg[76]);
 			sprintf(client_list[i].sort_by, &rcv_msg[80]);
-			sprintf(client_list[i].host_mode, &rcv_msg[84]);			
+			sprintf(client_list[i].host_mode, &rcv_msg[84]);
+			sprintf(client_list[i].led_color, &rcv_msg[90]);			
 			client_list[i].age_cnt = AGE_COUNT;	
 			age_client_list(1);
 			return;
@@ -2876,7 +2882,8 @@ void populate_new_client(char *ip_ad, char *rcv_msg)
 			sprintf(client_list[i].protocol, &rcv_msg[72]);
 			sprintf(client_list[i].crmx_power, &rcv_msg[76]);
 			sprintf(client_list[i].sort_by, &rcv_msg[80]);
-			sprintf(client_list[i].host_mode, &rcv_msg[84]);			
+			sprintf(client_list[i].host_mode, &rcv_msg[84]);
+			sprintf(client_list[i].led_color, &rcv_msg[90]);			
 			client_list[i].age_cnt = AGE_COUNT;
 			age_client_list(1);
 			return;
