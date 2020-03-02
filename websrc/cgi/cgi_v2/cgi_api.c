@@ -549,7 +549,25 @@ int CGI_do_cmd(http_req *req)
 		//CFG_save(0);
 		write_data_to_flash();					// write ratpac data to flash
 		return CGI_RC_OK;
-	}		
+	}
+	if (strstr(cmd, "SET_LED_COLOR"))
+	{
+		char led_c[8];
+		char *tmp1;
+
+		tmp1 = strchr(cmd, '=');
+		if (0 == tmp1)
+		{
+			return (CGI_RC_OK);
+		}
+		tmp1++;
+		
+		sprintf(led_c, "%s", tmp1);
+		ratpac_set_str(CFG_LED_COLOR,led_c);
+		//CFG_save(0);
+		write_data_to_flash();					// write ratpac data to flash
+		return CGI_RC_OK;
+	}			
 
 	if (strstr(cmd, "AUTO_SACN_UNIV"))
 	{
@@ -752,7 +770,7 @@ void fill_space(char *datarray, int arrlen)
 }
 
 int Joo_uart_cmd(char *cmd, int len, char *expect_resp, cyg_tick_count_t timeout_tick);
-int get_client_entry(int idx, char *node_name, char *ip_addr, char *universe, char *art_sub, char *battery, char *protocol, char *sacn_uni, char *sort_by, char *host_mode, char *timo_power);
+int get_client_entry(int idx, char *node_name, char *ip_addr, char *universe, char *art_sub, char *battery, char *protocol, char *sacn_uni, char *sort_by, char *host_mode, char *timo_power, char *led_color);
 int get_client_entry_adva(int idx, char *node_name, char *ip_addr, char *ecos_ver, char *samd_ver, char *timo_ver);
 extern char this_node_ip_address[];
 void CGI_var_map(http_req *req, char *name, int id)
@@ -769,6 +787,7 @@ void CGI_var_map(http_req *req, char *name, int id)
 	char sel_ele[60];
 	char timo_power[4];
 	char battery[12];
+	char rgb_led_color[8];
 	int node_len, link_len;
 	int uni_num, art_sub_num;
 
@@ -925,7 +944,7 @@ void CGI_var_map(http_req *req, char *name, int id)
 			//int get_client_entry(int idx, char *node_name, char *ip_addr, char *universe, char *art_sub, char *battery, char *protocol, char *sacn_uni, char *sort_by, char *host_mode, char *timo_power);
 			//href_link:protocol   cmd_buff:sacn_uni  ip_addr_save:sort_by  sel_ele:host_mode    timo_power:timo_power
 			
-			if (-1 == get_client_entry(idx, node_name, ip_addr, universe, art_sub, battery, href_link, cmd_buff, ip_addr_save, sel_ele, timo_power))
+			if (-1 == get_client_entry(idx, node_name, ip_addr, universe, art_sub, battery, href_link, cmd_buff, ip_addr_save, sel_ele, timo_power, rgb_led_color))
 			{
 				return;
 			}
@@ -934,8 +953,8 @@ void CGI_var_map(http_req *req, char *name, int id)
 			sprintf(val,"B");
 			strcat(val,battery);
 			// function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, hostType, battery, timoPwr, sort_by)			
-			WEB_printf(req, "BuildDisplayMsg('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s');\n",
-						name, node_name,ip_addr, href_link ,art_sub, universe,cmd_buff , sel_ele, val, timo_power, ip_addr_save, this_node_ip_address);
+			WEB_printf(req, "BuildDisplayMsg('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s');\n",
+						name, node_name,ip_addr, href_link ,art_sub, universe,cmd_buff , sel_ele, val, timo_power, rgb_led_color, ip_addr_save, this_node_ip_address);
 			return;
 #endif			
 			//sprintf(node_name, "AKS_NODE%d", idx);
