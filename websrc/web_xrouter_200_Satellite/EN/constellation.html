@@ -352,7 +352,7 @@ function apply_sort()
 </HEAD>
 <BODY leftmargin=0 topmargin=0 onload=init()>
 <script>pageHead();</script>
-
+<script src="../jscolor.js"></script>
 <center><h1 id="constellationTitle">Ratpac Constellation</h1></center>
 
 <hr>
@@ -518,13 +518,32 @@ function setTimoPwr(id, ipAdd)
 	}
 }
 
-function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, hostType, battery, timoPwr, sort_by, nodeIpAddr)
+function setLedColor(id, ipAdd)
+{
+	var f=document.HFA21TEST;
+
+	form2Cfg(f);
+	//alert(id + ' ' + ipAdd);
+	//alert('aks_name_id_' + id);
+	var myEle = document.getElementById('led_id_' + id);
+	if (myEle)
+	{
+		//alert("found " + id + 'value = ' + myEle.value);
+		var url = 'http://' + ipAdd + '/EN/';
+		subForm(f, url + 'do_constellation.html','SET_LED_COLOR=' + myEle.value,cPage);
+	}
+}
+
+function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, hostType, battery, timoPwr, rgb_led, sort_by, nodeIpAddr)
 {
 	var msg = '<input id="aks_name_id_' + consId + '"' + ' maxlength=20 size=16 value='+nName+'><input type=button value="Rename" onClick="renameAksName('+ '\''+consId+'\',' + '\''+ipAddr+'\')"' + '>';
 	var msg1 = '<button type="button" onClick="popupCenter(' + '\'http://' + ipAddr + '/EN/link.html\'' + ',\'myPop1\', 400, 300)">Link</button>';
 	var msg2 = '<button type="button" onClick="popupCenter(' + '\'http://' + ipAddr + '/EN/unlink.html\'' + ',\'myPop1\', 400, 300)">Unlink</button>';
 	var msg3 = '<button type="button" onClick="popupCenter(' + '\'http://' + ipAddr + '/EN/id.html\'' + ',\'myPop1\', 400, 300)">ID</button>';	
 	var msgx = '<br><a href=http://'+ipAddr+' target="_blank">'+ipAddr+'</a>';
+	var msgled = '<br><b>Color RGB ID:</b> <input class="jscolor" id="led_id_' + consId + '"' + ' maxlength=8 size=8 value='+rgb_led+'>';
+	var msgledbutton = '<input type=button value="Set" onClick="setLedColor('+ '\''+consId+'\',' + '\''+ipAddr+'\')"' + '>';
+	
 	//var myEle = document.getElementById('IP' + consId.substr(3));
 	//if (myEle)
 	//{
@@ -618,7 +637,7 @@ function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, h
 	var cell2 = row.insertCell(2);
 	var cell3 = row.insertCell(3);
 	
-	cell0.innerHTML = msg + msgx;
+	cell0.innerHTML = msg + msgx + msgled + msgledbutton;
 	cell1.innerHTML = msg4 + msg5;	
 	cell2.innerHTML = msg1 + msg2 + msg3 + msg6 + msg7;
 	cell3.innerHTML = msg8 + msg10 + msg11 + msg9 + msg12;
@@ -759,7 +778,7 @@ REAL*/
 //displayMsg('AKS_CONS1', 'This is a test <IMG SRC=\"../images/battery.png\">  \nThis is anothre test');
 //displayMsg('AKS_CONS2', 'This is added New row');
 //document.getElementById('sort_id').value = '1';
-//BuildDisplayMsg('AKS_CONS1','AKS TEST1','10.10.100.254','0', '2', '1', '1','2','B98%','3','1','10.10.100.254');
+//BuildDisplayMsg('AKS_CONS1','AKS TEST1','10.10.100.254','0', '2', '1', '1','2','B98%','3', 'ABABAB', '1','10.10.100.254');
 //BuildDisplayMsg('AKS_CONS2','AKS_TEST2','10.10.100.253','1', '3', '1', '1','dhcp','U99%','3');
 </script>
 </BODY>
