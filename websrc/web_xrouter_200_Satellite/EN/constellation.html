@@ -541,7 +541,7 @@ function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, h
 	var msg2 = '<button type="button" onClick="popupCenter(' + '\'http://' + ipAddr + '/EN/unlink.html\'' + ',\'myPop1\', 400, 300)">Unlink</button>';
 	var msg3 = '<button type="button" onClick="popupCenter(' + '\'http://' + ipAddr + '/EN/id.html\'' + ',\'myPop1\', 400, 300)">ID</button>';	
 	var msgx = '<br><a href=http://'+ipAddr+' target="_blank">'+ipAddr+'</a>';
-	var msgled = '<br><b>Color RGB ID:</b> <input class="jscolor" id="led_id_' + consId + '"' + ' maxlength=8 size=8 value='+rgb_led+'>';
+	var msgled = '<b>&nbsp;Color</b> <input class="jscolor" id="led_id_' + consId + '"' + ' maxlength=8 size=5 value='+rgb_led+'>';
 	var msgledbutton = '<input type=button value="Set" onClick="setLedColor('+ '\''+consId+'\',' + '\''+ipAddr+'\')"' + '>';
 	
 	//var myEle = document.getElementById('IP' + consId.substr(3));
