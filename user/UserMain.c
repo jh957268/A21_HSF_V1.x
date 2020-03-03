@@ -73,8 +73,8 @@ struct eth_drv_sc	*dev;
 
 #define AKS_PRIORITIES	8			// since the web server uses 8, the UserMain thread need to change 8 too
 
-#define MAGIC0			0xba
-#define MAGIC1			0x21
+#define MAGIC0			0xbc
+#define MAGIC1			0x25
 
 static int operation_mode;
 
@@ -817,9 +817,15 @@ void web_flash_data_init(int flag)
 		memset(&g_web_config,0,sizeof(WEB_DATA_T));
 
 		if (!(strcmp(build_img, "AKS")))
+		{
 			sprintf(g_web_config.name,"Ratpac AKS");
+			sprintf(g_web_config.led_color,"EEEEEE");
+		}
 		else
+		{
 			sprintf(g_web_config.name,"Satellite");
+			sprintf(g_web_config.led_color,"2EB35B");
+		}
 		sprintf(g_web_config.universe,"0");
 		sprintf(g_web_config.subnet,"0");
 		sprintf(g_web_config.gaffer_enb,"1");		// disable
