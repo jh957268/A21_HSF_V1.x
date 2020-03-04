@@ -686,7 +686,7 @@ var jsc = {
 			} else {
 				callback = thisObj.onFineChange;
 			}
-			callback.call(thisObj);
+			callback.call(thisObj+' '+thisObj.valueCons);
 		}
 	},
 
