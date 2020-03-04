@@ -534,6 +534,14 @@ function setLedColor(id, ipAdd)
 	}
 }
 
+function setTextColor(picker) {
+    alert("joo");
+	//document.getElementsByTagName('body')[0].style.color = '#' + picker.toString()
+	var table = document.getElementById("add_table");
+	var row = table.rows[1];
+	row.style.backgroundColor = '#' + picker.toString();
+}
+
 function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, hostType, battery, timoPwr, rgb_led, sort_by, nodeIpAddr)
 {
 	var msg = '<input id="aks_name_id_' + consId + '"' + ' maxlength=20 size=16 value='+nName+'><input type=button value="Rename" onClick="renameAksName('+ '\''+consId+'\',' + '\''+ipAddr+'\')"' + '>';
@@ -541,7 +549,7 @@ function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, h
 	var msg2 = '<button type="button" onClick="popupCenter(' + '\'http://' + ipAddr + '/EN/unlink.html\'' + ',\'myPop1\', 400, 300)">Unlink</button>';
 	var msg3 = '<button type="button" onClick="popupCenter(' + '\'http://' + ipAddr + '/EN/id.html\'' + ',\'myPop1\', 400, 300)">ID</button>';	
 	var msgx = '<br><a href=http://'+ipAddr+' target="_blank">'+ipAddr+'</a>';
-	var msgled = '<b>&nbsp;Color</b> <input class="jscolor" id="led_id_' + consId + '"' + ' maxlength=8 size=5 value='+rgb_led+'>';
+	var msgled = '<b>&nbsp;Color</b> <input class="jscolor {onFineChange:\'setTextColor(this)\'}" id="led_id_' + consId + '"' + ' maxlength=8 size=5 value='+rgb_led+'>';
 	var msgledbutton = '<input type=button value="Set" onClick="setLedColor('+ '\''+consId+'\',' + '\''+ipAddr+'\')"' + '>';
 	
 	//var myEle = document.getElementById('IP' + consId.substr(3));
@@ -787,7 +795,7 @@ REAL*/
 //displayMsg('AKS_CONS1', 'This is a test <IMG SRC=\"../images/battery.png\">  \nThis is anothre test');
 //displayMsg('AKS_CONS2', 'This is added New row');
 //document.getElementById('sort_id').value = '1';
-//BuildDisplayMsg('AKS_CONS1','AKS TEST1','10.10.100.254','0', '2', '1', '1','2','B98%','3', 'EEEEEE', '1','10.10.100.254');
+BuildDisplayMsg('AKS_CONS1','AKS TEST1','10.10.100.254','0', '2', '1', '1','2','B98%','3', 'EEEEEF', '1','10.10.100.254');
 //BuildDisplayMsg('AKS_CONS2','AKS_TEST2','10.10.100.253','1', '3', '1', '1','dhcp','U99%','3');
 </script>
 </BODY>
