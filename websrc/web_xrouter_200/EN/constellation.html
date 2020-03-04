@@ -535,11 +535,12 @@ function setLedColor(id, ipAdd)
 }
 
 function setTextColor(picker) {
-    alert("joo");
+    alert(picker);
 	//document.getElementsByTagName('body')[0].style.color = '#' + picker.toString()
 	var table = document.getElementById("add_table");
+	//var tbl_idx = 1*consId.substr(8);
 	var row = table.rows[1];
-	row.style.backgroundColor = '#' + picker.toString();
+	row.style.backgroundColor = picker.toString();
 }
 
 function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, hostType, battery, timoPwr, rgb_led, sort_by, nodeIpAddr)
@@ -549,9 +550,10 @@ function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, h
 	var msg2 = '<button type="button" onClick="popupCenter(' + '\'http://' + ipAddr + '/EN/unlink.html\'' + ',\'myPop1\', 400, 300)">Unlink</button>';
 	var msg3 = '<button type="button" onClick="popupCenter(' + '\'http://' + ipAddr + '/EN/id.html\'' + ',\'myPop1\', 400, 300)">ID</button>';	
 	var msgx = '<br><a href=http://'+ipAddr+' target="_blank">'+ipAddr+'</a>';
-	var msgled = '<b>&nbsp;Color</b> <input class="jscolor {onFineChange:\'setTextColor(this)\'}" id="led_id_' + consId + '"' + ' maxlength=8 size=5 value='+rgb_led+'>';
-	var msgledbutton = '<input type=button value="Set" onClick="setLedColor('+ '\''+consId+'\',' + '\''+ipAddr+'\')"' + '>';
-	
+	var ttt = '~' + consId + '~' + ipAddr;
+	var msgled = '<b>&nbsp;Color</b> <input class="jscolor {valueCons:' + '\'' + ttt + '\'' + ', onFineChange:\'setTextColor(this)\'}" id="led_id_' + consId + '"' + ' maxlength=8 size=5 value='+rgb_led+'>';
+	var msgledbutton = '&nbsp;<input type=button value="Lock IP" onClick="setLedColor('+ '\''+consId+'\',' + '\''+ipAddr+'\')"' + '>';
+
 	//var myEle = document.getElementById('IP' + consId.substr(3));
 	//if (myEle)
 	//{
@@ -560,24 +562,24 @@ function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, h
 	var msg4;
 	if (hostType == '1')
 	{
-		msg4 = '<b>DHCP Host</b>  &#128246;<b>Host</b>';
+		msg4 = '<br><b>DHCP Host</b>  &#128246;<b>Host</b>';
 	}
 	else if (hostType == '2')
 	{
-		msg4 = '<b>Dynamic</b>  &#128268;<b>ETH Client</b>';
+		msg4 = '<br><b>DHCP</b>  &#128268;<b>ETH Client</b>';
 	}
 	else
 	{
-		msg4 = '<b>WiFI</b>  &#128246;<b>WiFi Client</b>';	
+		msg4 = '<br><b>WiFI</b>  &#128246;<b>WiFi Client</b>';	
 	}
 	var msg5;
 	if (battery.charAt(0) == 'U')
 	{
-		msg5 = '<br>&#128268;' + battery.substr(1);
+		msg5 = '&#128268;' + battery.substr(1);
 	}
 	else
 	{
-		msg5 = '<br>&#128267;' + battery.substr(1);
+		msg5 = '&#128267;' + battery.substr(1);
 	}
 	var msg6 = '<br><b>Power:</b><select id="timo_pwr_id_' + consId + '"' + ' size="1"> \
 						<option value="0">250mW</option> \
@@ -647,15 +649,16 @@ function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, h
 	var cell2 = row.insertCell(2);
 	var cell3 = row.insertCell(3);
 	
+	cell0.innerHTML = msg + msgx + msgledbutton;
 	if (rgb_led == 'EEEEEE')
 	{
-		cell0.innerHTML = msg + msgx;
+		cell1.innerHTML = msg5 + msg4;
 	}
 	else
 	{
-		cell0.innerHTML = msg + msgx + msgled + msgledbutton;
-	}
-	cell1.innerHTML = msg4 + msg5;	
+		cell1.innerHTML = msg5 + msgled + msg4;
+	}	
+	
 	cell2.innerHTML = msg1 + msg2 + msg3 + msg6 + msg7;
 	cell3.innerHTML = msg8 + msg10 + msg11 + msg9 + msg12;
 
