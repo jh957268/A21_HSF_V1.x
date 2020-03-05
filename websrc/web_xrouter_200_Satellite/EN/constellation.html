@@ -518,6 +518,14 @@ function setTimoPwr(id, ipAdd)
 	}
 }
 
+function setIPLock(id, ipAdd)
+{
+	var f=document.HFA21TEST;
+
+	form2Cfg(f);
+	alert('Lock IP Not done ' + ipAdd);
+}
+
 function setLedColor(id, ipAdd)
 {
 	var f=document.HFA21TEST;
@@ -534,6 +542,18 @@ function setLedColor(id, ipAdd)
 	}
 }
 
+function setTextColor(picker) {
+	const [cocode, conId, iphost] = picker.split('~');
+	var table = document.getElementById("add_table");
+	var tbl_idx = 1*conId.substr(8);
+	var row = table.rows[tbl_idx];
+	row.style.backgroundColor = '#' + cocode.toString();
+	if (iphost != 'dummy')
+	{
+	setLedColor(conId, iphost);
+	}
+}
+
 function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, hostType, battery, timoPwr, rgb_led, sort_by, nodeIpAddr)
 {
 	var msg = '<input id="aks_name_id_' + consId + '"' + ' maxlength=20 size=16 value='+nName+'><input type=button value="Rename" onClick="renameAksName('+ '\''+consId+'\',' + '\''+ipAddr+'\')"' + '>';
@@ -541,9 +561,10 @@ function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, h
 	var msg2 = '<button type="button" onClick="popupCenter(' + '\'http://' + ipAddr + '/EN/unlink.html\'' + ',\'myPop1\', 400, 300)">Unlink</button>';
 	var msg3 = '<button type="button" onClick="popupCenter(' + '\'http://' + ipAddr + '/EN/id.html\'' + ',\'myPop1\', 400, 300)">ID</button>';	
 	var msgx = '<br><a href=http://'+ipAddr+' target="_blank">'+ipAddr+'</a>';
-	var msgled = '<b>&nbsp;Color</b> <input class="jscolor" id="led_id_' + consId + '"' + ' maxlength=8 size=5 value='+rgb_led+'>';
-	var msgledbutton = '<input type=button value="Set" onClick="setLedColor('+ '\''+consId+'\',' + '\''+ipAddr+'\')"' + '>';
-	
+	var ttt = consId + '~' + ipAddr;
+	var msgled = '<b>&nbsp;Color</b> <input class="jscolor {valueCons:' + '\'' + ttt + '\'' + ', onFineChange:\'setTextColor(this)\'}" id="led_id_' + consId + '"' + ' maxlength=8 size=5 value='+rgb_led+'>';
+	var msglockbutton = '&nbsp;<input type=button value="Lock IP" onClick="setIPLock('+ '\''+consId+'\',' + '\''+ipAddr+'\')"' + '>';
+
 	//var myEle = document.getElementById('IP' + consId.substr(3));
 	//if (myEle)
 	//{
@@ -552,24 +573,24 @@ function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, h
 	var msg4;
 	if (hostType == '1')
 	{
-		msg4 = '<b>DHCP Host</b>  &#128246;<b>Host</b>';
+		msg4 = '<br><b>DHCP Host</b>  &#128246;<b>Host</b>';
 	}
 	else if (hostType == '2')
 	{
-		msg4 = '<b>Dynamic</b>  &#128268;<b>ETH Client</b>';
+		msg4 = '<br><b>DHCP</b>  &#128268;<b>ETH Client</b>';
 	}
 	else
 	{
-		msg4 = '<b>WiFI</b>  &#128246;<b>WiFi Client</b>';	
+		msg4 = '<br><b>WiFI</b>  &#128246;<b>WiFi Client</b>';	
 	}
 	var msg5;
 	if (battery.charAt(0) == 'U')
 	{
-		msg5 = '<br>&#128268;' + battery.substr(1);
+		msg5 = '&#128268;' + battery.substr(1);
 	}
 	else
 	{
-		msg5 = '<br>&#128267;' + battery.substr(1);
+		msg5 = '&#128267;' + battery.substr(1);
 	}
 	var msg6 = '<br><b>Power:</b><select id="timo_pwr_id_' + consId + '"' + ' size="1"> \
 						<option value="2">100mW</option> \
@@ -624,28 +645,30 @@ function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, h
 	var tbl_idx = 1*consId.substr(8);
 	var table = document.getElementById("add_table");
 	var row = table.insertRow(tbl_idx);
-	if ( tbl_idx === 0 || !!(tbl_idx && !(tbl_idx%2)))
-	{
-		row.style.backgroundColor = "#cbccc6";
-	}
-	else
-	{
-		row.style.backgroundColor = "#DFEFE9";	
-	}
+	//if ( tbl_idx === 0 || !!(tbl_idx && !(tbl_idx%2)))
+	//{
+	//	row.style.backgroundColor = "#cbccc6";
+	//}
+	//else
+	//{
+	//	row.style.backgroundColor = "#DFEFE9";	
+	//}
+	row.style.backgroundColor = '#' + rgb_led.toString();
 	var cell0 = row.insertCell(0);
 	var cell1 = row.insertCell(1);
 	var cell2 = row.insertCell(2);
 	var cell3 = row.insertCell(3);
 	
+	cell0.innerHTML = msg + msgx + msglockbutton;
 	if (rgb_led == 'EEEEEE')
 	{
-		cell0.innerHTML = msg + msgx;
+		cell1.innerHTML = msg5 + msg4;
 	}
 	else
 	{
-		cell0.innerHTML = msg + msgx + msgled + msgledbutton;
-	}
-	cell1.innerHTML = msg4 + msg5;	
+		cell1.innerHTML = msg5 + msgled + msg4;
+	}	
+	
 	cell2.innerHTML = msg1 + msg2 + msg3 + msg6 + msg7;
 	cell3.innerHTML = msg8 + msg10 + msg11 + msg9 + msg12;
 
@@ -785,7 +808,8 @@ REAL*/
 //displayMsg('AKS_CONS1', 'This is a test <IMG SRC=\"../images/battery.png\">  \nThis is anothre test');
 //displayMsg('AKS_CONS2', 'This is added New row');
 //document.getElementById('sort_id').value = '1';
-//BuildDisplayMsg('AKS_CONS1','AKS TEST1','10.10.100.254','0', '2', '1', '1','2','B98%','3', '72AB50', '1','10.10.100.254');
+//BuildDisplayMsg('AKS_CONS1','AKS TEST1','10.10.100.254','0', '2', '1', '1','2','B98%','3', 'EEEEEE', '1','10.10.100.254');
+//BuildDisplayMsg('AKS_CONS2','AKS TEST1','10.10.100.254','0', '2', '1', '1','2','B98%','3', '2EB35B', '1','10.10.100.254');
 //BuildDisplayMsg('AKS_CONS2','AKS_TEST2','10.10.100.253','1', '3', '1', '1','dhcp','U99%','3');
 </script>
 </BODY>
