@@ -73,8 +73,8 @@ struct eth_drv_sc	*dev;
 
 #define AKS_PRIORITIES	8			// since the web server uses 8, the UserMain thread need to change 8 too
 
-#define MAGIC0			0x29
-#define MAGIC1			0xDC
+#define MAGIC0			0x53
+#define MAGIC1			0x35
 
 static int operation_mode;
 
@@ -842,7 +842,6 @@ void web_flash_data_init(int flag)
 		sprintf(g_web_config.channelWidth,"16");
 		sprintf(g_web_config.secondChannel,"0");
 		sprintf(g_web_config.bitSetting,"0");
-		sprintf(g_web_config.led_color,"2EB35B");
 		sprintf(g_web_config.led_g,"112");
 		sprintf(g_web_config.led_b,"102");		
 		sprintf(g_web_config.use_xlr,"0");
