@@ -665,6 +665,16 @@ var jsc = {
 			// in case some user interaction will occur in user's onchange callback
 			// that would intrude with current mouse events
 			jsc.dispatchChange(thisObj);
+			//jsc.dispatchFineChange(thisObj);
+			if (thisObj.onFineChange) {
+				var callback;
+				if (typeof thisObj.onFineChange === 'string') {
+					callback = new Function (thisObj.onFineChange);
+				} else {
+					callback = thisObj.onFineChange;
+				}
+				callback.call(thisObj+ '~' +thisObj.valueCons);
+			}			
 		};
 	},
 
@@ -686,7 +696,8 @@ var jsc = {
 			} else {
 				callback = thisObj.onFineChange;
 			}
-			callback.call(thisObj);
+			const [conId, iphost] = thisObj.valueCons.split('~');			
+			callback.call(thisObj+ '~' + conId + '~dummy' );
 		}
 	},
 
