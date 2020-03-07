@@ -39,7 +39,7 @@ addCfg("save_lan",120,"1");
 //addCfg("Data_Transfor_Mode",212,"2");
 //addCfg("AKS_NAME",212,"JOO RatPac");
 //addCfg("AKS_NAME1",212,"JOO Test");
-addCfg("AKS_CONS1",212,"Constellation test1           10.10.100.20");
+//addCfg("AKS_CONS1",212,"Constellation test1           10.10.100.20");
 //addCfg("AKS_CONS2",212,"Constellation test2");
 //addCfg("AKS_NAME3",212,"JOO Test");
 //addCfg("AKS_CONS_NUM",212,"6");
@@ -542,27 +542,50 @@ function setLedColor(id, ipAdd)
 	}
 }
 
-function setTextColor(picker) {
+function isRGBlight(rgbcode)
+{
+	var r_c = parseInt(rgbcode.substring(0, 2), 16);
+	var g_c = parseInt(rgbcode.substring(2, 4), 16);
+	var b_c = parseInt(rgbcode.substring(4, 6), 16);
+	return (
+				0.213 * r_c +
+				0.715 * g_c +
+				0.072 * b_c >
+				255 / 2
+			);
+}			
+
+function setTextColor(picker) 
+{
 	const [cocode, conId, iphost] = picker.split('~');
 	var table = document.getElementById("add_table");
 	var tbl_idx = 1*conId.substr(8);
 	var row = table.rows[tbl_idx];
 	row.style.backgroundColor = '#' + cocode.toString();
+	//var pick = document.getElementById("pickid");
+	//row.cells[1].style.color = pick.style.color;
+	var lightdark = isRGBlight(cocode) ? '#000' : '#FFF';
+	row.cells[1].style.color = lightdark;
+	row.cells[2].style.color = lightdark;
+	row.cells[3].style.color = lightdark;
+	var link = document.getElementById('link_' + conId);
+	link.style.color = lightdark; 
 	if (iphost != 'dummy')
 	{
-	setLedColor(conId, iphost);
+		setLedColor(conId, iphost);
 	}
 }
 
 function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, hostType, battery, timoPwr, rgb_led, sort_by, nodeIpAddr)
 {
-	var msg = '<input id="aks_name_id_' + consId + '"' + ' maxlength=20 size=16 value='+nName+'><input type=button value="Rename" onClick="renameAksName('+ '\''+consId+'\',' + '\''+ipAddr+'\')"' + '>';
+	var msg = '<input id="aks_name_id_' + consId + '"' + ' maxlength=20 size=10 value='+nName+'><input type=button value="Rename" onClick="renameAksName('+ '\''+consId+'\',' + '\''+ipAddr+'\')"' + '>';
 	var msg1 = '<button type="button" onClick="popupCenter(' + '\'http://' + ipAddr + '/EN/link.html\'' + ',\'myPop1\', 400, 300)">Link</button>';
 	var msg2 = '<button type="button" onClick="popupCenter(' + '\'http://' + ipAddr + '/EN/unlink.html\'' + ',\'myPop1\', 400, 300)">Unlink</button>';
 	var msg3 = '<button type="button" onClick="popupCenter(' + '\'http://' + ipAddr + '/EN/id.html\'' + ',\'myPop1\', 400, 300)">ID</button>';	
-	var msgx = '<br><a href=http://'+ipAddr+' target="_blank">'+ipAddr+'</a>';
+	var msgx = '<br><a id="link_' + consId + '"' + 'href=http://'+ipAddr+' target="_blank">'+ipAddr+'</a>';
 	var ttt = consId + '~' + ipAddr;
-	var msgled = '<b>&nbsp;Color</b> <input class="jscolor {valueCons:' + '\'' + ttt + '\'' + ', onFineChange:\'setTextColor(this)\'}" id="led_id_' + consId + '"' + ' maxlength=8 size=5 value='+rgb_led+'>';
+	var msgled = '<b>&nbsp;Color:</b> <input class="jscolor {valueCons:' + '\'' + ttt + '\'' + ', onFineChange:\'setTextColor(this)\'}" id="led_id_' + consId + '"' + ' maxlength=8 size=4 value='+rgb_led+'>';
+	//var msgled = '<b>&nbsp;Color</b> <input id="pickid" class="jscolor {valueCons:' + '\'' + ttt + '\'' + ', onFineChange:\'setTextColor(this)\'}" id="led_id_' + consId + '"' + ' maxlength=8 size=5>';
 	var msglockbutton = '&nbsp;<input type=button value="Lock IP" onClick="setIPLock('+ '\''+consId+'\',' + '\''+ipAddr+'\')"' + '>';
 
 	//var myEle = document.getElementById('IP' + consId.substr(3));
@@ -696,6 +719,13 @@ function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, h
 		document.getElementById('sort_id').value = sort_by;	
 	}
 	document.getElementById('aks_name_id_' + consId).value = nName;
+	
+	var lightdark = isRGBlight(rgb_led) ? '#000' : '#FFF';
+	row.cells[1].style.color = lightdark;
+	row.cells[2].style.color = lightdark;
+	row.cells[3].style.color = lightdark;
+	var link = document.getElementById('link_' + consId);
+	link.style.color = lightdark; 
 }
 
 function do_SetUniverse(url, universe) {
@@ -809,7 +839,7 @@ REAL*/
 //displayMsg('AKS_CONS2', 'This is added New row');
 //document.getElementById('sort_id').value = '1';
 //BuildDisplayMsg('AKS_CONS1','AKS TEST1','10.10.100.254','0', '2', '1', '1','2','B98%','3', 'EEEEEE', '1','10.10.100.254');
-//BuildDisplayMsg('AKS_CONS2','AKS TEST1','10.10.100.254','0', '2', '1', '1','2','B98%','3', '2EB35B', '1','10.10.100.254');
+//BuildDisplayMsg('AKS_CONS1','AKS TEST1','10.10.100.254','0', '2', '1', '1','2','B98%','3', '6E5CB3', '1','10.10.100.254');
 //BuildDisplayMsg('AKS_CONS2','AKS_TEST2','10.10.100.253','1', '3', '1', '1','dhcp','U99%','3');
 </script>
 </BODY>
