@@ -246,70 +246,122 @@ function Apply_2() {
 	subForm(f,'do_cmd.html','WIRELESS_BASIC',cPage);
 }
 
-var delay_cnt;
-function delay_loop()
+var uniTimeoutVar;
+var auto_num;
+var entry_num;
+var try_count;
+var in_progress = false;;
+var auto_universe_sel;
+function UniAutoSetTimer()
 {
-	var i;
-	
-	delay_cnt = 0;
-	for (i = 0; i < 200000000; i++)
+	var iFram = document.getElementById('subIframeId');
+	alert("AutoTimer");
+	if (iFram == null)
 	{
-		delay_cnt = delay_cnt+1;
+		alert("Timer IFrame null");
+		in_progress = false;
+		return;	
+	}
+	var iFramContentWindow = iFram.contentWindow
+	
+	if (iFramContentWindow == null)
+	{
+		alert("iFramContentWindow null");
+		in_progress = false;
+		return;	
+	}
+	alert(iFramContentWindow);
+	var iFramContent = iFramContentWindow.document.body.innerHTML
+	alert(iFramContent);
+	if (iFramContent.includes("Operation") == true)
+	{
+		auto_num = auto_num + 1;
+		entry_num = entry_num + 1;
+		try_count = 0;
+		DoSetUniver();
+		return;	
+	}
+	try_count = try_count + 1;
+	if (try_count < 5)
+	{
+		DoSetUniver();
+	}
+	else
+	{
+		alert("try count " + try_count);
+		in_progress = false;
+	}
+}
+
+function DoSetUniver()
+{
+	var myEle;
+	var f=document.HFA21TEST;
+
+	form2Cfg(f);
+		
+	myEle = document.getElementById('IP_CONS' + entry_num);
+	
+	if (myEle)
+	{
+		if (auto_universe_sel == 'AUTO_ARTNET_UNIV=')
+		{
+			if (auto_num > 255)
+			{
+				alert("Arnet Universe out of range!");
+				in_progress = false;
+				return;
+			}
+		}
+		var url = 'http://' + myEle.value + '/EN/';
+		subForm(f, url + 'do_constellation.html',auto_universe_sel + auto_num, cPage);
+		uniTimeoutVar = setTimeout(function(){ UniAutoSetTimer(); }, 500);
+	}
+	else
+	{
+		in_progress = false;
 	}
 }
 
 function artnet_auto()
 {
-	var i;
 	var myEle;
-	var f=document.HFA21TEST;
 
-	form2Cfg(f);
+	if (in_progress == true)
+	{
+		return;
+	}
 	
 	myEle = document.getElementById('auto_univ_id');
 	
 	//alert('auto number is ' + myEle.value);
-	var auto_num = 1 * myEle.value;
+	auto_num = 1 * myEle.value;
 	
 	//auto_num = auto_num + 1;
 
 	//alert('auto number is then ' + auto_num);	
-	
-	for (i = 1; i < 25; i++)
-	{
-		myEle = document.getElementById('IP_CONS' + i);
-		if (myEle)
-		{
-			//alert('artnet auto found IP_CONS' + i + ' value = ' + myEle.value);
-			if (auto_num > 255)
-			{
-				alert("Arnet Universe out of range!");
-				return;
-			}
-			var url = 'http://' + myEle.value + '/EN/';
-			subForm(f, url + 'do_constellation.html','AUTO_ARTNET_UNIV=' + auto_num, cPage);
-			delay_loop();
-			auto_num = auto_num + 1;
-		}
-		else
-		{
-			return;
-		}
-	}
+	auto_universe_sel = 'AUTO_ARTNET_UNIV=';
+	entry_num = 1;
+	try_count = 0;
+	//alert("Done");
+	in_progress = true;	
+	DoSetUniver();
+	//alert("Done1");
 }
 
 function sacn_auto()
 {
-	var i;
 	var myEle;
-	var f=document.HFA21TEST;
 
-	form2Cfg(f);
+	if (in_progress == true)
+	{
+		return;
+	}
 	
 	myEle = document.getElementById('auto_univ_id');
 	
 	//alert('auto number is ' + myEle.value);
-	var auto_num = 1 * myEle.value;
+	auto_num = 1 * myEle.value;
 	
 	//auto_num = auto_num + 1;
 
@@ -318,23 +370,14 @@ function sacn_auto()
 	{
 		return;
 	}
+	auto_universe_sel = 'AUTO_SACN_UNIV=';
 	
-	for (i = 1; i < 25; i++)
-	{
-		myEle = document.getElementById('IP_CONS' + i);
-		if (myEle)
-		{
-			//alert('artnet auto found IP_CONS' + i + ' value = ' + myEle.value);
-			var url = 'http://' + myEle.value + '/EN/';
-			subForm(f, url + 'do_constellation.html','AUTO_SACN_UNIV=' + auto_num, cPage);
-			delay_loop();
-			auto_num = auto_num + 1;
-		}
-		else
-		{
-			return;
-		}
-	}
+	entry_num = 1;
+	try_count = 0;
+	//alert("Done");
+	in_progress = true;	
+	DoSetUniver();
+	//alert("Done1");
 }
 
 function apply_sort()
