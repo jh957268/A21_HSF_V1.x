@@ -255,21 +255,26 @@ var auto_universe_sel;
 function UniAutoSetTimer()
 {
 	var iFram = document.getElementById('subIframeId');
+	//alert("AutoTimer");
 	if (iFram == null)
 	{
 			alert("Timer IFrame null");
-		in_progress = fals;
+		in_progress = false;
 			return;	
 	}
-	var iFramContentWindow = iFram.contentWindow
-	if (iFramContentWindow == null)
+	try
 	{
-		alert("iFramContentWindow null");
-		in_progress = fals;
+		var iFramContent = iFram.contentWindow.document.body.innerHTML
+		if (iFramContent.includes("Operation") == true)
+	{
+			auto_num = auto_num + 1;
+			entry_num = entry_num + 1;
+			try_count = 0;
+			DoSetUniver();
 		return;	
+		}
 	}
-	var iFramContent = iFramContentWindow.document.body.innerHTML
-	if (iFramContent.includes("Operation") == true)
+	catch
 	{
 		auto_num = auto_num + 1;
 		entry_num = entry_num + 1;
@@ -654,7 +659,10 @@ function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, h
 	{
 		msg5 = '&#128267;' + battery.substr(1);
 	}
-	var msg6 = '<br><b>Power:</b><select id="timo_pwr_id_' + consId + '"' + ' size="1"> \
+	var msg6;
+	if (rgb_led == 'EEEEEE')
+	{
+		msg6 = '<br><b>Power:</b><select id="timo_pwr_id_' + consId + '"' + ' size="1"> \
 						<option value="0">250mW</option> \
 						<option value="1">160mW</option> \
 						<option value="2">100mW</option> \
@@ -662,6 +670,16 @@ function BuildDisplayMsg(consId, nName, ipAddr, prot, artSub, artUni, sACNUni, h
 						<option value="4">&nbsp;25mW</option> \
 						<option value="5">&nbsp;10mW</option> \
 				</select>';
+	}
+	else
+	{
+		msg6 = '<br><b>Power:</b><select id="timo_pwr_id_' + consId + '"' + ' size="1"> \
+						<option value="2">100mW</option> \
+						<option value="3">40mW</option> \
+						<option value="4">13mW</option> \
+						<option value="5">&nbsp;3mW</option> \
+				</select>';
+	}
 	var msg7 = '<input type=button value="Set" onClick="setTimoPwr('+ '\''+consId+'\',' + '\''+ipAddr+'\')"' + '>';
 	var msg8 = '<input type="radio" value="0" name="PROTNAME_' +  consId + '"' + ' id="artnet_id_' + consId + '"' + '><b>Art-Net</b>';
 	var msg9 = '<br><input type="radio" value="1" name="PROTNAME_' +  consId + '"' + ' id="sacn_id_' + consId + '"' + '><b>sACN</b>';
