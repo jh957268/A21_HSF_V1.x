@@ -73,7 +73,7 @@ struct eth_drv_sc	*dev;
 
 #define AKS_PRIORITIES	8			// since the web server uses 8, the UserMain thread need to change 8 too
 
-#define MAGIC0			0x53
+#define MAGIC0			0x55
 #define MAGIC1			0x35
 
 static int operation_mode;
