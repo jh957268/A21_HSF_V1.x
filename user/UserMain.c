@@ -31,7 +31,7 @@
 #include "e131.h"
 #include "aks_debug_printf.h"
 
-//#define SSID_STR 	"MySpectrumWiFi60-2G"
+//#define SSID_STR 	"MySpectrumWiFi60-2G" pull request
 #define SSID_STR 	"Ratpac AKS"
 
 void Joo_uart_send(char *data);
