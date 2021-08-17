@@ -2,7 +2,7 @@
 #define __AKS_DEBUG_PRINTF__
 #include <stdio.h>
 
-#if 0
+#if 0 // pull request
 #define eprintf(fmt, args...) do {
 							sprintf (ebuffer, fmt, args);
 							Joo_uart_send((char *)ebuffer);
